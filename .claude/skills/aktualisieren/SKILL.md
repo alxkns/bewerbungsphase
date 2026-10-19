@@ -23,13 +23,13 @@ git pull --ff-only
 git config core.hooksPath .githooks
 git log --oneline "$alt"..HEAD
 ```
-Scheitert `--ff-only`: nichts erzwingen, dem Nutzer den Fehler zeigen. Keine Neuerungen: mit einem Satz beenden.
+Scheitert `--ff-only`: nichts erzwingen, dem Nutzer den Fehler zeigen. Keine Neuerungen: trotzdem Schritt 3 als Abgleich ausführen (die Vorlagen können lokal geändert worden sein, z. B. durch eigene Verbesserungen der Methode), dann mit Schritt 5 abschließen.
 
 Die Commits in zwei bis fünf Sätzen auf Deutsch zusammenfassen: was ist neu, was ändert sich für den Nutzer.
 
 ## 3. Vorlagen nach `daten/` übertragen (nur ergänzen)
 
-Welche Vorlagen sich geändert haben: `git diff --stat "$alt"..HEAD -- vorlagen/ dashboard/`.
+Welche Vorlagen sich geändert haben: `git diff --stat "$alt"..HEAD -- vorlagen/ dashboard/`. Unabhängig davon jede Vorlage gegen ihr Gegenstück in `daten/` abgleichen: Fehlt dort ein Abschnitt oder Feld der Vorlage, ergänzen.
 
 - **`vorlagen/profil.md` → `daten/profil.md`** und **`vorlagen/suchprofil.md` → `daten/suchprofil.md`:** Jede `##`-Überschrift der Vorlage, die in `daten/` fehlt, samt leerem Vorlagentext an derselben Stelle einfügen (nach dem Abschnitt, der in der Vorlage davor steht). Innerhalb bestehender Abschnitte neue Feldzeilen (`- Feld:`, Tabellenzeilen) ergänzen, die es noch nicht gibt. Bestehende Inhalte nie ändern. Umbenannte Abschnitte: nicht raten, dem Nutzer zeigen.
 - **`vorlagen/prozess-learnings.md` → `daten/prozess-learnings.md`:** neue Zeilen unter „Gültige Workarounds“ und „Offene Probleme“ übernehmen, die es dort noch nicht gibt. Log und „Vorschläge an den Nutzer“ nicht anfassen.
