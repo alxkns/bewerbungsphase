@@ -148,8 +148,7 @@ dialog::backdrop { background: rgba(18, 18, 18, .45); }
     <div class="tile t-green"><span class="lbl">Einladungen</span><span class="val" data-k="einladungen">–</span><span class="sub"><span data-k="einladungsquote">–</span> der versendeten</span></div>
     <div class="tile t-pink"><span class="lbl">Absagen</span><span class="val" data-k="absagen">–</span><span class="sub"><span data-k="absagequote">–</span> der versendeten</span></div>
     <div class="tile t-violet"><span class="lbl">Antwortquote</span><span class="val" data-k="antwortquote">–</span><span class="sub">Einladung oder Absage erhalten</span></div>
-    <div class="tile"><span class="lbl">Vorschläge</span><span class="val" data-k="vorschlaege">–</span><span class="sub">warten auf deine Prüfung</span></div>
-    <div class="tile"><span class="lbl">Entwürfe</span><span class="val" data-k="entwuerfe">–</span><span class="sub">fertig, noch nicht abgeschickt</span></div>
+    <div class="tile"><span class="lbl">ToDo</span><span class="val" data-k="todo">–</span><span class="sub">Vorschläge <span data-k="vorschlaege">–</span> · Entwürfe <span data-k="entwuerfe">–</span></span></div>
   </section>
   <p class="def">Quoten beziehen sich auf versendete Bewerbungen. Eine automatische Eingangsbestätigung zählt nicht als Antwort. Eine Einladung bleibt gezählt, auch wenn später eine Absage kommt.</p>
 
@@ -265,6 +264,7 @@ function stats(list) {
   const quote = (x) => (versendet ? x / versendet : null);
   return {
     entwuerfe: list.filter((b) => b.status === 'Entworfen').length, vorschlaege: list.filter((b) => b.status === 'Vorschlag').length, versendet,
+    todo: list.filter((b) => ['Vorschlag', 'Entworfen'].includes(b.status)).length,
     offen: zahl((b) => !(b.antwort_am || ['Einladung', 'Angebot', 'Absage', 'Zurückgezogen'].includes(b.status))),
     einladungen, absagen, angebote: zahl((b) => b.status === 'Angebot'), rueckmeldungen,
     antwortquote: quote(rueckmeldungen), einladungsquote: quote(einladungen), absagequote: quote(absagen),
