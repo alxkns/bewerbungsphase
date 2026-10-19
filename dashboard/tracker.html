@@ -1,5 +1,10 @@
-<!-- Bewerbungs-Tracker, zwei Betriebsarten:
-     lokal: python3 tracker/tracker.py serve, Daten in daten/tracker.sqlite (jede KI)
+<!doctype html>
+<html lang="de">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<!-- Bewerbungs-Tracker, drei Betriebsarten:
+     Ordner (Standard): Datei direkt in Chrome/Edge/Brave öffnen, liest und schreibt daten/tracker/*.json ohne Server
+     Server: python3 tracker/tracker.py serve, für Safari/Firefox
      claude.ai: als privates Artifact veröffentlicht (capabilities: db mit Regel read view / write owner, user), Collection `bewerbungen` -->
 <title>Bewerbungs-Tracker</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -132,6 +137,7 @@ dialog::backdrop { background: rgba(18, 18, 18, .45); }
       <h1>Bewerbungs-<span class="mark">Tracker</span></h1>
       <p class="take" id="take">Bewerbungen werden geladen …</p>
     </div>
+    <button class="btn" id="connect" type="button" hidden>Ordner verbinden</button>
     <button class="btn" id="add" type="button" hidden>+ Bewerbung eintragen</button>
   </header>
   <p class="banner" id="banner" hidden></p>
@@ -500,16 +506,95 @@ function localDb() {
   };
 }
 
+// Ordner-Modus: Datei direkt im Browser geöffnet (file://), liest und schreibt daten/tracker/<id>.json ohne Server.
+// Gleiches Dateiformat wie tracker/tracker.py: {"version", "geaendert", "data"}
+function kv(key, value) {
+  return new Promise((ok, no) => {
+    const q = indexedDB.open('bewerbungs-tracker', 1);
+    q.onupgradeneeded = () => q.result.createObjectStore('kv');
+    q.onerror = () => no(q.error);
+    q.onsuccess = () => {
+      const st = q.result.transaction('kv', value === undefined ? 'readonly' : 'readwrite').objectStore('kv');
+      const r = value === undefined ? st.get(key) : st.put(value, key);
+      r.onsuccess = () => ok(r.result); r.onerror = () => no(r.error);
+    };
+  });
+}
+
+function folderDb(dir) {
+  const subs = [];
+  let last = '';
+  const refresh = async () => {
+    try {
+      const files = [];
+      for await (const [name, h] of dir.entries()) if (h.kind === 'file' && name.endsWith('.json')) files.push([name, await h.getFile()]);
+      const sig = files.map(([n, f]) => n + ':' + f.lastModified + ':' + f.size).sort().join('|');
+      if (sig === last) return;
+      last = sig;
+      const docs = await Promise.all(files.map(async ([n, f]) => { const d = JSON.parse(await f.text()); return { id: n.slice(0, -5), data: () => d.data || d }; }));
+      subs.forEach(([cb]) => cb({ docs }));
+    } catch (e) { subs.forEach(([, err]) => err && err(e)); }
+  };
+  const schreiben = async (id, data, merge) => {
+    let alt = null;
+    try { alt = JSON.parse(await (await (await dir.getFileHandle(id + '.json')).getFile()).text()); } catch {}
+    if (merge && !alt) throw new Error(id + ' gibt es nicht');
+    const inhalt = { version: (alt?.version || 0) + 1, geaendert: new Date().toLocaleString('sv-SE').replace(' ', 'T'), data: merge ? { ...(alt.data || alt), ...data } : data };
+    const w = await (await dir.getFileHandle(id + '.json', { create: true })).createWritable();
+    await w.write(JSON.stringify(inhalt, null, 1));
+    await w.close();
+    refresh();
+  };
+  return {
+    collection: () => ({
+      doc: (id) => ({ update: (p) => schreiben(id, p, true), set: (d) => schreiben(id, d, false), delete: async () => { await dir.removeEntry(id + '.json'); refresh(); } }),
+      onSnapshot(cb, err) { subs.push([cb, err]); refresh(); setInterval(refresh, 3000); },
+    }),
+  };
+}
+
+const banner = (text) => { const b = $('#banner'); b.textContent = text; b.hidden = !text; };
+
+// Ordner holen: gespeicherte Freigabe nutzen, sonst per Klick (Browser verlangt eine Nutzeraktion)
+async function ordnerFreigabe() {
+  if (!window.showDirectoryPicker) {
+    banner('Ohne Server läuft das Dashboard nur in Chrome, Edge oder Brave. In Safari oder Firefox: „python3 tracker/tracker.py serve“ starten und http://localhost:8765 öffnen.');
+    return null;
+  }
+  let dir = null;
+  try { dir = await kv('ordner'); } catch {}
+  if (dir && (await dir.queryPermission({ mode: 'readwrite' })) === 'granted') return dir;
+  $('#take').textContent = 'Noch nicht mit deinen Daten verbunden.';
+  banner(dir ? 'Der Browser fragt einmal pro Sitzung, ob das Dashboard den Ordner weiter bearbeiten darf. Wähle „Bei jedem Besuch zulassen“, dann entfällt auch das.'
+    : 'Einmalig: „Ordner verbinden“ klicken und im Bewerbungs-Ordner den Ordner daten/tracker auswählen.');
+  const btn = $('#connect');
+  btn.textContent = dir ? 'Ordner freigeben' : 'Ordner verbinden';
+  btn.hidden = false;
+  return new Promise((ok) => {
+    btn.onclick = async () => {
+      try {
+        if (dir && (await dir.requestPermission({ mode: 'readwrite' })) === 'granted') { btn.hidden = true; return ok(dir); }
+        const neu = await window.showDirectoryPicker({ id: 'bewerbungs-tracker', mode: 'readwrite' });
+        if (neu.name !== 'tracker' && !confirm(`Der Ordner heißt „${neu.name}“, nicht „tracker“. Trotzdem verwenden?`)) return;
+        try { await kv('ordner', neu); } catch {}
+        btn.hidden = true;
+        ok(neu);
+      } catch (e) { if (e.name !== 'AbortError') toast('Ordner nicht verbunden: ' + e.message, true); }
+    };
+  });
+}
+
 renderAll();
 (async () => {
-  const lokal = !window.claude && location.protocol.startsWith('http');
-  db = window.claude ? await window.claude.use('db') : lokal ? localDb() : null;
+  const modus = window.claude ? 'claude' : location.protocol === 'file:' ? 'ordner' : 'server';
+  if (modus === 'claude') db = await window.claude.use('db');
+  else if (modus === 'server') db = localDb();
+  else { const dir = await ordnerFreigabe(); db = dir && folderDb(dir); }
   if (!db) {
-    $('#take').textContent = 'Keine Verbindung zur Datenbank.';
-    const b = $('#banner'); b.textContent = 'Lokal starten mit „python3 tracker/tracker.py serve“ und http://localhost:8765 öffnen, oder die Seite angemeldet über claude.ai öffnen.'; b.hidden = false;
+    if (modus !== 'ordner') { $('#take').textContent = 'Keine Verbindung zur Datenbank.'; banner('Dashboard direkt als Datei in Chrome, Edge oder Brave öffnen, „python3 tracker/tracker.py serve“ starten oder die Seite angemeldet über claude.ai öffnen.'); }
     return;
   }
-  if (lokal) canWrite = true;
+  if (modus !== 'claude') canWrite = true;
   else {
     const user = await window.claude.use('user');
     if (user) { const w = await user.can('data.write'); canWrite = (await user.isOwner()) || w !== false; }
@@ -517,9 +602,11 @@ renderAll();
   $('#add').hidden = !canWrite;
   $('#table-note').textContent = canWrite ? 'Status direkt in der Tabelle ändern, Details über „Bearbeiten“' : 'Nur ansehen: Ändern kann nur der Besitzer';
   db.collection('bewerbungen').onSnapshot((snap) => {
-    $('#banner').hidden = true;
+    banner('');
     rows = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
     renderAll();
-  }, () => { const b = $('#banner'); b.textContent = lokal ? 'Keine Verbindung zum lokalen Tracker. Läuft „python3 tracker/tracker.py serve“ noch?' : 'Die Verbindung zur Datenbank ist abgerissen. Lade die Seite neu.'; b.hidden = false; });
+  }, () => banner(modus === 'ordner' ? 'Der Ordner ist nicht mehr lesbar (verschoben oder Freigabe entzogen). Seite neu laden und Ordner neu verbinden.'
+    : modus === 'server' ? 'Keine Verbindung zum lokalen Tracker. Läuft „python3 tracker/tracker.py serve“ noch?'
+    : 'Die Verbindung zur Datenbank ist abgerissen. Lade die Seite neu.'));
 })();
 </script>

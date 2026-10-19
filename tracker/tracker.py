@@ -1,41 +1,31 @@
 #!/usr/bin/env python3
-"""Lokaler Bewerbungs-Tracker: SQLite-Datei daten/tracker.sqlite, nur Python-Standardbibliothek.
+"""Lokaler Bewerbungs-Tracker: eine JSON-Datei je Bewerbung in daten/tracker/, nur Python-Standardbibliothek.
 
-Ein Dokument pro Bewerbung (id = Ordnername, Felder als JSON), mit Versionsnummer gegen
-gleichzeitiges Überschreiben. Gleiche Felder wie der claude.ai-Tracker.
+Datei daten/tracker/<id>.json = {"version": N, "geaendert": "…", "data": {firma, stelle, status, …}}.
+Dieselben Dateien liest und schreibt das Dashboard (dashboard/tracker.html) direkt im Browser.
+Die Versionsnummer verhindert, dass parallele Änderungen sich still überschreiben.
 
   python3 tracker/tracker.py list [--status S] [--min-match N]   alle (oder gefilterte) Bewerbungen als JSON
   python3 tracker/tracker.py get ID
   python3 tracker/tracker.py set ID '{"firma": ...}'             anlegen oder ganz ersetzen
   python3 tracker/tracker.py update ID '{"status": ...}' [--if-version N]   Felder ändern
   python3 tracker/tracker.py delete ID
-  python3 tracker/tracker.py export DIR                           je Bewerbung DIR/<id>.json (für status-ordner.py)
   python3 tracker/tracker.py import DIR                           <id>.json-Dateien einlesen (z. B. Export aus claude.ai)
-  python3 tracker/tracker.py serve [--port 8765]                  Dashboard unter http://localhost:8765
+  python3 tracker/tracker.py serve [--port 8765]                  nur für Safari/Firefox: Dashboard über localhost
 """
-import argparse, json, sqlite3, sys
+import argparse, json, os, sys, tempfile
 from datetime import datetime
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import unquote
 
 ROOT = Path(__file__).resolve().parents[1]
-DB = ROOT / "daten" / "tracker.sqlite"
+ORDNER = ROOT / "daten" / "tracker"
 DASHBOARD = ROOT / "dashboard" / "tracker.html"
 
 
 class Konflikt(Exception):
     pass
-
-
-def verbinden(pfad=None):
-    pfad = pfad or DB
-    pfad.parent.mkdir(parents=True, exist_ok=True)
-    con = sqlite3.connect(pfad, timeout=30, isolation_level=None)
-    con.execute("PRAGMA journal_mode=WAL")
-    con.execute("CREATE TABLE IF NOT EXISTS bewerbungen (id TEXT PRIMARY KEY, data TEXT NOT NULL, "
-                "version INTEGER NOT NULL, geaendert TEXT NOT NULL)")
-    return con
 
 
 def gueltige_id(i):
@@ -44,43 +34,49 @@ def gueltige_id(i):
     return i
 
 
-def zeile(r):
-    return {"id": r[0], "version": r[2], "data": json.loads(r[1])}
+def pfad(i):
+    return ORDNER / f"{gueltige_id(i)}.json"
 
 
-def liste(con):
-    return [zeile(r) for r in con.execute("SELECT id, data, version FROM bewerbungen ORDER BY id")]
+def holen(i):
+    p = pfad(i)
+    if not p.exists():
+        return None
+    d = json.loads(p.read_text(encoding="utf-8"))
+    return {"id": i, "version": d.get("version", 1), "data": d.get("data", d)}
 
 
-def holen(con, i):
-    r = con.execute("SELECT id, data, version FROM bewerbungen WHERE id = ?", (i,)).fetchone()
-    return zeile(r) if r else None
+def liste():
+    ORDNER.mkdir(parents=True, exist_ok=True)
+    return [holen(p.stem) for p in sorted(ORDNER.glob("*.json"))]
 
 
-def schreiben(con, i, daten, merge, if_version=None):
+def schreiben(i, daten, merge, if_version=None):
+    # ponytail: Versionsprüfung ohne Sperre, ein Rest-Risiko bleibt bei Änderungen in derselben Sekunde; Sperrdatei, falls das je stört
     if not isinstance(daten, dict):
         raise ValueError("Daten müssen ein JSON-Objekt sein")
-    gueltige_id(i)
-    con.execute("BEGIN IMMEDIATE")
-    try:
-        alt = holen(con, i)
-        if if_version is not None and (alt is None or alt["version"] != if_version):
-            raise Konflikt(f"Version passt nicht (aktuell {alt and alt['version']}), neu lesen")
-        if merge and alt is None:
-            raise KeyError(f"{i} gibt es nicht")
-        neu = {**alt["data"], **daten} if merge else daten
-        version = (alt["version"] if alt else 0) + 1
-        con.execute("INSERT OR REPLACE INTO bewerbungen VALUES (?, ?, ?, ?)",
-                    (i, json.dumps(neu, ensure_ascii=False), version, datetime.now().isoformat(timespec="seconds")))
-        con.execute("COMMIT")
-    except BaseException:
-        con.execute("ROLLBACK")
-        raise
+    alt = holen(i)
+    if if_version is not None and (alt is None or alt["version"] != if_version):
+        raise Konflikt(f"Version passt nicht (aktuell {alt and alt['version']}), neu lesen")
+    if merge and alt is None:
+        raise KeyError(f"{i} gibt es nicht")
+    neu = {**alt["data"], **daten} if merge else daten
+    version = (alt["version"] if alt else 0) + 1
+    ORDNER.mkdir(parents=True, exist_ok=True)
+    inhalt = {"version": version, "geaendert": datetime.now().isoformat(timespec="seconds"), "data": neu}
+    fd, tmp = tempfile.mkstemp(dir=ORDNER, suffix=".tmp")
+    with os.fdopen(fd, "w", encoding="utf-8") as f:
+        json.dump(inhalt, f, ensure_ascii=False, indent=1)
+    os.replace(tmp, pfad(i))  # atomar: Leser sehen nie eine halbe Datei
     return {"id": i, "version": version, "data": neu}
 
 
-def loeschen(con, i):
-    return con.execute("DELETE FROM bewerbungen WHERE id = ?", (i,)).rowcount
+def loeschen(i):
+    p = pfad(i)
+    if p.exists():
+        p.unlink()
+        return 1
+    return 0
 
 
 class Handler(BaseHTTPRequestHandler):
@@ -110,16 +106,11 @@ class Handler(BaseHTTPRequestHandler):
     def do_GET(self):
         if not self._erlaubt():
             return
-        pfad = self.path.split("?")[0]
-        if pfad in ("/", "/index.html"):
-            seite = DASHBOARD.read_text(encoding="utf-8")
-            html = ('<!doctype html><html lang="de"><head><meta charset="utf-8">'
-                    '<meta name="viewport" content="width=device-width,initial-scale=1"></head><body>'
-                    + seite + "</body></html>")
-            return self._antwort(200, html.encode(), "text/html; charset=utf-8")
-        if pfad == "/api/bewerbungen":
-            with verbinden() as con:
-                return self._antwort(200, liste(con))
+        p = self.path.split("?")[0]
+        if p in ("/", "/index.html"):
+            return self._antwort(200, DASHBOARD.read_bytes(), "text/html; charset=utf-8")
+        if p == "/api/bewerbungen":
+            return self._antwort(200, liste())
         self._antwort(404, {"fehler": "nicht gefunden"})
 
     def _schreiben(self, merge):
@@ -130,8 +121,7 @@ class Handler(BaseHTTPRequestHandler):
             return self._antwort(404, {"fehler": "nicht gefunden"})
         try:
             daten = json.loads(self.rfile.read(int(self.headers.get("Content-Length") or 0)) or b"{}")
-            with verbinden() as con:
-                self._antwort(200, schreiben(con, i, daten, merge))
+            self._antwort(200, schreiben(i, daten, merge))
         except Konflikt as e:
             self._antwort(409, {"fehler": str(e)})
         except (ValueError, KeyError) as e:
@@ -149,8 +139,10 @@ class Handler(BaseHTTPRequestHandler):
         i = self._id()
         if i is None:
             return self._antwort(404, {"fehler": "nicht gefunden"})
-        with verbinden() as con:
-            self._antwort(200, {"geloescht": loeschen(con, i)})
+        try:
+            self._antwort(200, {"geloescht": loeschen(i)})
+        except ValueError as e:
+            self._antwort(400, {"fehler": str(e)})
 
     def log_message(self, *args):
         pass
@@ -169,8 +161,7 @@ def main(argv=None):
         s.add_argument("id")
         s.add_argument("json")
         s.add_argument("--if-version", type=int)
-    for name in ("export", "import"):
-        sub.add_parser(name).add_argument("dir")
+    sub.add_parser("import").add_argument("dir")
     s = sub.add_parser("serve")
     s.add_argument("--port", type=int, default=8765)
     a = p.parse_args(argv)
@@ -179,31 +170,24 @@ def main(argv=None):
         print(f"Dashboard: http://localhost:{a.port}  (Strg+C beendet)")
         ThreadingHTTPServer(("127.0.0.1", a.port), Handler).serve_forever()
         return
-    con = verbinden()
     try:
         if a.cmd == "list":
-            out = [d for d in liste(con)
+            out = [d for d in liste()
                    if (not a.status or d["data"].get("status") == a.status)
                    and (a.min_match is None or (d["data"].get("match") or 0) >= a.min_match)]
         elif a.cmd == "get":
-            out = holen(con, a.id)
+            out = holen(a.id)
             if out is None:
                 sys.exit(f"{a.id} gibt es nicht")
         elif a.cmd in ("set", "update"):
-            out = schreiben(con, a.id, json.loads(a.json), a.cmd == "update", a.if_version)
+            out = schreiben(a.id, json.loads(a.json), a.cmd == "update", a.if_version)
         elif a.cmd == "delete":
-            out = {"geloescht": loeschen(con, a.id)}
-        elif a.cmd == "export":
-            ziel = Path(a.dir)
-            ziel.mkdir(parents=True, exist_ok=True)
-            for d in liste(con):
-                (ziel / f"{d['id']}.json").write_text(json.dumps(d["data"], ensure_ascii=False, indent=1), encoding="utf-8")
-            out = {"exportiert": len(liste(con))}
+            out = {"geloescht": loeschen(a.id)}
         elif a.cmd == "import":
             n = 0
             for f in sorted(Path(a.dir).glob("*.json")):
                 d = json.loads(f.read_text(encoding="utf-8"))
-                schreiben(con, f.stem, d.get("data", d), merge=False)
+                schreiben(f.stem, d.get("data", d), merge=False)
                 n += 1
             out = {"importiert": n}
     except (Konflikt, KeyError, ValueError) as e:

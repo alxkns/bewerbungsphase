@@ -110,13 +110,17 @@ Vorschau-PNGs ansehen: Kopf, Foto, Unterschrift, Umbrüche, keine `{Platzhalter}
 
 Der Tracker ist die Liste aller Bewerbungen. Das Dashboard (`dashboard/tracker.html`) zeigt Kennzahlen, Trichter, Versand pro Woche und eine Tabelle, in der der Nutzer Status ändert und Vorschläge per „Bewerbung erstellen“ anfordert. Die Routinen lesen und schreiben dieselbe Liste. Nutzer fragen (Auswahlfrage):
 
-- **Lokal (Standard):** Datei `daten/tracker.sqlite`, funktioniert mit jeder KI und offline. Dashboard im Browser auf diesem Rechner.
+- **Lokal (Standard):** eine JSON-Datei je Bewerbung in `daten/tracker/`, funktioniert mit jeder KI und offline. Das Dashboard ist eine HTML-Datei, die direkt im Browser läuft, ohne Server.
 - **claude.ai:** privates Artifact mit Datenbank, auch am Handy. Nur, wenn der Nutzer mit Claude arbeitet und ein claude.ai-Konto mit Artifacts hat.
 
 **Lokal:**
-1. `python3 tracker/tracker.py list` einmal ausführen (legt die Datei an, Ausgabe `[]`).
+1. `python3 tracker/tracker.py list` einmal ausführen (legt `daten/tracker/` an, Ausgabe `[]`).
 2. In `daten/suchprofil.md` → „Tracker“: `Art: lokal`.
-3. Dem Nutzer zeigen, wie er das Dashboard öffnet: `python3 tracker/tracker.py serve`, dann http://localhost:8765 (in Claude Code: Startkonfiguration „tracker“ aus `.claude/launch.json`). Kurz selbst starten, Seite laden, wieder beenden.
+3. Dem Nutzer Schritt für Schritt sagen (das kann nur er selbst klicken):
+   - `dashboard/tracker.html` in Chrome, Edge oder Brave öffnen (vollen Pfad nennen, `file://…` per `pwd`) und als Lesezeichen speichern.
+   - „Ordner verbinden“ klicken und `daten/tracker` im Bewerbungs-Ordner auswählen, Bearbeiten erlauben.
+   - Fragt der Browser später „Bei jedem Besuch zulassen?“: zulassen, dann ist kein Klick mehr nötig.
+   - Nur Safari oder Firefox: dort fehlt die Ordner-Freigabe. Stattdessen `python3 tracker/tracker.py serve` und http://localhost:8765 (läuft, solange der Befehl läuft).
 
 **claude.ai** (nur mit Claude):
 1. Skill `artifact-capabilities` laden (Pflicht, bevor `capabilities` übergeben werden).
@@ -125,7 +129,7 @@ Der Tracker ist die Liste aller Bewerbungen. Das Dashboard (`dashboard/tracker.h
 3. In `daten/suchprofil.md` → „Tracker“: `Art: claude.ai` und die URL aus dem Ergebnis. Anbieten, das Dashboard anzupinnen (nur auf Ja).
 4. Steht `capabilities` laut Ergebnis nicht zur Verfügung: auf „Lokal“ wechseln.
 
-Spätere Updates von `dashboard/tracker.html` (nach `git pull`): lokal sofort aktiv; claude.ai erneut publishen mit `url` = Tracker-URL, die Daten bleiben erhalten. Wechsel von claude.ai zu lokal: Datenbank mit `ArtifactData` `list` (`out_dir`) exportieren, dann `python3 tracker/tracker.py import <out_dir>/bewerbungen`.
+Spätere Updates von `dashboard/tracker.html` (nach `git pull`): lokal beim nächsten Neuladen aktiv; claude.ai erneut publishen mit `url` = Tracker-URL, die Daten bleiben erhalten. Wechsel von claude.ai zu lokal: Datenbank mit `ArtifactData` `list` (`out_dir`) exportieren, dann `python3 tracker/tracker.py import <out_dir>/bewerbungen`.
 
 ## 8. Automatik (geplante Routinen)
 

@@ -70,13 +70,13 @@ Fehlen `daten/profil.md` oder der Master-Lebenslauf: abbrechen und Skill `einric
 
 Einzige Liste aller Bewerbungen ist die Datenbank des Bewerbungs-Trackers, ein Dokument pro Bewerbung (`id` = Ordnername ohne Umlaute und Sonderzeichen, nur `A-Z a-z 0-9 _ -`, z. B. `2026-10-15_Beispiel-GmbH`). Der Nutzer ändert dort selbst Status und Daten im Dashboard. Welche Art, steht in `daten/suchprofil.md` → „Tracker“. Ist noch keiner eingerichtet: Schritt überspringen und das sagen.
 
-**Lokal** (Standard, funktioniert mit jeder KI; Daten in `daten/tracker.sqlite`):
+**Lokal** (Standard, funktioniert mit jeder KI; eine JSON-Datei je Bewerbung in `daten/tracker/`):
 ```bash
 python3 tracker/tracker.py list [--status Angefordert] [--min-match 70]   # [{"id", "version", "data"}]
 python3 tracker/tracker.py set <id> '<json mit allen Feldern>'            # neu anlegen
 python3 tracker/tracker.py update <id> '<json nur geänderte Felder>' --if-version <N>
 ```
-JSON in einfache Anführungszeichen, einfache Anführungszeichen im Text als `'\''` schreiben. Meldet `update` „Version passt nicht“, hat der Nutzer parallel im Dashboard geändert: neu lesen, erneut schreiben. Dashboard: `python3 tracker/tracker.py serve`, dann http://localhost:8765.
+JSON in einfache Anführungszeichen, einfache Anführungszeichen im Text als `'\''` schreiben. Meldet `update` „Version passt nicht“, hat der Nutzer parallel im Dashboard geändert: neu lesen, erneut schreiben. Dateien nur über `tracker.py` ändern, nie von Hand (Versionsnummer). Dashboard: `dashboard/tracker.html` direkt im Browser öffnen (Chrome, Edge oder Brave; als Lesezeichen speichern) und einmal den Ordner `daten/tracker` verbinden. Kein Server nötig. Safari/Firefox: `python3 tracker/tracker.py serve`, dann http://localhost:8765.
 
 **claude.ai** (Dashboard als Artifact, nur mit Claude): Tool `ArtifactData` auf die URL aus `suchprofil.md`, Collection `bewerbungen`. Lesen mit `list` (Seiten mit `query.cursor`) oder `query` mit `where`, neu mit `set` (`doc_id`), ändern mit `update` nur mit den geänderten Felder und `if_version`, mehrere Änderungen als `batch`.
 

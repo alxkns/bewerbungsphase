@@ -12,8 +12,8 @@ Läuft mit Claude Code und mit anderen Werkzeugen, die Dateien lesen und Befehle
 | `.claude/skills/` | Die Methode: eine Anleitung (`SKILL.md`) je Schritt | ja |
 | `vorlagen/` | Layout (`style.css`) und leere Vorlagen für Profil, Suchprofil, Lebenslauf, Anschreiben, Lern-Datei der Routinen | ja |
 | `dashboard/` | Dashboard für den Bewerbungs-Tracker (`tracker.html`) | ja |
-| `tracker/` | Lokaler Tracker: `tracker.py` (SQLite, nur Python-Standardbibliothek) und Selbsttest | ja |
-| `daten/` | Deine Daten: `profil.md`, `suchprofil.md`, Master-Lebenslauf, Foto, Unterschrift, alle Bewerbungen, `tracker.sqlite` | **nein** (`.gitignore`) |
+| `tracker/` | Lokaler Tracker: `tracker.py` (nur Python-Standardbibliothek) und Selbsttest | ja |
+| `daten/` | Deine Daten: `profil.md`, `suchprofil.md`, Master-Lebenslauf, Foto, Unterschrift, alle Bewerbungen, Tracker (`tracker/`) | **nein** (`.gitignore`) |
 
 Skills lesen nur aus `daten/`. Updates der Skills überschreiben deshalb nie dein Profil.
 
@@ -31,9 +31,11 @@ Der Tracker ist die Liste aller Bewerbungen mit Status. Das Dashboard zeigt sie 
 
 | | Lokal (Standard) | claude.ai |
 |---|---|---|
-| Daten | `daten/tracker.sqlite` auf deinem Rechner | Datenbank deines privaten claude.ai-Artifacts |
-| Dashboard | `python3 tracker/tracker.py serve`, dann http://localhost:8765 | Link auf claude.ai, auch am Handy |
-| Funktioniert mit | jeder KI, offline | nur Claude |
+| Daten | eine JSON-Datei je Bewerbung in `daten/tracker/` | Datenbank deines privaten claude.ai-Artifacts |
+| Dashboard | `dashboard/tracker.html` als Lesezeichen, direkt im Browser, ohne Server | Link auf claude.ai, auch am Handy |
+| Funktioniert mit | jeder KI, offline, Chrome/Edge/Brave auf jedem Betriebssystem | nur Claude |
+
+Beim ersten Öffnen klickst du einmal „Ordner verbinden“ und wählst `daten/tracker`. Danach liest und schreibt das Dashboard dort selbst. Safari und Firefox können das nicht; dort geht es nur mit `python3 tracker/tracker.py serve` und http://localhost:8765.
 
 Die KI liest und schreibt den lokalen Tracker per Kommandozeile (`python3 tracker/tracker.py list`, `set`, `update`; Hilfe mit `--help`).
 

@@ -10,7 +10,7 @@ Dieses Repo hilft einer Person bei der Bewerbung auf Stellen in Deutschland: Ste
 | `vorlagen/` | Layout und leere Vorlagen, werden bei der Einrichtung nach `daten/` kopiert |
 | `daten/` | Alles Persönliche: Profil, Suchprofil, Lebenslauf, Bewerbungen, Tracker. Nie committen (steht in `.gitignore`). |
 | `dashboard/tracker.html` | Dashboard für den Bewerbungs-Tracker |
-| `tracker/tracker.py` | Lokaler Tracker (SQLite, nur Python-Standardbibliothek), Dashboard per `python3 tracker/tracker.py serve` |
+| `tracker/tracker.py` | Lokaler Tracker: liest und schreibt `daten/tracker/<id>.json` (nur Python-Standardbibliothek). Das Dashboard öffnet der Nutzer direkt als Datei im Browser. |
 
 Alle Pfade in den Skills sind relativ zum Hauptordner des Repos.
 
