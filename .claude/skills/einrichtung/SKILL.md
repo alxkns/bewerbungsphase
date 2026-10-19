@@ -32,6 +32,11 @@ cp -n vorlagen/lebenslauf.html vorlagen/anschreiben.html daten/bewerbungen/_vorl
 
 `cp -n` überschreibt nichts, was schon da ist.
 
+Git-Sperre gegen private Daten einschalten (bleibt dauerhaft, prüft jeden Commit):
+```bash
+git config core.hooksPath .githooks
+```
+
 ## 3. Suchprofil abfragen → `daten/suchprofil.md`
 
 Kurz erklären, was gleich passiert (Suchprofil, dann Lebenslauf), dann in zwei Runden fragen. Freitext im Chat, feste Auswahl als Auswahlfrage (siehe `AGENTS.md`, „Werkzeuge“).
@@ -83,6 +88,8 @@ Ist der PDF-Text leer oder zerstückelt (Scan, Grafik-Lebenslauf): die PDF seite
 - **Englischer Lebenslauf:** Inhalt übersetzen, Firmennamen und Titel im Original lassen, wenn sie so geführt werden.
 
 Danach eine Liste **Unklar im Lebenslauf** für den Nutzer (Lücken > 3 Monate, Stationen ohne Aufgaben, Abkürzungen, fehlende Zeiträume, widersprüchliche Angaben). Antworten in den Master, offene Punkte in `profil.md` → „Offen aus der Einrichtung“ (dort holt `kennenlernen` sie ab).
+
+**`daten/privat.txt`** anlegen, ein Eintrag pro Zeile: Nachname, E-Mail (Teil vor dem @), Telefonnummer ohne Leerzeichen, Straße, aktuelle und frühere Arbeitgeber, Kunden. Die Git-Sperre verhindert, dass diese Wörter je in einen Commit gelangen. Dem Nutzer sagen, dass er die Liste jederzeit ergänzen kann.
 
 **Eckdaten** aus dem Lebenslauf in `profil.md` übernehmen: Name, Anschrift, Telefon, E-Mail, Sprachen. Unter „Positionierung“ einen Entwurf aus Lebenslauf + gesuchter Position, markiert mit „Entwurf, im Kennenlernen bestätigen“.
 

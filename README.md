@@ -13,7 +13,8 @@ Läuft mit Claude Code und mit anderen Werkzeugen, die Dateien lesen und Befehle
 | `vorlagen/` | Layout (`style.css`) und leere Vorlagen für Profil, Suchprofil, Lebenslauf, Anschreiben, Lern-Datei der Routinen | ja |
 | `dashboard/` | Dashboard für den Bewerbungs-Tracker (`tracker.html`) | ja |
 | `tracker/` | Lokaler Tracker: `tracker.py` (nur Python-Standardbibliothek) und Selbsttest | ja |
-| `daten/` | Deine Daten: `profil.md`, `suchprofil.md`, Master-Lebenslauf, Foto, Unterschrift, alle Bewerbungen, Tracker (`tracker/`) | **nein** (`.gitignore`) |
+| `daten/` | Deine Daten: `profil.md`, `suchprofil.md`, Master-Lebenslauf, Foto, Unterschrift, alle Bewerbungen, Tracker (`tracker/`), optional `eigenes-layout.css` und `privat.txt` |
+| `.githooks/` | Git-Sperre gegen private Daten | ja | **nein** (`.gitignore`) |
 
 Skills lesen nur aus `daten/`. Updates der Skills überschreiben deshalb nie dein Profil.
 
@@ -48,6 +49,12 @@ Drei Routinen laufen auf Wunsch automatisch:
 | `gmail-abgleich` | trägt Versand, Einladungen und Absagen aus Gmail ein (Gmail-Zugriff der KI nötig) | 8 und 18 Uhr |
 
 Geplant werden sie entweder in der Claude-Desktop-App (läuft, solange die App offen ist) oder per `cron` mit der Kommandozeile deiner KI (`claude -p`, `codex exec`, `gemini -p`; läuft, solange der Rechner an ist). Der Zeitplan verweist nur auf den Skill, nach `git pull` gilt sofort die neue Fassung. Alle Routinen lassen sich auch von Hand starten („such neue Stellen“). Gesendet wird nie etwas, Abschicken machst du selbst.
+
+## Updates und Datenschutz
+
+- **Updaten:** „Update dich“ sagen (Skill `aktualisieren`). Holt die neue Version, erklärt die Neuerungen und ergänzt neue Felder in deinem Profil, ohne etwas zu überschreiben. `daten/` wird nie ersetzt.
+- **Eigene Anpassungen** gehören nach `daten/`: Regeln und Vorlieben in `profil.md` („Grenzen“, „Stil-Vorlieben“), Quellen in `suchprofil.md` („Eigene Quellen“), Schrift und Farben in `daten/eigenes-layout.css`. Wer Skills oder Vorlagen selbst ändert, bekommt beim nächsten Update Konflikte.
+- **Schutz:** `daten/` ist von Git ausgeschlossen. Zusätzlich stoppt eine Git-Sperre (`.githooks/pre-commit`, die Einrichtung schaltet sie ein) jeden Commit mit Dateien aus `daten/` oder mit Wörtern aus `daten/privat.txt` (Name, Mail, Telefon, Arbeitgeber, Kunden).
 
 ## Genauer recherchieren
 

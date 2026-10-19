@@ -10,6 +10,7 @@ Dieses Repo hilft einer Person bei der Bewerbung auf Stellen in Deutschland: Ste
 | `vorlagen/` | Layout und leere Vorlagen, werden bei der Einrichtung nach `daten/` kopiert |
 | `daten/` | Alles Persönliche: Profil, Suchprofil, Lebenslauf, Bewerbungen, Tracker. Nie committen (steht in `.gitignore`). |
 | `dashboard/tracker.html` | Dashboard für den Bewerbungs-Tracker |
+| `.githooks/pre-commit` | Sperre: kein Commit mit Dateien aus `daten/` oder Wörtern aus `daten/privat.txt` |
 | `tracker/tracker.py` | Lokaler Tracker: liest und schreibt `daten/tracker/<id>.json` (nur Python-Standardbibliothek). Das Dashboard öffnet der Nutzer direkt als Datei im Browser. |
 
 Alle Pfade in den Skills sind relativ zum Hauptordner des Repos.
@@ -29,6 +30,7 @@ Alle Pfade in den Skills sind relativ zum Hauptordner des Repos.
 | Neue Stellen suchen (auch als Routine) | `stellensuche` |
 | Angeforderte Bewerbungen bauen (auch als Routine) | `bewerbungen-erstellen` |
 | Gmail nach Antworten durchsuchen (auch als Routine) | `gmail-abgleich` |
+| Neue Version holen, „update dich“ | `aktualisieren` |
 
 ## Grundregeln
 
@@ -36,7 +38,9 @@ Alle Pfade in den Skills sind relativ zum Hauptordner des Repos.
 - **Nie etwas versenden.** Keine Mails, keine Formulare, keine Bewerbungen abschicken. Das macht der Nutzer selbst.
 - **Grenzen einhalten:** Abschnitt „Grenzen“ in `daten/profil.md` gilt für alle Texte.
 - **Entscheidungen des Nutzers nicht ändern:** Ausschlüsse, Match-Grenze, Suchprofil. Vorschläge dazu nur nennen.
-- **`daten/` ist privat.** Nichts daraus in Commits, Issues oder an fremde Dienste.
+- **`daten/` ist privat.** Nichts daraus in Commits, Issues oder an fremde Dienste. Die Git-Sperre (`git config core.hooksPath .githooks`) muss eingeschaltet sein.
+- **Methode und Person trennen.** Alles außerhalb von `daten/` ist die Methode, für alle Nutzer gleich. Nur ändern, wenn der Nutzer ausdrücklich die Methode verbessern will. Neue Regeln, Vorlieben, Fakten oder Quellen des Nutzers gehören nach `daten/` (`profil.md` → „Grenzen“, „Stil-Vorlieben“; `suchprofil.md` → „Eigene Quellen“; `eigenes-layout.css` für Schrift und Farben). Im Zweifel `daten/`. Nur so kann jeder Nutzer per `git pull` (Skill `aktualisieren`) updaten, ohne Konflikte und ohne etwas zu verlieren.
+- **Wird die Methode verbessert:** keine Namen, Firmen, Zahlen oder Beispiele des Nutzers in Skills übernehmen, nur die allgemeine Regel mit neutralem Beispiel. Ändert sich das Format von `profil.md` oder `suchprofil.md`, die Vorlage in `vorlagen/` anpassen; `aktualisieren` überträgt neue Abschnitte zu den Nutzern.
 
 ## Werkzeuge
 

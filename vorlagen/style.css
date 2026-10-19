@@ -1,4 +1,5 @@
 /* Gemeinsames Layout für Anschreiben und Lebenslauf (A4, Chrome-Druck) */
+/* Eigene Anpassungen (Schrift, Farben) gehören nach daten/eigenes-layout.css, das danach geladen wird. */
 :root {
   --navy: #14294b;
   --blau: #3d5a80;

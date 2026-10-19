@@ -1,0 +1,21 @@
+#!/bin/sh
+# Verhindert, dass persönliche Daten ins Repo gelangen. Eingeschaltet per: git config core.hooksPath .githooks
+# 1. Keine Datei aus daten/ (auch nicht mit git add -f)
+# 2. Kein Wort aus daten/privat.txt in hinzugefügten Zeilen (ein Wort oder Satzteil pro Zeile, # = Kommentar)
+
+stopp() { echo "Commit gestoppt: $1" >&2; echo "Persönliches gehört nach daten/, siehe AGENTS.md. Prüfen mit: git diff --cached" >&2; exit 1; }
+
+dateien=$(git diff --cached --name-only --diff-filter=ACMR)
+echo "$dateien" | grep -q '^daten/' && stopp "Dateien aus daten/ sind vorgemerkt: $(echo "$dateien" | grep '^daten/' | head -3 | tr '\n' ' ')"
+
+liste="daten/privat.txt"
+[ -f "$liste" ] || exit 0
+neu=$(git diff --cached -U0 --no-color | grep '^+' | grep -v '^+++')
+grep -v '^[[:space:]]*#' "$liste" | sed 's/[[:space:]]*$//' | grep -v '^$' | while IFS= read -r wort; do
+  if printf '%s\n' "$neu" | grep -qiF -- "$wort"; then
+    echo "$wort"
+  fi
+done > "${TMPDIR:-/tmp}/privat-treffer.$$"
+treffer=$(cat "${TMPDIR:-/tmp}/privat-treffer.$$"); rm -f "${TMPDIR:-/tmp}/privat-treffer.$$"
+[ -n "$treffer" ] && stopp "Private Wörter aus $liste in den Änderungen: $(echo "$treffer" | tr '\n' ',' | sed 's/,$//')"
+exit 0
