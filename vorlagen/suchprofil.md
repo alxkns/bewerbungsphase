@@ -34,6 +34,7 @@
 ## Match und Zeitraum
 - Vorschlagen ab Match: 70 %
 - Anzeigen nicht älter als: 7 Tage
+- Neu geschaltete ältere Anzeigen zählen als neu: nein
 - Höchstens neue Vorschläge pro Kalenderwoche: <!-- leer = kein Limit -->
 
 ## Tracker

@@ -20,6 +20,7 @@ Tracker lesen und schreiben wie im Skill `bewerbung`, Abschnitt „Tracker pfleg
    - `versendet_am`: Tag des Absendens (Portal-Bestätigung zählt), nur setzen, wenn leer.
    - `antwort_am`: erste echte Rückmeldung (Einladung oder Absage), nicht die automatische Eingangsbestätigung. Nur setzen, wenn leer.
    - `einladung_am`: bei Einladung setzen, bleibt auch bei späterer Absage stehen.
+   - Bei „Eingang bestätigt“ `naechster_schritt` = „Warten“.
    - Bei Absage `naechster_schritt` = „Abgeschlossen“. Bei Einladung den Termin (falls genannt) in `naechster_schritt` und auf Skill `vorstellungsgespraech` hinweisen.
    - Schreiben mit `update`, nur geänderte Felder, Version aus Schritt 1. Bei Versionskonflikt neu lesen und erneut versuchen.
 5. **Bewerbungen außerhalb des Ablaufs** (in Gmail, aber nicht im Tracker): neues Dokument mit `set`, `id` = `JJJJ-MM-TT_Firmenname` (Versanddatum, nur `A-Z a-z 0-9 _ -`). Felder: firma, stelle, ort (null), weg (Portal/Kanal), match (null), status, entworfen_am (null), versendet_am, einladung_am, antwort_am, naechster_schritt, link (falls in der Mail), notiz (null).
