@@ -81,7 +81,7 @@ Hauptquelle für Anschreiben. Eigene Aussagen des Nutzers, sinngemäß. Formulie
 **Was daraus gelernt wurde (gehört ins Anschreiben):**
 
 ## Eigenschaften und Belege
-Was die Zielrollen verlangen (aus der Marktanalyse) und womit der Nutzer es belegt. Die Stellenanalyse wählt pro Anzeige die 3–4 wichtigsten, das Anschreiben zeigt sie als Verhalten mit Beleg (nie als Adjektiv). Nur diese Belege verwenden.
+Was die Zielrollen verlangen (aus der Marktanalyse) und womit der Nutzer es belegt. Die Stellenanalyse wählt pro Anzeige die 3–4 wichtigsten, das Anschreiben zeigt sie als Verhalten mit Beleg (nie als Adjektiv). Nur diese Belege verwenden. Dazu immer die drei A-Merkmale aus `.claude/skills/bewerbung/stil.md` (Ergebnisse statt Aufgaben, Lerntempo, Eigeninitiative), markiert mit „(A-Merkmal)“.
 
 | Eigenschaft | Beleg (Anschreiben-tauglich) | Grenze, nie behaupten |
 |---|---|---|
@@ -95,6 +95,8 @@ Was die Zielrollen verlangen (aus der Marktanalyse) und womit der Nutzer es bele
 **Schwächen und Risiken (mit Gegenmittel)**
 
 **Antwort auf die Schwächen-Frage im Gespräch:**
+
+**Persönlichkeitstest (optional, nur Hypothesen, nie in die Unterlagen):**
 
 ## Wechsel
 Grundlage für den Skill `quereinstieg`. Leer lassen, wenn kein Rollen- oder Branchenwechsel ansteht.
@@ -132,6 +134,7 @@ Ergänzt die allgemeinen Regeln in `.claude/skills/bewerbung/stil.md`. Bei Wider
 - Niveau der Zielstellen (Gehalt/Seniorität), danach richtet sich das Register:
 - Maximale Länge Anschreiben (Standard 200 Wörter):
 - Freigegebenes Referenz-Anschreiben (Absätze, die gut waren):
+- A-Merkmale (nur wenn abweichend von `stil.md`):
 - Eigene No-gos (Wörter, Zahlen, Themen):
 
 ## Privat

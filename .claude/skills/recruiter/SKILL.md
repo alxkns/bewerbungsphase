@@ -57,7 +57,7 @@ d) **Unausgesprochene Fragen** (Skill `quereinstieg`, Bedenken-Tabelle in `profi
 | Glaubwürdigkeit | Zahlen, konkrete Ergebnisse, nichts aufgeblasen? |
 | Risiken entschärft | Sind Wechsel, Lücken, Gehalt sauber eingeordnet? |
 | Ton & Kultur | Klingt das, als würde die Person zu uns passen? Verkaufston über das eigene System, Allgemeinweisheiten oder eine gespiegelte Anzeige: höchstens 7. Kleinkram, der die Arbeit klein wirken lässt (Fehlerfall, einzelnes Datenfeld, einzelne Funktion als Beleg): höchstens 7. Nie solche Einzelbeispiele als Ersatztext vorschlagen (Regel „Flughöhe“ in `stil.md`). |
-| Gesuchte Eigenschaften | Sehe ich die 3–4 Eigenschaften, die die Stelle braucht (Tabelle „Eigenschaften und Belege“ in `profil.md`, Auswahl in `analyse.md`), als Verhalten mit Beleg? Eigenschaft ohne Beleg oder Technisches im Anschreiben (Tools, Methoden-Details, Fachjargon): höchstens 7. |
+| Gesuchte Eigenschaften | Sehe ich die 3–4 Eigenschaften, die die Stelle braucht (Tabelle „Eigenschaften und Belege“ in `profil.md`, Auswahl in `analyse.md`), als Verhalten mit Beleg? Eigenschaft ohne Beleg oder Technisches im Anschreiben (Tools, Methoden-Details, Fachjargon): höchstens 7. Sehe ich daneben belegt, dass die Person überdurchschnittlich liefert (A-Merkmale in `bewerbung/stil.md`: Ergebnisse statt Aufgaben, Lerntempo, Eigeninitiative)? Wenn nein: höchstens 8. Nie vorschlagen, ein belegtes A-Merkmal gegen eine weitere Eigenschaft aus der Anzeige zu tauschen. |
 | Schlagwörter (ATS) | Kommen die Begriffe der Anzeige in unserer Schreibweise im **Lebenslauf** vor? Im Anschreiben nur die gesuchten Eigenschaften, keine Fachbegriff-Liste. |
 
 **Maßstab (damit Runden vergleichbar sind):**

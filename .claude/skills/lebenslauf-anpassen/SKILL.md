@@ -34,7 +34,7 @@ Zusätzlich erlaubt: „Bausteine“ aus `daten/profil.md` als Stichpunkt, wenn 
 1. **`<title>`** bleibt `Lebenslauf_<Name>`.
 2. **Untertitel** im Kopfband (`.untertitel`): Rolle der Anzeige aufgreifen, solange sie ehrlich passt.
 3. **Profil** (3–5 Sätze): erster Satz auf die Kernanforderung der Stelle. Letzter Satz: was der Nutzer dort machen will (Richtung „Motivation und Charakter“ in `profil.md`). Stil wie `bewerbung/stil.md`, aber sachlicher als das Anschreiben.
-4. **Stichpunkte der aktuellen Station:** die zur Stelle passendsten nach oben. Für Fachrollen Methoden- und Tool-Details sichtbar lassen, für Führungs- und Operations-Rollen eher Wirkung betonen. Unpassendes kürzen.
+4. **Stichpunkte der aktuellen Station:** die zur Stelle passendsten nach oben. Für Fachrollen Methoden- und Tool-Details sichtbar lassen, für Führungs- und Operations-Rollen eher Wirkung betonen. Jeden Stichpunkt mit dem Ergebnis formulieren, in der stärksten wahren Fassung (`bewerbung/stil.md`). Unpassendes kürzen.
 5. **Führungs- und Querschnittsaufgaben:** für Führungs- oder Operations-Rollen ausbauen, für reine Fachrollen knapp halten.
 6. **Kenntnisse:** Kategorien in Reihenfolge der Anzeige. Schlagwörter aus `analyse.md` in exakter Schreibweise, sofern belegt.
 7. **Nebenstationen:** knapp halten, nur ausbauen, wenn sie für die Stelle etwas belegen.

@@ -9,7 +9,7 @@ Pflichtlektüre vorher: `.claude/skills/bewerbung/stil.md` (Ton + Du/Sie), in `d
 
 **Grundsatz: Das Anschreiben ist ein Motivationsschreiben.** Es beantwortet vier Fragen, nichts sonst:
 1. **Worauf habe ich Lust?** Was den Nutzer an genau dieser Arbeit antreibt (Quelle: „Motivation und Charakter“ in `profil.md`).
-2. **Welche gesuchten Eigenschaften bringe ich mit?** Die 3 Eigenschaften, die die Anzeige am stärksten verlangt (Auswahl in `analyse.md`, Tabelle „Eigenschaften und Belege“ in `profil.md`), jeweils mit **einem kurzen Satz Beleg** aus der eigenen Erfahrung.
+2. **Welche gesuchten Eigenschaften bringe ich mit?** Die 3 Eigenschaften, die die Anzeige am stärksten verlangt, darunter die A-Merkmale (Regel in `stil.md`; Auswahl in `analyse.md`, Tabelle „Eigenschaften und Belege“ in `profil.md`), jeweils mit **einem kurzen Satz Beleg** aus der eigenen Erfahrung.
 3. **Wie kann ich die Firma unterstützen?** Was sie davon hat, in den Worten des Nutzers, ohne einen Anwendungsfall zu unterstellen.
 4. **Warum bin ich ein Fit?** Wie der Nutzer arbeitet, passend zu Kultur und Werten der Firma, gezeigt als eigenes Verhalten.
 
@@ -58,7 +58,7 @@ Vier Absätze, entlang der vier Fragen aus dem Grundsatz.
 
 **1. Worauf ich Lust habe (2–3 Sätze).** Kein „hiermit bewerbe ich mich“. Was den Nutzer an dieser Arbeit freut, passend zur Rolle aus „Rolle verstehen“ (gleiche Richtung: intern Kolleg:innen, extern Kunden). Dazu kurz, warum jetzt (aus „Motivation und Charakter“ bzw. „Wechsel“). Nie mit Größe argumentieren. Keine Allgemeinweisheit, kein Verkaufston über die eigene Arbeit.
 
-**2. Welche gesuchten Eigenschaften ich mitbringe (Kern).** Die 3 wichtigsten Eigenschaften aus `analyse.md`. Je Eigenschaft ein Gedanke: was der Nutzer mitbringt und ein kurzer Beleg aus seiner Erfahrung (Tabelle in `profil.md`, Ergebnis auf Systemebene). Eine Einleitung wie „Dafür bringe ich drei Dinge mit.“ ist erlaubt. Nicht technisch, nicht in Reihenfolge der Anzeige abhaken.
+**2. Welche gesuchten Eigenschaften ich mitbringe (Kern).** Die 3 Eigenschaften aus `analyse.md`, darunter immer „Ergebnisse statt Aufgaben“ (A-Merkmale, `stil.md`). Je Eigenschaft ein Gedanke: was der Nutzer mitbringt und ein kurzer Beleg aus seiner Erfahrung (Tabelle in `profil.md`, Ergebnis auf Systemebene). Eine Einleitung wie „Dafür bringe ich drei Dinge mit.“ ist erlaubt. Nicht technisch, nicht in Reihenfolge der Anzeige abhaken.
 
 **3. Warum ich passe und wie ich unterstütze.** Wie der Nutzer arbeitet, passend zu Kultur und Werten aus „Unternehmen verstehen“, als eigenes Verhalten in der Ich-Form (z. B. „Für mich zählt eine Lösung erst, wenn sie genutzt wird. Deshalb fange ich beim Ablauf an, nicht beim Werkzeug.“). Daraus muss der Einladungsgrund hervorgehen. Einen Wechsel einordnen nur, wenn nötig (Skill `quereinstieg`). Was unter „Grenzen“ als „nur im Gespräch“ steht, kommt nicht hinein.
 - **Lücken nur nennen, wenn sie ein Muss der Anzeige betreffen** und der Recruiter sie ohnehin sieht. Dann kurz, mit Gegenbeleg, nicht entschuldigen. Tools nie als Lücke. Sonst gehört die Lücke in `analyse.md` als Gesprächsvorbereitung.
@@ -75,6 +75,8 @@ Vier Absätze, entlang der vier Fragen aus dem Grundsatz.
 
 ## Qualitätscheck vor dem PDF
 - [ ] Vier Fragen beantwortet: worauf ich Lust habe, 3 gesuchte Eigenschaften mit je einem kurzen Beleg, wie ich unterstütze, warum ich passe
+- [ ] A-Merkmale nach `stil.md` drin, mindestens „Ergebnisse statt Aufgaben“, belegt, nie als Adjektiv
+- [ ] Belege in der stärksten wahren Fassung, keine Bescheidenheit, die die Fakten nicht verlangen
 - [ ] Nichts Technisches, kein Kleinkram (Fehlerfall, Datenfeld, einzelne Funktion)
 - [ ] Ich-Form: eigene Leistung nie „gemeinsam/wir“, kein Zitat von Kollegen, keine losen Behauptungssätze
 - [ ] Kein Wort aus der Floskel-Blacklist (`stil.md`)

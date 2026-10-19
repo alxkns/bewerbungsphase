@@ -27,6 +27,17 @@ Professionell auf dem Niveau der Zielstellen, keine Nachricht an einen Freund. S
 - **Fachbegriffe ja, Denglisch-Soße nein.** Im Anschreiben Begriffe aus dem Abschnitt „Wortschatz“ in `profil.md`, in der Schreibweise der Anzeige und immer mit Beleg. Technikbegriffe gehören in Lebenslauf und Gespräch. „Drive“, „smart“, „Impact generieren“ nie.
 - **Keine Gedankenstrich-Kaskaden** (— oder – als Stilmittel). Lieber Punkt, Komma oder Doppelpunkt. Das liest sich menschlicher.
 
+## A-Merkmale: zeigen, dass der Nutzer zu den Besten gehört
+
+Einsteller suchen neben der fachlichen Passung Menschen, die überdurchschnittlich liefern. Drei Merkmale zeigen das in jeder Rolle:
+- **Ergebnisse statt Aufgaben:** was sich durch den Nutzer verändert hat, nicht wofür er zuständig war (mehr Ergebnis mit gleichen Mitteln, etwas eingeführt, das bleibt).
+- **Lerntempo:** Neues schnell produktiv gemacht (Thema, Werkzeug, Branche, und in welcher Zeit).
+- **Eigeninitiative:** etwas angestoßen und umgesetzt, ohne dass es verlangt war.
+
+**Regel fürs Anschreiben:** Von den 3 Eigenschaften ist immer eine „Ergebnisse statt Aufgaben“, egal was die Anzeige betont. Fehlt dem Nutzer ein gefordertes Tool oder Fachwissen, ersetzt „Lerntempo“ eine der anderen beiden, sonst „Eigeninitiative“, wenn die Anzeige Eigenverantwortung, Gestaltungswille oder Hands-on nennt. Nur mit Beleg aus „Eigenschaften und Belege“ in `profil.md`, als Verhalten in einem Satz, nie als Adjektiv („Macher“, „High Performer“, „mit Biss“). Fehlt der Beleg: weglassen und als Fakten-Frage notieren. Eigene Festlegungen unter „Stil-Vorlieben“ in `profil.md` gehen vor.
+
+**Stärkste wahre Fassung.** Jeden Beleg so formulieren, wie er maximal stimmt: Wirkung vor Tätigkeit, volle Verantwortung benennen, Tempo oder Vergleich nennen, wenn belegt („nach drei Monaten eigenständig verantwortet“, „mehr Projekte mit gleichem Team“). Bescheidene Wörter des Nutzers („nur“, „ein bisschen“, „mitgeholfen“) nicht übernehmen, wenn die Fakten mehr hergeben. Die Grenze ist der Beleg: nichts darüber hinaus. Gilt auch für den Lebenslauf.
+
 ## Floskel-Blacklist (nie verwenden)
 
 hiermit bewerbe ich mich · mit großem Interesse habe ich … gelesen · Leidenschaft / leidenschaftlich · brenne für · Drive · hochmotiviert · Teamplayer · belastbar · lösungsorientiert · zielstrebig · spannende Herausforderung · vollumfänglich · ganzheitlich · Mehrwert schaffen · smart · in einem dynamischen Umfeld · Über eine Einladung … würde ich mich sehr freuen · Ich bin der perfekte Kandidat · Für Rückfragen stehe ich jederzeit gerne zur Verfügung

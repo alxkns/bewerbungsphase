@@ -16,6 +16,7 @@ Vorher lesen: `daten/profil.md` (was steht schon, was ist leer), Master-Lebensla
 - **Nach Beispielen fragen, nicht nach Adjektiven.** Auf „Ich bin kommunikativ“ folgt „Wann hat das einen Unterschied gemacht? Was hast du gesagt oder getan, was kam dabei raus?“
 - **Nachhaken bei Vagem:** „Woran hat man das gemerkt?“, „Gibt es dazu eine Zahl, oder eher nicht gemessen?“, „Was war dein Teil, was der des Teams?“ Höchstens zweimal pro Punkt, dann so festhalten, wie es ist.
 - **Nichts in den Mund legen.** Keine Vorschläge wie „Du hast sicher auch …“. Was der Nutzer nicht bestätigt, steht nicht im Profil.
+- **Das Beste herauskitzeln.** Viele stellen sich kleiner dar, als sie sind. Bei „nur“, „halt“, „ein bisschen geholfen“, „war ja mein Job“ nachhaken: Was wäre ohne dich nicht passiert? Was war dein Anteil? Wie lange brauchen andere dafür? Was der Nutzer bestätigt, in der stärksten wahren Fassung notieren (`bewerbung/stil.md`).
 - **Zahlen nie runden oder schätzen.** „Nicht gemessen“ ist eine gültige Antwort und wird so notiert (dann qualitativ formulieren).
 - **Locker bleiben.** Der Nutzer darf „weiß nicht“, „überspringen“ oder „später“ sagen. Dann notieren und weiter.
 
@@ -39,6 +40,12 @@ Für jedes Tool und jedes Fachthema aus den Muss- und Kann-Kriterien in `markt.m
 **3. Belege für die gesuchten Eigenschaften** → „Eigenschaften und Belege“, „Geschichten (STAR)“
 Für die 6–10 Eigenschaften aus `markt.md` je eine Frage nach einer echten Situation: Situation, Aufgabe, was hast du getan, Ergebnis. Dazu die „Fragen fürs Kennenlernen“ aus `markt.md`. Je Eigenschaft in die Tabelle: Beleg (Anschreiben-tauglich, auf Systemebene, Regel „Flughöhe“ in `bewerbung/stil.md`) und Grenze (was man daraus nicht ableiten darf). Gute Geschichten zusätzlich als STAR-Zeile. Fehlt für eine häufig gesuchte Eigenschaft jeder Beleg: als Lücke unter „Stärken und Schwächen“ notieren, nicht schönreden.
 
+Zusätzlich immer die drei A-Merkmale (`bewerbung/stil.md`), auch wenn `markt.md` sie nicht nennt, je mit eigener Frage:
+- Ergebnisse statt Aufgaben: Was ist heute anders, weil du da warst? Vorher, nachher, im Vergleich zu wem?
+- Lerntempo: Was hast du zuletzt neu gelernt, und ab wann warst du damit produktiv?
+- Eigeninitiative: Was hast du angestoßen, ohne dass es jemand verlangt hat?
+Auch nach Hinweisen fragen: schneller befördert, mehr Verantwortung als die Rolle vorsah, wieder angefragt, für etwas ausgewählt. Als eigene Zeilen in die Tabelle, markiert mit „(A-Merkmal)“. Diese Belege braucht jedes Anschreiben, hier am gründlichsten nachhaken.
+
 **4. Motivation und Charakter** → „Motivation und Charakter“ (Hauptquelle fürs Anschreiben, hier am gründlichsten)
 - Der Moment: Wann hast du gemerkt, dass diese Art Arbeit das Richtige ist?
 - Welche Rolle willst du, was genau willst du dort tun (und was nicht)?
@@ -54,6 +61,8 @@ Aus den Learnings des WIN entstehen die Sätze, die im Anschreiben zeigen, wie d
 
 **5. Stärken und Schwächen** → „Stärken und Schwächen“
 Eigene Sicht abfragen, dann mit den Belegen aus Runde 3 und dem Abgleich in `markt.md` spiegeln: „Aus deinen Antworten sehe ich als Stärke X, belegt durch Y. Passt das?“ Schwächen ehrlich, je mit Gegenmittel. Eine Antwort auf die Schwächen-Frage im Gespräch gemeinsam formulieren.
+
+**Optional: Persönlichkeitstest.** Kann der Nutzer seine Stärken schwer benennen oder will er die Schwächen-Frage üben: einen anerkannten, kostenlosen Big-Five-Test vorschlagen, den er selbst macht (z. B. IPIP-NEO-120 oder BFI-2), und das Ergebnis hochladen lassen. Keinen eigenen Test erfinden, keine Typen-Modelle wie MBTI. Ergebnis unter „Stärken und Schwächen“ → „Persönlichkeitstest“ als Hypothese notieren und daraus nur Fragen ableiten („Hohe Gewissenhaftigkeit: Wann hat dir das geholfen?“). In die Unterlagen kommt nur, was eine echte Situation belegt, nie der Test selbst. Setzt eine Zielfirma selbst Tests ein (DISC, Gallup, Assessment-Center), dient das Ergebnis der Vorbereitung.
 
 **6. Wechsel** (nur bei Rollen-, Branchen- oder Arbeitsform-Wechsel, Wiedereinstieg, kurzer letzter Station) → „Wechsel“
 Nach Skill `quereinstieg`, Schritt 1. Bedenken-Tabelle mit echten Antworten füllen.
@@ -74,7 +83,7 @@ Was hat der Nutzer neben dem Kern gemacht, das bei manchen Stellen zieht (Einkau
 
 Wenn alle Runden durch sind: eine typische Anzeige aus `daten/markt/` nehmen (häufigstes Rollenbild) und prüfen, ob sich die vier Fragen des Anschreibens (Skill `anschreiben`, Grundsatz) **nur aus `profil.md` und Master** beantworten lassen:
 1. Worauf hat der Nutzer Lust? → Motivation vorhanden und konkret?
-2. Die 3 meistgesuchten Eigenschaften → je ein Beleg auf Systemebene vorhanden?
+2. Die 3 meistgesuchten Eigenschaften und die A-Merkmale → je ein Beleg auf Systemebene vorhanden?
 3. Wie unterstützt er die Firma? → Ergebnis-Belege vorhanden?
 4. Warum passt er? → Arbeitsweise als eigenes Verhalten beschreibbar?
 

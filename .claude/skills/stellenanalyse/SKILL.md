@@ -44,7 +44,7 @@ Fachbegriffe und Tools in **exakter Schreibweise** der Anzeige sammeln (für Leb
 
 Gibt es `daten/markt.md`: Begriffe, die dort häufig sind, haben Vorrang, und die Schreibweise der Anzeige geht vor der des Marktes.
 
-**Gesuchte Eigenschaften:** Die 3–4 Eigenschaften aus der Tabelle „Eigenschaften und Belege“ in `profil.md`, die die Anzeige am stärksten betont (Häufigkeit, Reihenfolge, Muss), mit dem passenden Beleg festhalten. Sie steuern, was das Anschreiben zeigt. Verlangt die Anzeige eine Eigenschaft, die in der Tabelle fehlt: als offene Frage an den Nutzer notieren.
+**Gesuchte Eigenschaften:** Die 3–4 Eigenschaften aus der Tabelle „Eigenschaften und Belege“ in `profil.md`, die die Anzeige am stärksten betont (Häufigkeit, Reihenfolge, Muss), mit dem passenden Beleg festhalten. Sie steuern, was das Anschreiben zeigt. Verlangt die Anzeige eine Eigenschaft, die in der Tabelle fehlt: als offene Frage an den Nutzer notieren. Danach die 3 Eigenschaften fürs Anschreiben festlegen: zuerst die A-Merkmale nach `bewerbung/stil.md` (immer „Ergebnisse statt Aufgaben“, je nach Anzeige „Lerntempo“ oder „Eigeninitiative“), den Rest aus den gesuchten. Fehlt der Beleg für ein A-Merkmal: offene Frage an den Nutzer.
 
 ## 4. Match berechnen
 Muss-Kriterien zählen 70 %, Kann-Kriterien 30 %. Pro Kriterium: ✅ erfüllt (Beleg aus Lebenslauf nennen) · 🟡 teilweise/übertragbar · ❌ fehlt.
