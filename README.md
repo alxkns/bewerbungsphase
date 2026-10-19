@@ -68,7 +68,7 @@ Die Stellensuche nutzt von sich aus nur frei zugängliche Quellen: die Jobbörse
 - Google Chrome (PDF-Druck; anderer Pfad: `CHROME=/pfad/zu/chrome`)
 - poppler (`brew install poppler`) für `pdfunite`, `pdftoppm`, `pdftotext`
 
-Enthalten: Skill `humanizer-de` (MIT, Martin Moeller, auf Basis von blader/humanizer) für den KI-Sprache-Check, Lizenz in `.claude/skills/humanizer-de/LICENSE`.
+Enthalten: Skill `humanizer-de` (MIT, Martin Moeller, auf Basis von blader/humanizer) für den KI-Sprache-Check, ohne die Entwickler-Werkzeuge des Originals, Lizenz in `.claude/skills/humanizer-de/LICENSE`.
 
 ## Nutzung
 
