@@ -11,7 +11,7 @@ Steuert den Ablauf und ruft die Fach-Skills auf. Vor dem Schreiben immer lesen:
 - `daten/suchprofil.md`: Ausschlüsse, Match-Grenze, Tracker-URL
 - `daten/bewerbungen/_vorlage/lebenslauf.html`: Master-Lebenslauf. Fakten nur aus Master und `profil.md`, nichts erfinden
 
-Fehlen `daten/profil.md` oder der Master-Lebenslauf: abbrechen und auf die Einrichtung verweisen (README).
+Fehlen `daten/profil.md` oder der Master-Lebenslauf: abbrechen und Skill `einrichtung` vorschlagen. Steht im Kopf von `profil.md` noch nicht „Kennenlernen abgeschlossen“: einmal darauf hinweisen, dass Skill `kennenlernen` die Anschreiben deutlich persönlicher macht, dann weitermachen, wenn der Nutzer will.
 
 `<Name>` = Name aus `profil.md`, Abschnitt „Eckdaten“.
 
@@ -89,6 +89,7 @@ Status (genau so schreiben): Vorschlag → Angefordert → In Arbeit → Entworf
 Nachfassen nur auf ausdrücklichen Wunsch (Skill `anschreiben`, Variante Nachfassen): nicht vorschlagen, keine Entwürfe anlegen.
 
 ## Weitere Skills
+- `einrichtung`, `marktanalyse`, `kennenlernen`: einmalig vor der ersten Bewerbung, `kennenlernen` später erneut für offene Fakten-Fragen
 - `unternehmensanalyse`: Kultur und Werte der Firma, Einladungsgrund (Schritt 3)
 - `quereinstieg`: Rollen- oder Branchenwechsel übersetzen (bei jeder Bewerbung mitdenken, wenn `profil.md` einen Abschnitt „Wechsel“ hat)
 - `vorstellungsgespraech`: sobald eine Einladung kommt, Ergebnis als `gespraech.md` in den Ordner

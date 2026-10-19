@@ -42,6 +42,8 @@ Fachbegriffe und Tools in **exakter Schreibweise** der Anzeige sammeln (für Leb
 - **Fürs Anschreiben:** 3–5 Begriffe aus dem „Wortschatz“ in `profil.md`, jeweils mit dem Beleg aus der Tabelle „Eigenschaften und Belege“. Ohne Beleg nicht aufnehmen.
 - **Nur Lebenslauf:** technische Begriffe und Tools.
 
+Gibt es `daten/markt.md`: Begriffe, die dort häufig sind, haben Vorrang, und die Schreibweise der Anzeige geht vor der des Marktes.
+
 **Gesuchte Eigenschaften:** Die 3–4 Eigenschaften aus der Tabelle „Eigenschaften und Belege“ in `profil.md`, die die Anzeige am stärksten betont (Häufigkeit, Reihenfolge, Muss), mit dem passenden Beleg festhalten. Sie steuern, was das Anschreiben zeigt. Verlangt die Anzeige eine Eigenschaft, die in der Tabelle fehlt: als offene Frage an den Nutzer notieren.
 
 ## 4. Match berechnen

@@ -12,15 +12,13 @@ Claude-Code-Skills, die deutsche Bewerbungen von der Stellenanzeige bis zur fert
 
 Skills lesen nur aus `daten/`. Updates der Skills überschreiben deshalb nie dein Profil.
 
-## Einrichtung (vorerst von Hand)
+## Los geht's
 
-```bash
-mkdir -p daten/bewerbungen/_vorlage/assets
-cp vorlagen/profil.md vorlagen/suchprofil.md daten/
-cp vorlagen/lebenslauf.html vorlagen/anschreiben.html daten/bewerbungen/_vorlage/
-```
+Repo klonen, Claude Code im Ordner starten und nacheinander:
 
-Dann in Claude Code: Lebenslauf (PDF/Word) hochladen und `daten/bewerbungen/_vorlage/lebenslauf.html` daraus befüllen lassen, `{Platzhalter}` im Anschreiben ersetzen, `foto.jpg` (optional) und `unterschrift.png` nach `daten/bewerbungen/_vorlage/assets/` legen, `profil.md` und `suchprofil.md` im Gespräch füllen lassen.
+1. **„Richte mich ein“** (Skill `einrichtung`): prüft die Voraussetzungen, fragt dein Suchprofil ab (Position, Ort, Umkreis, Remote, Gehalt, Ausschlüsse), baut aus deinem Lebenslauf (PDF/Word) den Master-Lebenslauf und macht einen Probedruck.
+2. **„Mach die Marktanalyse“** (Skill `marktanalyse`): sammelt 20–40 passende Anzeigen und wertet aus, was die Stellen wirklich verlangen, welche Eigenschaften und Begriffe gefragt sind und wo dein Lebenslauf passt oder Lücken hat.
+3. **„Lern mich kennen“** (Skill `kennenlernen`): Interview in Runden, das dein Profil füllt. Darf über mehrere Sitzungen gehen. Je gründlicher, desto persönlicher die Anschreiben.
 
 ## Voraussetzungen
 
