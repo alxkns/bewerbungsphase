@@ -25,7 +25,6 @@ Repo klonen, Claude Code im Ordner starten und nacheinander:
 - Claude Code
 - Google Chrome (PDF-Druck; anderer Pfad: `CHROME=/pfad/zu/chrome`)
 - poppler (`brew install poppler`) für `pdfunite`, `pdftoppm`, `pdftotext`
-- Schrift Manrope (installiert, sonst Ersatzschrift)
 
 Enthalten: Skill `humanizer-de` (MIT, Martin Moeller, auf Basis von blader/humanizer) für den KI-Sprache-Check, Lizenz in `.claude/skills/humanizer-de/LICENSE`.
 

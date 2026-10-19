@@ -7,12 +7,12 @@
 ## Ort und Arbeitsmodell
 - Wohnort:
 - Umkreis (km), in dem hybrid/vor Ort ok ist:
-- Außerhalb des Umkreises: nur vollständig remote? (ja/nein)
+- Arbeitsmodell: vor Ort / hybrid / nur remote / egal
+- Außerhalb des Umkreises: nur vollständig remote / auch hybrid mit Pendeln / gar nicht
 - Arbeitszeit: Vollzeit / Teilzeit ab … Std./Woche
-- Befristung ok? (ja/nein)
 
 ## Zielrollen und Suchbegriffe
-- Zielrollen (aus `daten/profil.md`):
+- Zielrollen:
 - Suchbegriffe (jeweils einzeln gesucht, kurz halten):
 - Wunschumfeld (Größe, Branche, Teamform):
 

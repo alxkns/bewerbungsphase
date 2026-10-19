@@ -97,6 +97,6 @@ Nachfassen nur auf ausdrücklichen Wunsch (Skill `anschreiben`, Variante Nachfas
 - `recruiter`: Einstellersicht-Check + Umschreiben, Pflicht ab Match-Grenze, max. 2 Verbesserungsrunden
 
 ## Technik
-- Layout: `vorlagen/style.css` (Manrope, Navy, hellblaues Kopfband). Foto und Unterschrift in `daten/bewerbungen/_vorlage/assets/`.
+- Layout: `vorlagen/style.css` (Arial, Navy, hellblaues Kopfband; Standardschrift, damit Bewerberportale den Text sauber auslesen). Foto und Unterschrift in `daten/bewerbungen/_vorlage/assets/`.
 - HTML-Dateien im Bewerbungsordner verweisen auf `../../../vorlagen/style.css` und `../_vorlage/assets/…`, deshalb immer genau eine Ebene unter `daten/bewerbungen/` ablegen.
 - PDF über Chrome headless, Mappe über `pdfunite` (poppler).

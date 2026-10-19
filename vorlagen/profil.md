@@ -6,6 +6,9 @@
 
 **Quelle der Wahrheit für Fakten: `daten/bewerbungen/_vorlage/lebenslauf.html` (Master-Lebenslauf).** Nichts erfinden, was dort nicht steht. Neue Fakten erst dort ergänzen, dann verwenden.
 
+## Offen aus der Einrichtung
+<!-- Unklare Punkte aus dem Lebenslauf und Entwürfe, die im Kennenlernen geklärt werden. Erledigtes löschen. -->
+
 ## Positionierung
 - Kernkompetenz in einem Satz:
 - Kernstory (woher, was gebaut/erreicht, wohin jetzt):

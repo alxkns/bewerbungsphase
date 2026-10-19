@@ -16,13 +16,11 @@ Gibt es `daten/` schon: nur die fehlenden oder gewünschten Schritte machen, nic
 ```bash
 test -x "${CHROME:-/Applications/Google Chrome.app/Contents/MacOS/Google Chrome}" && echo "Chrome ok" || echo "Chrome fehlt"
 for t in pdfunite pdftoppm pdftotext; do command -v $t >/dev/null && echo "$t ok" || echo "$t fehlt"; done
-ls ~/Library/Fonts /Library/Fonts 2>/dev/null | grep -qi manrope && echo "Manrope ok" || echo "Manrope fehlt"
 ```
 
 Fehlt etwas: dem Nutzer den Befehl nennen, nicht selbst installieren.
 - poppler: `brew install poppler` (Linux: `apt install poppler-utils`)
 - Chrome: installieren oder Pfad per `CHROME=/pfad/zu/chrome` setzen
-- Manrope: von Google Fonts laden und installieren. Ohne Manrope nimmt Chrome eine Ersatzschrift, das Layout verschiebt sich leicht. Kein Abbruchgrund.
 
 ## 2. Ordner anlegen
 
@@ -42,8 +40,10 @@ Kurz erklären, was gleich passiert (Suchprofil, dann Lebenslauf), dann in zwei 
 1. Welche Position(en) suchst du? Gern mehrere Titel oder eine Beschreibung der Arbeit.
 2. Wohnort (Stadt reicht)?
 3. Was willst du auf keinen Fall (Branchen, Firmenarten, Aufgaben, Bedingungen)?
-4. Gehaltsvorstellung brutto im Jahr: Wunsch und Untergrenze? (Unsicher ist ok, dann später Skill `gehaltsverhandlung`.)
-5. Frühester Eintritt und Kündigungsfrist?
+4. Was wäre ok, aber nicht ideal (z. B. befristet, Pendeln, viel Englisch, Reisen)?
+5. Wo arbeitest du am liebsten (Firmengröße, Branche, Teamform)?
+6. Gehaltsvorstellung brutto im Jahr: Wunsch und Untergrenze? (Unsicher ist ok, dann später Skill `gehaltsverhandlung`.)
+7. Frühester Eintritt und Kündigungsfrist?
 
 **Runde 2, per `AskUserQuestion`:**
 - Umkreis für Stellen mit Präsenz: 10 km · 25 km · 50 km · 100 km
@@ -52,8 +52,11 @@ Kurz erklären, was gleich passiert (Suchprofil, dann Lebenslauf), dann in zwei 
 - Arbeitszeit: Vollzeit · Teilzeit (ab wie vielen Std. per „Other“) · beides
 
 Daraus `daten/suchprofil.md` füllen:
-- **Suchbegriffe:** aus den Positionen 5–10 kurze, einzelne Begriffe ableiten (Jobbörsen suchen wörtlich, lange Kombinationen finden nichts). Deutsche und englische Titel, wenn der Markt beide nutzt. Dem Nutzer zur Bestätigung zeigen. Die Marktanalyse schärft sie später nach.
-- **Harte Ausschlüsse:** nur, was der Nutzer genannt hat, plus Ortsregel aus Runde 2. Nichts dazu erfinden.
+- **Ort und Arbeitsmodell:** alle Antworten aus Runde 2, auch die Arbeitszeit. Die Arbeitszeit ist kein eigener Ausschluss-Eintrag.
+- **Zielrollen:** die Positionen aus Frage 1, zusätzlich in `daten/profil.md` → „Zielrollen“. **Wunschumfeld:** Frage 5.
+- **Suchbegriffe:** aus den Positionen 5–10 kurze Begriffe aus ein bis zwei Wörtern ableiten. Jobbörsen suchen wörtlich: Zusammengesetzte Wörter getrennt schreiben („Kampagnen Manager“ statt „Kampagnenmanager“), die männliche Form reicht, Reihenfolge ist egal. Deutsche und englische Titel, wenn der Markt beide nutzt. Dem Nutzer zur Bestätigung zeigen. Die Marktanalyse schärft sie später nach.
+- **Harte Ausschlüsse:** nur, was der Nutzer in Frage 3 genannt hat, plus Ortsregel aus Runde 2. Nichts dazu erfinden.
+- **Nur als Risiko markieren:** Frage 4.
 - **Match-Grenze:** 70 % als Standard, erklären, dass der Nutzer sie ändern kann.
 - **Tracker:** leer lassen (wird mit dem Dashboard eingerichtet).
 
@@ -73,11 +76,12 @@ Ist der PDF-Text leer oder zerstückelt (Scan, Grafik-Lebenslauf): die PDF mit d
 `daten/bewerbungen/_vorlage/lebenslauf.html` aus dem Gerüst befüllen:
 - `{Platzhalter}` ersetzen, Abschnitte nach Bedarf wiederholen (`.eintrag` je Station, `<li>` je Stichpunkt). Klassen aus `vorlagen/style.css`, keine Inline-Styles.
 - **Deutsches Format:** antichronologisch, `MM/JJJJ`, kein Geburtsdatum, keine Konfession, kein Familienstand (außer der Nutzer will es ausdrücklich).
+- **Zeitangaben:** `MM/JJJJ`, bei Schule und Abschlüssen ohne Monat im Original nur das Jahr. Erklärte Lücken (Sabbatical, Elternzeit, Pflege) als kompakter Eintrag in die Berufserfahrung (`.eintrag kompakt`), ein Halbsatz, ohne Rechtfertigung.
 - **Inhalt 1:1 aus dem Lebenslauf.** Umformulieren nur sprachlich (Stichpunkte statt Fließtext, aktive Verben), keine neuen Zahlen, Tools oder Ergebnisse. Der Master darf länger als 2 Seiten sein, gekürzt wird pro Bewerbung.
-- **Profiltext:** aus dem Lebenslauf zusammenfassen, als Entwurf markieren. Er wird nach `kennenlernen` überarbeitet.
+- **Profiltext:** aus dem Lebenslauf zusammenfassen, nur Verben und Umfang, die dort stehen („koordiniert“ bleibt „koordiniert“, nicht „verantwortet“). Kein Entwurfs-Vermerk ins HTML (würde mitgedruckt), stattdessen in `profil.md` → „Offen aus der Einrichtung“: „Profiltext im Lebenslauf ist Entwurf“.
 - **Englischer Lebenslauf:** Inhalt übersetzen, Firmennamen und Titel im Original lassen, wenn sie so geführt werden.
 
-Danach eine Liste **Unklar im Lebenslauf** für den Nutzer (Lücken > 3 Monate, Stationen ohne Aufgaben, Abkürzungen, fehlende Zeiträume, widersprüchliche Angaben). Antworten in den Master, Rest wandert an `kennenlernen`.
+Danach eine Liste **Unklar im Lebenslauf** für den Nutzer (Lücken > 3 Monate, Stationen ohne Aufgaben, Abkürzungen, fehlende Zeiträume, widersprüchliche Angaben). Antworten in den Master, offene Punkte in `profil.md` → „Offen aus der Einrichtung“ (dort holt `kennenlernen` sie ab).
 
 **Eckdaten** aus dem Lebenslauf in `profil.md` übernehmen: Name, Anschrift, Telefon, E-Mail, Sprachen. Unter „Positionierung“ einen Entwurf aus Lebenslauf + gesuchter Position, markiert mit „Entwurf, im Kennenlernen bestätigen“.
 
@@ -97,7 +101,9 @@ pdftoppm -r 50 -png "$T"/Lebenslauf_*.pdf <scratchpad>/probe
 pdftoppm -r 50 -png "$T"/Anschreiben_*.pdf <scratchpad>/probe-brief
 ```
 
-Vorschau-PNGs ansehen: Kopf, Foto, Unterschrift, Umbrüche, keine `{Platzhalter}` mehr außer den `[eckigen]` im Anschreiben. Fehler beheben, dann den Ordner `0000-00-00_Probedruck` wieder löschen. Dem Nutzer die erste Seite des Lebenslaufs zeigen und fragen, ob Inhalt und Kopf stimmen.
+`pdf.sh` baut zusätzlich eine Mappe `Bewerbung_Probedruck_<Name>.pdf`, das ist normal.
+
+Vorschau-PNGs ansehen: Kopf, Foto, Unterschrift, Umbrüche, keine `{Platzhalter}` mehr außer den `[eckigen]` im Anschreiben. Fehler beheben, dann dem Nutzer die erste Seite des Lebenslaufs zeigen und fragen, ob Inhalt und Kopf stimmen. Erst nach seinem Ok den Ordner `0000-00-00_Probedruck` löschen.
 
 ## 7. Übergabe
 

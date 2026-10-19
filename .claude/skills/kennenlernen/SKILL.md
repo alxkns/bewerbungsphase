@@ -31,7 +31,7 @@ Vorher lesen: `daten/profil.md` (was steht schon, was ist leer), Master-Lebensla
 Reihenfolge ist Empfehlung. Runden, deren Abschnitte in `profil.md` schon gefüllt sind, überspringen oder nur prüfen. Beim Fortsetzen mit der ersten Runde beginnen, deren Abschnitt noch leer ist.
 
 **1. Lebenslauf klären** → Master-Lebenslauf, „Hintergrund“ (Werdegang-Linie, Zahlen)
-Offene Punkte aus der Einrichtung, Lücken > 3 Monate, Wechsel zwischen Stationen (warum?), Umfang der Verantwortung je Station (Team, Budget, Kunden), Zahlen, die belegt sind. Zeitstrahl in eigenen Worten bestätigen lassen: Was kam wann, was davon klingt im Lebenslauf größer oder kleiner, als es war?
+Offene Punkte aus `profil.md` → „Offen aus der Einrichtung“ (danach dort löschen, inkl. Profiltext im Lebenslauf neu schreiben), Lücken > 3 Monate, Wechsel zwischen Stationen (warum?), Umfang der Verantwortung je Station (Team, Budget, Kunden), Zahlen, die belegt sind. Zeitstrahl in eigenen Worten bestätigen lassen: Was kam wann, was davon klingt im Lebenslauf größer oder kleiner, als es war?
 
 **2. Ehrliches Level** → „Hintergrund“ → „Ehrliches Level“, „Grenzen“
 Für jedes Tool und jedes Fachthema aus den Muss- und Kann-Kriterien in `markt.md` (Anteil ≥ 20 %) plus den Kenntnissen im Lebenslauf per `AskUserQuestion`: produktiv im Alltag genutzt · Grundkenntnisse · nur ausprobiert · nie genutzt. Bei „produktiv“: wofür, wie lange? „Nur ausprobiert“ und „nie“ wandern unter „Grenzen“ → „Nie behaupten“. Auch fragen: Was traust du dir zu, wäre aber im Lebenslauf übertrieben?
