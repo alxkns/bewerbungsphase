@@ -1,0 +1,491 @@
+<!-- Bewerbungs-Tracker. Wird bei der Einrichtung als eigenes, privates claude.ai-Artifact veröffentlicht
+     (capabilities: db mit Regel read view / write owner, user). Daten: Collection `bewerbungen`. -->
+<title>Bewerbungs-Tracker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Archivo:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;700&display=swap">
+<style>
+/* Neobrutalism, nur hell: Poster auf Punktraster, 3px-Rahmen, harte Versatzschatten, flache Signalfarben */
+:root {
+  --ink: #121212; --muted: #4a4740; --paper: #fdf6e3; --dot: rgba(18, 18, 18, .13); --card: #ffffff;
+  --yellow: #ffd23f; --blue: #74c0fc; --green: #8ce99a; --pink: #ff8fab; --violet: #b197fc; --orange: #ffa94d; --red: #e03131;
+  --b: 3px solid var(--ink); --sh: 5px 5px 0 var(--ink); --sh-sm: 3px 3px 0 var(--ink);
+  --display: "Archivo Black", "Arial Black", Impact, system-ui, sans-serif;
+  --body: "Archivo", "Helvetica Neue", Arial, system-ui, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+  color-scheme: light;
+}
+html { background: var(--paper); }
+body {
+  background-color: var(--paper);
+  background-image: radial-gradient(var(--dot) 1.2px, transparent 1.2px);
+  background-size: 20px 20px;
+  color: var(--ink); font-family: var(--body); font-size: 15px;
+  padding: clamp(20px, 4vw, 44px) clamp(16px, 4vw, 44px);
+}
+.wrap { max-width: 1180px; margin-inline: auto; display: grid; gap: 28px; }
+button, input, select, textarea { font: inherit; color: inherit; }
+:focus-visible { outline: 3px solid var(--pink); outline-offset: 2px; }
+
+.head { display: flex; flex-wrap: wrap; gap: 16px 24px; align-items: end; justify-content: space-between; }
+.head-text { display: grid; gap: 12px; justify-items: start; min-width: 0; }
+.eyebrow { margin: 0; background: var(--pink); border: var(--b); box-shadow: var(--sh-sm); padding: 2px 10px; font-family: var(--mono); font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; }
+h1 { margin: 0; font-family: var(--display); font-weight: 400; font-size: clamp(2rem, 6vw, 3.4rem); line-height: 1.05; text-wrap: balance; }
+.mark { display: inline-block; background: var(--yellow); border: var(--b); box-shadow: var(--sh); padding: 0 .2em; transform: rotate(-1.5deg); }
+.take { margin: 0; font-size: 1.1rem; font-weight: 700; max-width: 62ch; }
+
+.btn { cursor: pointer; border: var(--b); box-shadow: var(--sh-sm); background: var(--yellow); padding: 8px 14px; font-weight: 800; border-radius: 0; }
+.btn:active { transform: translate(3px, 3px); box-shadow: none; }
+.btn.ghost { background: var(--card); }
+.btn.mini { padding: 3px 8px; font-size: .78rem; margin-left: 8px; box-shadow: 2px 2px 0 var(--ink); white-space: nowrap; }
+.btn.danger { background: var(--card); color: var(--red); }
+.btn.danger.armed { background: var(--red); color: #fff; }
+.btn[hidden] { display: none !important; }
+
+.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 10.5rem), 1fr)); gap: 18px; }
+.tile { --tile: var(--card); background: var(--tile); border: var(--b); box-shadow: var(--sh); padding: 14px 16px; display: grid; gap: 6px; align-content: start; }
+.tile .lbl { font-family: var(--mono); font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; }
+.tile .val { font-family: var(--display); font-size: 2.6rem; line-height: 1; font-variant-numeric: tabular-nums; }
+.tile .sub { font-size: .8rem; font-weight: 700; }
+.t-yellow { --tile: var(--yellow); } .t-blue { --tile: var(--blue); } .t-green { --tile: var(--green); } .t-pink { --tile: var(--pink); } .t-violet { --tile: var(--violet); }
+.def { margin: -10px 0 0; font-size: .82rem; color: var(--muted); font-weight: 600; }
+
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr)); gap: 22px; }
+.card { background: var(--card); border: var(--b); box-shadow: var(--sh); padding: 18px 20px; min-width: 0; }
+.card h2 { margin: 0; font-family: var(--display); font-weight: 400; font-size: 1.25rem; }
+.note { margin: 4px 0 16px; font-size: .85rem; color: var(--muted); font-weight: 600; }
+.empty { margin: 0; padding: 14px; border: 2px dashed var(--ink); font-weight: 700; }
+
+.funnel { display: grid; gap: 12px; }
+.fun-row { display: grid; grid-template-columns: 7rem 1fr 2.4rem; gap: 4px 10px; align-items: center; }
+.fun-lbl { font-weight: 800; font-size: .9rem; }
+.fun-track { height: 28px; border: var(--b); background: var(--paper); }
+.fun-bar { height: 100%; background: var(--c); }
+.fun-bar.has { border-right: 3px solid var(--ink); }
+.fun-n { font-family: var(--mono); font-weight: 700; text-align: right; font-variant-numeric: tabular-nums; }
+.fun-rate { grid-column: 2 / 4; font-family: var(--mono); font-size: .72rem; color: var(--muted); font-weight: 700; }
+
+.weeks { position: relative; min-height: 190px; }
+.weeks svg { display: block; overflow: visible; }
+.weeks text { font-family: var(--mono); font-size: 11px; font-weight: 700; fill: var(--ink); }
+.tip { position: absolute; pointer-events: none; background: var(--yellow); border: 2px solid var(--ink); box-shadow: 3px 3px 0 var(--ink); padding: 4px 8px; font-family: var(--mono); font-size: .75rem; font-weight: 700; white-space: nowrap; }
+
+.tools { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 14px; }
+.tools .grow { flex: 1 1 auto; }
+.seg { display: flex; border: var(--b); box-shadow: var(--sh-sm); background: var(--card); }
+.seg button { all: unset; cursor: pointer; padding: 8px 14px; font-weight: 800; white-space: nowrap; }
+.seg button + button { border-left: var(--b); }
+.seg button[aria-pressed="true"] { background: var(--yellow); }
+.seg button:focus-visible { outline: 3px solid var(--pink); outline-offset: -6px; }
+.seg .n { font-family: var(--mono); font-size: .8rem; }
+.field { border: var(--b); box-shadow: var(--sh-sm); background: var(--paper); padding: 8px 12px; font-weight: 600; border-radius: 0; min-width: 0; }
+#q { width: min(100%, 18rem); }
+.count { font-family: var(--mono); font-size: .8rem; font-weight: 700; }
+.scroll { overflow: auto; max-height: 36rem; border: var(--b); }
+table { width: 100%; border-collapse: collapse; font-size: .9rem; }
+th { position: sticky; top: 0; z-index: 1; background: var(--yellow); border-bottom: var(--b); text-align: left; padding: 0; white-space: nowrap; }
+th button { all: unset; cursor: pointer; display: block; padding: 10px 12px; font-family: var(--mono); font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; }
+th button:focus-visible { outline: 3px solid var(--ink); outline-offset: -5px; }
+th[aria-sort="ascending"] button::after { content: " ↑"; }
+th[aria-sort="descending"] button::after { content: " ↓"; }
+th.plain { padding: 10px 12px; font-family: var(--mono); font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; }
+td { padding: 9px 12px; border-bottom: 2px solid var(--ink); vertical-align: middle; }
+tbody tr:last-child td { border-bottom: 0; }
+tbody tr:hover { background: color-mix(in srgb, var(--yellow) 22%, transparent); }
+td.date { font-family: var(--mono); font-size: .82rem; white-space: nowrap; font-variant-numeric: tabular-nums; }
+td.num { font-family: var(--mono); font-weight: 700; white-space: nowrap; font-variant-numeric: tabular-nums; text-align: right; }
+td.num .pill { box-shadow: none; }
+td a { color: inherit; font-weight: 800; text-decoration-thickness: 2px; text-underline-offset: 3px; }
+td .firm { font-weight: 800; }
+.pill, .status-select { --p: var(--card); display: inline-block; padding: 2px 8px; border: 2px solid var(--ink); box-shadow: 2px 2px 0 var(--ink); background: var(--p); font-size: .78rem; font-weight: 800; white-space: nowrap; border-radius: 0; }
+.status-select { cursor: pointer; padding: 3px 6px; }
+.p-blue { --p: var(--blue); } .p-green { --p: var(--green); } .p-yellow { --p: var(--yellow); } .p-pink { --p: var(--pink); } .p-orange { --p: var(--orange); } .p-violet { --p: var(--violet); }
+.edit { all: unset; cursor: pointer; font-family: var(--mono); font-size: .75rem; font-weight: 700; text-decoration: underline; text-underline-offset: 3px; }
+@media (max-width: 46rem) { .hide-sm { display: none; } }
+
+dialog { border: var(--b); box-shadow: 8px 8px 0 var(--ink); background: var(--card); padding: 0; width: min(36rem, calc(100vw - 32px)); max-height: calc(100dvh - 32px); border-radius: 0; color: var(--ink); }
+dialog::backdrop { background: rgba(18, 18, 18, .45); }
+.dlg { display: grid; gap: 14px; padding: 20px; }
+.dlg h3 { margin: 0; font-family: var(--display); font-weight: 400; font-size: 1.3rem; }
+.form { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr)); gap: 12px; }
+.form label { display: grid; gap: 4px; font-family: var(--mono); font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; }
+.form .wide { grid-column: 1 / -1; }
+.form .field { box-shadow: none; text-transform: none; letter-spacing: 0; font-family: var(--body); font-size: .95rem; background: var(--card); }
+.dlg-actions { display: flex; flex-wrap: wrap; gap: 10px; justify-content: space-between; }
+.dlg-actions div { display: flex; gap: 10px; }
+.hint { margin: 0; font-size: .8rem; color: var(--muted); font-weight: 600; }
+
+.toast { position: fixed; left: 50%; bottom: calc(18px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); background: var(--green); border: var(--b); box-shadow: var(--sh-sm); padding: 8px 14px; font-weight: 800; z-index: 10; }
+.toast.err { background: var(--pink); }
+.banner { border: var(--b); background: var(--pink); padding: 10px 14px; font-weight: 700; }
+@media (prefers-reduced-motion: no-preference) {
+  .tile { transition: transform .2s ease-out, box-shadow .2s ease-out; }
+  .tile:hover { transform: translate(-2px, -2px); box-shadow: 7px 7px 0 var(--ink); }
+}
+</style>
+
+<div class="wrap">
+  <header class="head" id="ueberblick">
+    <div class="head-text">
+      <p class="eyebrow">Bewerbungsphase</p>
+      <h1>Bewerbungs-<span class="mark">Tracker</span></h1>
+      <p class="take" id="take">Bewerbungen werden geladen …</p>
+    </div>
+    <button class="btn" id="add" type="button" hidden>+ Bewerbung eintragen</button>
+  </header>
+  <p class="banner" id="banner" hidden></p>
+
+  <section class="tiles" id="kennzahlen">
+    <div class="tile t-yellow"><span class="lbl">Versendet</span><span class="val" data-k="versendet">–</span><span class="sub">Bewerbungen abgeschickt</span></div>
+    <div class="tile t-blue"><span class="lbl">Offen</span><span class="val" data-k="offen">–</span><span class="sub">warten auf Antwort</span></div>
+    <div class="tile t-green"><span class="lbl">Einladungen</span><span class="val" data-k="einladungen">–</span><span class="sub"><span data-k="einladungsquote">–</span> der versendeten</span></div>
+    <div class="tile t-pink"><span class="lbl">Absagen</span><span class="val" data-k="absagen">–</span><span class="sub"><span data-k="absagequote">–</span> der versendeten</span></div>
+    <div class="tile t-violet"><span class="lbl">Antwortquote</span><span class="val" data-k="antwortquote">–</span><span class="sub">Einladung oder Absage erhalten</span></div>
+    <div class="tile"><span class="lbl">Vorschläge</span><span class="val" data-k="vorschlaege">–</span><span class="sub">warten auf deine Prüfung</span></div>
+    <div class="tile"><span class="lbl">Entwürfe</span><span class="val" data-k="entwuerfe">–</span><span class="sub">fertig, noch nicht abgeschickt</span></div>
+  </section>
+  <p class="def">Quoten beziehen sich auf versendete Bewerbungen. Eine automatische Eingangsbestätigung zählt nicht als Antwort. Eine Einladung bleibt gezählt, auch wenn später eine Absage kommt.</p>
+
+  <section class="grid" id="verlauf">
+    <div class="card" id="trichter">
+      <h2>Wo es hängen bleibt</h2>
+      <p class="note">Von versendet bis Angebot, mit Quote zur Vorstufe</p>
+      <div class="funnel" id="funnel"></div>
+    </div>
+    <div class="card" id="wochen">
+      <h2>Versendet pro Woche</h2>
+      <p class="note">Kalenderwoche des Versanddatums, gestapelt nach heutigem Stand</p>
+      <div class="weeks" id="weeks"></div>
+    </div>
+  </section>
+
+  <section class="card" id="alle-bewerbungen">
+    <h2 id="list-title">Deine To-dos</h2>
+    <p class="note" id="table-note">Status direkt in der Tabelle ändern, Details über „Bearbeiten“</p>
+    <div class="tools">
+      <div class="seg" role="group" aria-label="Ansicht">
+        <button type="button" data-view="todo" aria-pressed="true">To-do <span class="n" id="n-todo"></span></button>
+        <button type="button" data-view="alle" aria-pressed="false">Alle <span class="n" id="n-alle"></span></button>
+      </div>
+      <input class="field" id="q" type="search" placeholder="Firma, Stelle …" aria-label="Bewerbungen durchsuchen">
+      <select class="field" id="filter" aria-label="Nach Status filtern">
+        <option value="">Alle Status</option>
+        <option value="offen">Offen</option>
+      </select>
+      <span class="grow"></span>
+      <span class="count" id="count"></span>
+    </div>
+    <div class="scroll">
+      <table id="table">
+        <thead><tr>
+          <th data-f="firma"><button type="button">Firma</button></th>
+          <th data-f="stelle"><button type="button">Stelle</button></th>
+          <th data-f="status"><button type="button">Status</button></th>
+          <th data-f="versendet_am"><button type="button">Versendet</button></th>
+          <th data-f="antwort_am" class="hide-sm"><button type="button">Antwort</button></th>
+          <th data-f="match"><button type="button">Match</button></th>
+          <th data-f="score"><button type="button">Score</button></th>
+          <th class="plain" id="th-edit"><span class="sr">&nbsp;</span></th>
+        </tr></thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
+  </section>
+</div>
+
+<dialog id="dlg" aria-labelledby="dlg-title">
+  <form class="dlg" id="form" novalidate>
+    <h3 id="dlg-title">Bewerbung bearbeiten</h3>
+    <div class="form">
+      <label>Firma<input class="field" id="f-firma" required></label>
+      <label>Stelle<input class="field" id="f-stelle"></label>
+      <label>Ort<input class="field" id="f-ort"></label>
+      <label>Weg<input class="field" id="f-weg" placeholder="Portal, E-Mail, Indeed …"></label>
+      <label>Status<select class="field" id="f-status"></select></label>
+      <label>Versendet am<input class="field" id="f-versendet_am" type="date"></label>
+      <label>Einladung am<input class="field" id="f-einladung_am" type="date"></label>
+      <label>Antwort am<input class="field" id="f-antwort_am" type="date"></label>
+      <label>Match (%)<input class="field" id="f-match" type="number" min="0" max="100" step="1"></label>
+      <label>Bewerbungsscore (/10)<input class="field" id="f-score" type="number" min="0" max="10" step="0.1"></label>
+      <label class="wide">Nächster Schritt<input class="field" id="f-naechster_schritt"></label>
+      <label class="wide">Link zur Anzeige<input class="field" id="f-link" type="url" placeholder="https://…"></label>
+      <label class="wide">Notiz<textarea class="field" id="f-notiz" rows="3"></textarea></label>
+    </div>
+    <p class="hint">„Antwort am“ ist die erste echte Rückmeldung (Einladung oder Absage). Beim Statuswechsel setzt der Tracker fehlende Daten auf heute.</p>
+    <div class="dlg-actions">
+      <button class="btn danger" id="del" type="button">Löschen</button>
+      <div>
+        <button class="btn ghost" id="cancel" type="button">Abbrechen</button>
+        <button class="btn" id="save" type="submit">Speichern</button>
+      </div>
+    </div>
+  </form>
+</dialog>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+const STATUS = ['Vorschlag', 'Angefordert', 'In Arbeit', 'Entworfen', 'Versendet', 'Eingang bestätigt', 'Einladung', 'Angebot', 'Absage', 'Zurückgezogen', 'Verworfen'];
+// Noch nicht abgeschickt: zählen nicht in Quoten
+const PRE = ['Vorschlag', 'Angefordert', 'In Arbeit', 'Entworfen', 'Verworfen'];
+// Hier muss der Nutzer selbst ran (Angefordert/In Arbeit erledigt die Automatik)
+const TODO = ['Vorschlag', 'Entworfen', 'Einladung', 'Angebot'];
+const TONE = { 'Vorschlag': 'p-violet', 'Angefordert': 'p-yellow', 'In Arbeit': 'p-yellow', 'Versendet': 'p-blue', 'Eingang bestätigt': 'p-blue', 'Einladung': 'p-green', 'Angebot': 'p-yellow', 'Absage': 'p-pink', 'Zurückgezogen': 'p-orange' };
+const FIELDS = ['firma', 'stelle', 'ort', 'weg', 'status', 'versendet_am', 'einladung_am', 'antwort_am', 'match', 'score', 'naechster_schritt', 'link', 'notiz'];
+const NUM = ['match', 'score'];
+const fmtMatch = (v) => (v == null ? '–' : v + ' %');
+const fmtScore = (v) => (v == null ? '–' : Number(v).toLocaleString('de-DE', { minimumFractionDigits: 1, maximumFractionDigits: 1 }));
+const matchTone = (v) => (v == null ? '' : v >= 80 ? 'p-green' : v >= 70 ? 'p-yellow' : 'p-pink');
+const scoreTone = (v) => (v == null ? '' : v >= 9 ? 'p-green' : v >= 8 ? 'p-yellow' : 'p-pink');
+const $ = (s) => document.querySelector(s);
+const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
+const pct = (v) => (v == null ? '–' : Math.round(v * 100) + ' %');
+const today = () => new Date().toLocaleDateString('sv-SE');
+const deDate = (s) => (s ? new Date(s + 'T00:00:00').toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: '2-digit' }) : '–');
+
+let rows = [], db = null, canWrite = false, sortF = null, asc = false, editing = null;
+let view = 'todo';
+try { if (localStorage.getItem('ansicht') === 'alle') view = 'alle'; } catch {}
+
+STATUS.forEach((s) => { $('#filter').append(new Option(s, s)); $('#f-status').append(new Option(s, s)); });
+
+function stats(list) {
+  const raus = list.filter((b) => !PRE.includes(b.status));
+  const zahl = (f) => raus.filter(f).length;
+  const versendet = raus.length;
+  const einladungen = zahl((b) => b.einladung_am || b.status === 'Einladung' || b.status === 'Angebot');
+  const absagen = zahl((b) => b.status === 'Absage');
+  const rueckmeldungen = zahl((b) => b.antwort_am || ['Einladung', 'Angebot', 'Absage'].includes(b.status));
+  const quote = (x) => (versendet ? x / versendet : null);
+  return {
+    entwuerfe: list.filter((b) => b.status === 'Entworfen').length, vorschlaege: list.filter((b) => b.status === 'Vorschlag').length, versendet,
+    offen: zahl((b) => !(b.antwort_am || ['Einladung', 'Angebot', 'Absage', 'Zurückgezogen'].includes(b.status))),
+    einladungen, absagen, angebote: zahl((b) => b.status === 'Angebot'), rueckmeldungen,
+    antwortquote: quote(rueckmeldungen), einladungsquote: quote(einladungen), absagequote: quote(absagen),
+  };
+}
+const isOpen = (b) => !PRE.includes(b.status) && !(b.antwort_am || ['Einladung', 'Angebot', 'Absage', 'Zurückgezogen'].includes(b.status));
+
+function renderStats() {
+  const k = stats(rows);
+  document.querySelectorAll('[data-k]').forEach((m) => { const v = k[m.dataset.k]; m.textContent = m.dataset.k.endsWith('quote') ? pct(v) : String(v); });
+  const vor = k.vorschlaege ? ` ${k.vorschlaege} ${k.vorschlaege === 1 ? 'Vorschlag wartet' : 'Vorschläge warten'} auf Prüfung.` : '';
+  const ent = k.entwuerfe ? ` ${k.entwuerfe} ${k.entwuerfe === 1 ? 'Entwurf liegt' : 'Entwürfe liegen'} noch.` : '';
+  $('#take').textContent = !rows.length ? 'Noch keine Bewerbungen eingetragen.'
+    : k.versendet === 0 ? `${k.entwuerfe} ${k.entwuerfe === 1 ? 'Bewerbung ist' : 'Bewerbungen sind'} fertig, noch keine abgeschickt.`
+    : `${k.versendet} versendet, ${k.offen} warten auf Antwort, ${k.einladungen} ${k.einladungen === 1 ? 'Einladung' : 'Einladungen'} (${pct(k.einladungsquote)}).${ent}${vor}`;
+  return k;
+}
+
+function renderFunnel(k) {
+  const box = $('#funnel');
+  if (!k.versendet) { box.replaceChildren(el('p', 'empty', 'Sobald die erste Bewerbung raus ist, siehst du hier, an welcher Stufe es hängen bleibt.')); return; }
+  const st = [['Versendet', k.versendet, 'var(--yellow)'], ['Rückmeldung', k.rueckmeldungen, 'var(--blue)'], ['Einladung', k.einladungen, 'var(--green)'], ['Angebot', k.angebote, 'var(--pink)']];
+  box.replaceChildren(...st.map(([name, n, c], i) => {
+    const row = el('div', 'fun-row'), track = el('div', 'fun-track'), bar = el('div', 'fun-bar' + (n ? ' has' : ''));
+    bar.style.width = (n / k.versendet) * 100 + '%'; bar.style.setProperty('--c', c); track.append(bar);
+    row.append(el('span', 'fun-lbl', name), track, el('span', 'fun-n', String(n)));
+    if (i) row.append(el('span', 'fun-rate', st[i - 1][1] ? pct(n / st[i - 1][1]) + ' von ' + st[i - 1][0] : 'keine Vorstufe'));
+    return row;
+  }));
+}
+
+const SVG = 'http://www.w3.org/2000/svg';
+const svgEl = (tag, attrs) => { const e = document.createElementNS(SVG, tag); for (const [a, v] of Object.entries(attrs)) e.setAttribute(a, v); return e; };
+const monday = (s) => { const d = new Date(s + 'T00:00:00Z'); d.setUTCDate(d.getUTCDate() - (d.getUTCDay() + 6) % 7); return d.getTime(); };
+const isoWeek = (t) => { const d = new Date(t); d.setUTCDate(d.getUTCDate() + 3); const y = new Date(Date.UTC(d.getUTCFullYear(), 0, 4)); return 1 + Math.round((d - y) / 6048e5 - ((y.getUTCDay() + 6) % 7 - 3) / 7); };
+const STACK = [['Absage', 'var(--pink)'], ['Offen', 'var(--blue)'], ['Einladung', 'var(--green)']];
+const bucket = (b) => (b.einladung_am || b.status === 'Einladung' || b.status === 'Angebot' ? 'Einladung' : b.status === 'Absage' || b.status === 'Zurückgezogen' ? 'Absage' : 'Offen');
+
+function renderWeeks() {
+  const box = $('#weeks');
+  const sent = rows.filter((b) => !PRE.includes(b.status) && b.versendet_am);
+  box.replaceChildren();
+  if (!sent.length) { box.append(el('p', 'empty', 'Noch nichts versendet. Jede abgeschickte Bewerbung landet hier in ihrer Kalenderwoche.')); return; }
+  const m = new Map();
+  for (const b of sent) { const t = monday(b.versendet_am); const w = m.get(t) || { Absage: 0, Offen: 0, Einladung: 0 }; w[bucket(b)]++; m.set(t, w); }
+  const weeks = [];
+  for (let t = Math.min(...m.keys()); t <= Math.max(...m.keys()); t += 6048e5) weeks.push({ t, ...(m.get(t) || { Absage: 0, Offen: 0, Einladung: 0 }) });
+  const W = Math.max(260, box.clientWidth), H = 190, ml = 28, mr = 8, mt = 10, mb = 44;
+  const maxY = Math.max(1, ...weeks.map((w) => w.Absage + w.Offen + w.Einladung));
+  const stepY = maxY > 12 ? 5 : maxY > 5 ? 2 : 1, top = Math.ceil(maxY / stepY) * stepY;
+  const y = (v) => H - mb - (v / top) * (H - mt - mb);
+  const band = (W - ml - mr) / weeks.length, bw = Math.min(40, band * 0.6);
+  const svg = svgEl('svg', { width: '100%', viewBox: `0 0 ${W} ${H}`, role: 'img', 'aria-label': 'Versendete Bewerbungen pro Kalenderwoche' });
+  for (let v = 0; v <= top; v += stepY) {
+    svg.append(svgEl('line', { x1: ml, x2: W - mr, y1: y(v), y2: y(v), stroke: '#121212', 'stroke-width': v ? 1 : 3, 'stroke-dasharray': v ? '3 4' : '', opacity: v ? 0.35 : 1 }));
+    const t = svgEl('text', { x: ml - 8, y: y(v), dy: '0.35em', 'text-anchor': 'end' }); t.textContent = v; svg.append(t);
+  }
+  const tip = el('div', 'tip'); tip.hidden = true;
+  weeks.forEach((w, i) => {
+    const x = ml + band * i + (band - bw) / 2, total = w.Absage + w.Offen + w.Einladung;
+    if (total) {
+      svg.append(svgEl('rect', { x: x + 4, y: y(total) + 4, width: bw, height: y(0) - y(total) - 4, fill: '#121212' }));
+      let acc = 0;
+      for (const [k, c] of STACK) { if (!w[k]) continue; const r = svgEl('rect', { x, y: y(acc + w[k]), width: bw, height: y(acc) - y(acc + w[k]), stroke: '#121212', 'stroke-width': 2.5 }); r.style.fill = c; svg.append(r); acc += w[k]; }
+      const n = svgEl('text', { x: x + bw / 2, y: y(total) - 7, 'text-anchor': 'middle' }); n.textContent = total; svg.append(n);
+    }
+    const lab = svgEl('text', { x: x + bw / 2, y: H - mb + 18, 'text-anchor': 'middle' }); lab.textContent = 'KW ' + isoWeek(w.t); svg.append(lab);
+    const hit = svgEl('rect', { x: ml + band * i, y: mt, width: band, height: H - mt - mb, fill: 'transparent' });
+    hit.addEventListener('mousemove', (ev) => {
+      tip.textContent = `KW ${isoWeek(w.t)}: ${total} versendet · ${w.Einladung} Einladung · ${w.Absage} Absage · ${w.Offen} offen`;
+      tip.hidden = false;
+      const r = box.getBoundingClientRect();
+      tip.style.left = Math.max(0, Math.min(ev.clientX - r.left + 12, box.clientWidth - tip.offsetWidth)) + 'px';
+      tip.style.top = Math.max(0, ev.clientY - r.top - 40) + 'px';
+    });
+    hit.addEventListener('mouseleave', () => { tip.hidden = true; });
+    svg.append(hit);
+  });
+  let lx = ml;
+  for (const [k, c] of [...STACK].reverse()) {
+    const sw = svgEl('rect', { x: lx, y: H - 14, width: 12, height: 12, stroke: '#121212', 'stroke-width': 2 }); sw.style.fill = c; svg.append(sw);
+    const t = svgEl('text', { x: lx + 18, y: H - 8, dy: '0.35em' }); t.textContent = k; svg.append(t);
+    lx += 30 + k.length * 7.5;
+  }
+  box.append(svg, tip);
+}
+
+function renderTable() {
+  const q = $('#q').value.trim().toLowerCase(), f = $('#filter').value;
+  const base = view === 'todo' ? rows.filter((r) => TODO.includes(r.status)) : rows;
+  $('#n-todo').textContent = rows.filter((r) => TODO.includes(r.status)).length;
+  $('#n-alle').textContent = rows.length;
+  document.querySelectorAll('.seg button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.view === view)));
+  $('#list-title').textContent = view === 'todo' ? 'Deine To-dos' : 'Alle Bewerbungen';
+  const list = base.filter((r) => (!q || [r.firma, r.stelle, r.ort, r.weg, r.naechster_schritt, r.notiz].join(' ').toLowerCase().includes(q))
+    && (!f || (f === 'offen' ? isOpen(r) : r.status === f)));
+  const key = (r) => (sortF ? r[sortF] : r.versendet_am || r.entworfen_am || r.vorgeschlagen_am);
+  list.sort((a, c) => {
+    const va = key(a), vc = key(c);
+    if (!va && !vc) return 0; if (!va) return 1; if (!vc) return -1;
+    const d = sortF === 'status' ? STATUS.indexOf(va) - STATUS.indexOf(vc) : typeof va === 'number' && typeof vc === 'number' ? va - vc : String(va).localeCompare(String(vc), 'de');
+    return sortF && asc ? d : -d;
+  });
+  document.querySelectorAll('#table th[data-f]').forEach((th) => { if (th.dataset.f === sortF) th.setAttribute('aria-sort', asc ? 'ascending' : 'descending'); else th.removeAttribute('aria-sort'); });
+  $('#count').textContent = `${list.length} von ${base.length}`;
+  $('#th-edit').hidden = !canWrite;
+  if (!list.length) {
+    const td = el('td', null, view === 'todo' && !q && !f ? 'Nichts zu tun: keine Vorschläge, Entwürfe, Einladungen oder Angebote offen.' : 'Keine Bewerbung passt zu Suche oder Filter.');
+    td.colSpan = 8; const tr = document.createElement('tr'); tr.append(td);
+    $('#tbody').replaceChildren(tr); return;
+  }
+  $('#tbody').replaceChildren(...list.map((r) => {
+    const tr = document.createElement('tr');
+    const firma = el('td');
+    if (typeof r.link === 'string' && /^https:\/\//.test(r.link)) { const a = el('a', null, r.firma || '–'); a.href = r.link; a.target = '_blank'; a.rel = 'noopener'; firma.append(a); }
+    else firma.append(el('span', 'firm', r.firma || '–'));
+    const st = el('td');
+    if (canWrite) {
+      const s = el('select', 'status-select ' + (TONE[r.status] || ''));
+      s.setAttribute('aria-label', 'Status ' + (r.firma || ''));
+      STATUS.forEach((x) => s.append(new Option(x, x)));
+      s.value = r.status;
+      s.addEventListener('change', () => save(r.id, withDates(r, { status: s.value }), `${r.firma}: ${s.value}`));
+      st.append(s);
+      if (r.status === 'Vorschlag') {
+        const go = el('button', 'btn mini', 'Bewerbung erstellen'); go.type = 'button';
+        go.addEventListener('click', () => save(r.id, { status: 'Angefordert', angefordert_am: today() }, `${r.firma}: Bewerbung angefordert`));
+        st.append(go);
+      }
+    } else st.append(el('span', 'pill ' + (TONE[r.status] || ''), r.status || '–'));
+    tr.append(firma, el('td', null, r.stelle || '–'), st, el('td', 'date', deDate(r.versendet_am)), el('td', 'date hide-sm', deDate(r.antwort_am)), numCell(r.match, fmtMatch, matchTone), numCell(r.score, fmtScore, scoreTone));
+    if (canWrite) { const td = el('td'), b = el('button', 'edit', 'Bearbeiten'); b.type = 'button'; b.addEventListener('click', () => openDialog(r)); td.append(b); tr.append(td); }
+    return tr;
+  }));
+}
+
+function numCell(v, fmt, tone) { const td = el('td', 'num'); td.append(v == null ? document.createTextNode('–') : el('span', 'pill ' + tone(v), fmt(v))); return td; }
+
+function renderAll() { const k = renderStats(); renderFunnel(k); renderWeeks(); renderTable(); }
+
+// Fehlende Daten beim Statuswechsel auf heute setzen
+function withDates(r, patch) {
+  const s = patch.status, t = today(), out = { ...patch };
+  const has = (f) => (f in patch ? patch[f] : r[f]);
+  if (!PRE.includes(s) && !has('versendet_am')) out.versendet_am = t;
+  if ((s === 'Einladung' || s === 'Angebot') && !has('einladung_am')) out.einladung_am = t;
+  if (['Einladung', 'Angebot', 'Absage'].includes(s) && !has('antwort_am')) out.antwort_am = t;
+  if (s === 'Absage' && r.status !== 'Absage' && !('naechster_schritt' in patch)) out.naechster_schritt = 'Abgeschlossen';
+  return out;
+}
+
+let toastTimer;
+function toast(msg, err) { const t = $('#toast'); t.textContent = msg; t.classList.toggle('err', !!err); t.hidden = false; clearTimeout(toastTimer); toastTimer = setTimeout(() => { t.hidden = true; }, 2600); }
+
+async function save(id, patch, msg) {
+  try { await db.collection('bewerbungen').doc(id).update(patch); toast(msg ? 'Gespeichert: ' + msg : 'Gespeichert'); }
+  catch (e) { toast(e?.code === 'invalid_argument' ? 'Keine Berechtigung zum Speichern.' : 'Nicht gespeichert, bitte nochmal versuchen.', true); renderTable(); }
+}
+
+const slug = (s) => s.replace(/ä/g, 'ae').replace(/ö/g, 'oe').replace(/ü/g, 'ue').replace(/Ä/g, 'Ae').replace(/Ö/g, 'Oe').replace(/Ü/g, 'Ue').replace(/ß/g, 'ss').replace(/[^A-Za-z0-9_\-]/g, '').slice(0, 80) || 'bewerbung';
+
+function openDialog(r) {
+  editing = r;
+  $('#dlg-title').textContent = r ? 'Bewerbung bearbeiten' : 'Bewerbung eintragen';
+  for (const f of FIELDS) $('#f-' + f).value = r ? (r[f] ?? '') : f === 'status' ? 'Versendet' : f === 'versendet_am' ? today() : '';
+  const del = $('#del'); del.hidden = !r; del.classList.remove('armed'); del.textContent = 'Löschen';
+  $('#dlg').showModal();
+}
+$('#add').addEventListener('click', () => openDialog(null));
+$('#cancel').addEventListener('click', () => $('#dlg').close());
+$('#del').addEventListener('click', async () => {
+  const del = $('#del');
+  if (!del.classList.contains('armed')) { del.classList.add('armed'); del.textContent = 'Wirklich löschen?'; return; }
+  try { await db.collection('bewerbungen').doc(editing.id).delete(); $('#dlg').close(); toast('Gelöscht: ' + editing.firma); }
+  catch { toast('Nicht gelöscht, bitte nochmal versuchen.', true); }
+});
+$('#form').addEventListener('submit', async (ev) => {
+  ev.preventDefault();
+  const v = {};
+  for (const f of FIELDS) { const x = $('#f-' + f).value.trim(); v[f] = x === '' ? null : NUM.includes(f) ? Number(x) : x; }
+  if (!v.firma) { $('#f-firma').focus(); toast('Bitte eine Firma eintragen.', true); return; }
+  if (v.link && !/^https:\/\//.test(v.link)) { $('#f-link').focus(); toast('Der Link muss mit https:// beginnen.', true); return; }
+  if (editing) {
+    const patch = {};
+    for (const f of FIELDS) if ((editing[f] ?? null) !== v[f]) patch[f] = v[f];
+    if (!Object.keys(patch).length) { $('#dlg').close(); return; }
+    $('#dlg').close();
+    await save(editing.id, patch.status ? withDates(editing, patch) : patch, editing.firma);
+  } else {
+    const base = slug((v.versendet_am || today()) + '_' + v.firma);
+    let id = base, n = 2;
+    while (rows.some((r) => r.id === id)) id = base + '-' + n++;
+    const doc = withDates({}, { ...v, entworfen_am: v.status === 'Entworfen' ? today() : null });
+    for (const f of FIELDS) if (!(f in doc)) doc[f] = v[f];
+    try { await db.collection('bewerbungen').doc(id).set(doc); $('#dlg').close(); toast('Eingetragen: ' + v.firma); }
+    catch (e) { toast(e?.code === 'quota_exceeded' ? 'Datenbank voll, bitte alte Einträge löschen.' : 'Nicht gespeichert, bitte nochmal versuchen.', true); }
+  }
+});
+
+$('#q').addEventListener('input', renderTable);
+$('#filter').addEventListener('change', renderTable);
+document.querySelectorAll('.seg button').forEach((b) => b.addEventListener('click', () => {
+  view = b.dataset.view;
+  try { localStorage.setItem('ansicht', view); } catch {}
+  renderTable();
+}));
+document.querySelectorAll('#table th[data-f] button').forEach((b) => b.addEventListener('click', () => {
+  const f = b.parentElement.dataset.f;
+  asc = sortF === f ? !asc : ['firma', 'stelle', 'naechster_schritt'].includes(f);
+  sortF = f; renderTable();
+}));
+let rw; new ResizeObserver(() => { clearTimeout(rw); rw = setTimeout(renderWeeks, 120); }).observe($('#weeks'));
+
+renderAll();
+(async () => {
+  db = window.claude ? await window.claude.use('db') : null;
+  if (!db) {
+    $('#take').textContent = 'Die Bewerbungen sind nur angemeldet auf claude.ai sichtbar.';
+    const b = $('#banner'); b.textContent = 'Keine Verbindung zur Datenbank. Öffne die Seite angemeldet über claude.ai.'; b.hidden = false;
+    return;
+  }
+  const user = await window.claude.use('user');
+  if (user) { const w = await user.can('data.write'); canWrite = (await user.isOwner()) || w !== false; }
+  $('#add').hidden = !canWrite;
+  $('#table-note').textContent = canWrite ? 'Status direkt in der Tabelle ändern, Details über „Bearbeiten“' : 'Nur ansehen: Ändern kann nur der Besitzer';
+  db.collection('bewerbungen').onSnapshot((snap) => {
+    rows = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+    renderAll();
+  }, () => { const b = $('#banner'); b.textContent = 'Die Verbindung zur Datenbank ist abgerissen. Lade die Seite neu.'; b.hidden = false; });
+})();
+</script>

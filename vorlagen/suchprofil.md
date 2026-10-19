@@ -1,7 +1,7 @@
 # Suchprofil {Name}
 
 <!-- Vorlage. Wird nach daten/suchprofil.md kopiert und bei der Einrichtung gefüllt.
-     Gelesen von stellenanalyse (Ausschlüsse, Match-Grenze) und der Routine Stellensuche (alles).
+     Gelesen von stellenanalyse (Ausschlüsse, Match-Grenze) und Skill stellensuche (alles).
      Nur der Nutzer ändert Ausschlüsse und Match-Grenze. -->
 
 ## Ort und Arbeitsmodell
@@ -23,6 +23,11 @@
 ## Nur als Risiko markieren
 <!-- Kein Ausschluss, aber in analyse.md und Tracker-Notiz vermerken. -->
 -
+
+## Quellen
+- Bundesagentur für Arbeit: ja (kostenlos)
+- Apify (LinkedIn, Indeed, StepStone-Details, Portale über Google): nein <!-- ja = Apify-Connector nötig, kostet ca. 0,50–2 $ pro Suchlauf -->
+- XING, StepStone-Suchseiten: ja (kostenlos)
 
 ## Match und Zeitraum
 - Vorschlagen ab Match: 70 %

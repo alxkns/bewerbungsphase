@@ -1,6 +1,6 @@
 ---
 name: einrichtung
-description: Ersteinrichtung für neue Nutzer. Prüft Voraussetzungen, legt daten/ an, fragt das Suchprofil ab (Position, Ort, Umkreis, Remote, Arbeitszeit, Gehalt, Ausschlüsse), baut aus dem hochgeladenen Lebenslauf (PDF/Word) den Master-Lebenslauf und den Briefkopf und macht einen PDF-Probedruck. Nutzen beim ersten Start, wenn daten/profil.md fehlt, bei „richte ein“, „los geht's“, „neuer Lebenslauf“ oder „Suchprofil ändern“.
+description: Ersteinrichtung für neue Nutzer. Prüft Voraussetzungen, legt daten/ an, fragt das Suchprofil ab (Position, Ort, Umkreis, Remote, Arbeitszeit, Gehalt, Ausschlüsse), baut aus dem hochgeladenen Lebenslauf (PDF/Word) den Master-Lebenslauf und den Briefkopf und macht einen PDF-Probedruck; richtet Dashboard und geplante Routinen ein. Nutzen beim ersten Start, wenn daten/profil.md fehlt, bei „richte ein“, „los geht's“, „neuer Lebenslauf“ oder „Suchprofil ändern“.
 ---
 
 # Einrichtung: vom leeren Repo zum ersten Probedruck
@@ -26,7 +26,7 @@ Fehlt etwas: dem Nutzer den Befehl nennen, nicht selbst installieren.
 
 ```bash
 mkdir -p daten/bewerbungen/_vorlage/assets
-cp -n vorlagen/profil.md vorlagen/suchprofil.md daten/
+cp -n vorlagen/profil.md vorlagen/suchprofil.md vorlagen/prozess-learnings.md daten/
 cp -n vorlagen/lebenslauf.html vorlagen/anschreiben.html daten/bewerbungen/_vorlage/
 ```
 
@@ -58,7 +58,8 @@ Daraus `daten/suchprofil.md` füllen:
 - **Harte Ausschlüsse:** nur, was der Nutzer in Frage 3 genannt hat, plus Ortsregel aus Runde 2. Nichts dazu erfinden.
 - **Nur als Risiko markieren:** Frage 4.
 - **Match-Grenze:** 70 % als Standard, erklären, dass der Nutzer sie ändern kann.
-- **Tracker:** leer lassen (wird mit dem Dashboard eingerichtet).
+- **Tracker:** leer lassen (füllt Schritt 7).
+- **Quellen:** Bundesagentur und XING/StepStone auf „ja“. Apify nur auf „ja“, wenn der Nutzer es will und den Apify-Connector verbunden hat (Kosten pro Suchlauf nennen, LinkedIn-Abruf verstößt gegen deren Nutzungsbedingungen).
 
 Gehalt, Eintritt, Kündigungsfrist, Ort/Remote und Arbeitszeit zusätzlich in `daten/profil.md` → „Eckdaten“.
 
@@ -105,9 +106,47 @@ pdftoppm -r 50 -png "$T"/Anschreiben_*.pdf <scratchpad>/probe-brief
 
 Vorschau-PNGs ansehen: Kopf, Foto, Unterschrift, Umbrüche, keine `{Platzhalter}` mehr außer den `[eckigen]` im Anschreiben. Fehler beheben, dann dem Nutzer die erste Seite des Lebenslaufs zeigen und fragen, ob Inhalt und Kopf stimmen. Erst nach seinem Ok den Ordner `0000-00-00_Probedruck` löschen.
 
-## 7. Übergabe
+## 7. Dashboard (Bewerbungs-Tracker)
 
-Kurz im Chat: was eingerichtet ist, was fehlt (Voraussetzungen, Foto, Unterschrift, offene Punkte im Lebenslauf). Dann den nächsten Schritt vorschlagen:
+Das Dashboard ist `dashboard/tracker.html`: Kennzahlen, Trichter, Versand pro Woche und eine Tabelle aller Bewerbungen, in der der Nutzer Status ändert und Vorschläge per „Bewerbung erstellen“ anfordert. Es läuft als privates claude.ai-Artifact mit eigener Datenbank (Collection `bewerbungen`), auch am Handy. Die Routinen lesen und schreiben dieselbe Datenbank.
+
+Nutzer fragen, ob er es will (braucht ein claude.ai-Konto mit Artifacts). Ja:
+1. Skill `artifact-capabilities` laden (Pflicht, bevor `capabilities` übergeben werden).
+2. `Artifact` publish mit `file_path` `dashboard/tracker.html`, `icon` „chart“, `description` „Bewerbungen, Status und Quoten auf einen Blick“ und
+   `capabilities` `{"db": {"rules": [{"path": "", "read": "view", "write": "owner"}]}, "user": {}}`.
+3. Die URL aus dem Ergebnis in `daten/suchprofil.md` → „Tracker“ eintragen. Anbieten, das Dashboard anzupinnen (nur auf Ja).
+4. Steht `capabilities` laut Ergebnis nicht zur Verfügung: Schritt abbrechen, dem Nutzer sagen, dass es ohne Dashboard geht (Bewerbungen auf Zuruf mit Skill `bewerbung`, ohne Routinen 1–3 in Schritt 8).
+
+Spätere Updates von `dashboard/tracker.html` (nach `git pull`): erneut publishen mit `url` = Tracker-URL. Die Daten bleiben erhalten.
+
+## 8. Automatik (geplante Routinen)
+
+Nur mit Dashboard aus Schritt 7. Per `AskUserQuestion` (multiSelect) fragen, welche Routinen laufen sollen:
+
+| Routine | Skill | Vorschlag Zeitplan | cron |
+|---|---|---|---|
+| Neue Stellen suchen und vorschlagen | `stellensuche` | werktags 7 Uhr | `0 7 * * 1-5` |
+| Angeforderte Bewerbungen bauen | `bewerbungen-erstellen` | stündlich 8–22 Uhr | `0 8-22 * * *` |
+| Gmail nach Antworten durchsuchen | `gmail-abgleich` | 8 und 18 Uhr | `0 8,18 * * *` |
+
+Gmail-Abgleich nur anbieten, wenn Gmail-Tools da sind (ToolSearch „gmail search_threads“), sonst sagen, dass er den Gmail-Connector braucht.
+
+Anlegen:
+1. `mcp__scheduled-tasks__list_scheduled_tasks` und `…__create_scheduled_task` per ToolSearch laden. Erst listen: Gibt es schon eine Aufgabe mit derselben `taskId`, den Nutzer fragen, nie überschreiben.
+2. Je Routine `create_scheduled_task` mit `taskId` `bewerbung-<skill>`, `title` aus der Tabelle, `description` = Spalte „Routine“, `cronExpression` (oder die Zeit, die der Nutzer will) und diesem `prompt` (`<Projektordner>` = absoluter Pfad, per `pwd`):
+   ```
+   Projektordner: <Projektordner>
+   Wechsle per cd in diesen Ordner und arbeite nur dort. Lies .claude/skills/<skill>/SKILL.md und befolge es vollständig. Antworte auf Deutsch, kurz.
+   ```
+   Der Auftrag enthält bewusst keine Logik: Nach einem `git pull` gilt sofort die neue Fassung des Skills.
+3. Dem Nutzer sagen:
+   - Routinen laufen nur, wenn die Claude-Desktop-App offen ist; verpasste Läufe holt sie beim nächsten Start nach.
+   - Ohne passenden Berechtigungsmodus bleiben Läufe an Freigaben hängen (Bash, Dateien, Datenbank). Empfehlung: Routinen im Auto-Modus anlegen bzw. die Freigaben beim ersten Lauf erteilen.
+   - Jede Routine schreibt ihr Log nach `daten/prozess-learnings.md`. Dort stehen auch Vorschläge an den Nutzer.
+
+## 9. Übergabe
+
+Kurz im Chat: was eingerichtet ist, was fehlt (Voraussetzungen, Foto, Unterschrift, offene Punkte im Lebenslauf, Dashboard, Routinen). Dann den nächsten Schritt vorschlagen:
 1. `marktanalyse`: passende Anzeigen sammeln und auswerten, was der Markt verlangt
 2. `kennenlernen`: Interview, das `profil.md` füllt (braucht die Marktanalyse für gezielte Fragen)
 

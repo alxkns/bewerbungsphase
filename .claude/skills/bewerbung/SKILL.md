@@ -81,7 +81,7 @@ Einzige Liste aller Bewerbungen ist die Datenbank des Bewerbungs-Trackers: URL i
 ```
 
 Status (genau so schreiben): Vorschlag → Angefordert → In Arbeit → Entworfen → Versendet → Eingang bestätigt → Einladung → Angebot, oder Absage / Zurückgezogen / Verworfen.
-- Automatik: Routine Stellensuche legt neue Stellen als „Vorschlag“ an (mit `anzeige.md`, `analyse.md`, `vorgeschlagen_am`). Der Nutzer klickt im Dashboard „Bewerbung erstellen“ → „Angefordert“. Routine Erstellen baut daraus die Mappe → „Entworfen“. „Verworfen“ = Vorschlag abgelehnt, wird nicht erneut vorgeschlagen.
+- Automatik (Einrichtung Schritt 8): Skill `stellensuche` legt neue Stellen als „Vorschlag“ an (mit `anzeige.md`, `analyse.md`, `vorgeschlagen_am`). Der Nutzer klickt im Dashboard „Bewerbung erstellen“ → „Angefordert“. Skill `bewerbungen-erstellen` baut daraus die Mappe → „Entworfen“. Skill `gmail-abgleich` hält Versand, Einladungen und Absagen aktuell. „Verworfen“ = Vorschlag abgelehnt, wird nicht erneut vorgeschlagen.
 - `versendet_am`: Tag des Absendens (Portal-Bestätigung per Mail zählt).
 - `match`: Match aus `analyse.md` in % (Zahl). `score`: Endnote des Recruiter-Checks (/10, Zahl mit einer Nachkommastelle, z. B. 8.6), sonst null. Beide zeigt das Dashboard als Spalten.
 - `antwort_am`: erste echte Rückmeldung (Einladung oder Absage), nicht die automatische Eingangsbestätigung.
