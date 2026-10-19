@@ -36,7 +36,7 @@ Einsteller suchen neben der fachlichen Passung Menschen, die überdurchschnittli
 
 **Regel fürs Anschreiben:** Von den 3 Eigenschaften ist immer eine „Ergebnisse statt Aufgaben“, egal was die Anzeige betont. Fehlt dem Nutzer ein gefordertes Tool oder Fachwissen, ersetzt „Lerntempo“ eine der anderen beiden, sonst „Eigeninitiative“, wenn die Anzeige Eigenverantwortung, Gestaltungswille oder Hands-on nennt. Nur mit Beleg aus „Eigenschaften und Belege“ in `profil.md`, als Verhalten in einem Satz, nie als Adjektiv („Macher“, „High Performer“, „mit Biss“). Fehlt der Beleg: weglassen und als Fakten-Frage notieren. Eigene Festlegungen unter „Stil-Vorlieben“ in `profil.md` gehen vor.
 
-**Stärkste wahre Fassung.** Jeden Beleg so formulieren, wie er maximal stimmt: Wirkung vor Tätigkeit, volle Verantwortung benennen, Tempo oder Vergleich nennen, wenn belegt („nach drei Monaten eigenständig verantwortet“, „mehr Projekte mit gleichem Team“). Bescheidene Wörter des Nutzers („nur“, „ein bisschen“, „mitgeholfen“) nicht übernehmen, wenn die Fakten mehr hergeben. Die Grenze ist der Beleg: nichts darüber hinaus. Gilt auch für den Lebenslauf.
+**Stärkste wahre Fassung.** Jeden Beleg so formulieren, wie er maximal stimmt: Wirkung vor Tätigkeit, volle Verantwortung benennen, Tempo oder Vergleich nennen, wenn belegt („nach drei Monaten eigenständig verantwortet“, „mehr Projekte mit gleichem Team“). Bescheidene Wörter des Nutzers („nur“, „ein bisschen“, „mitgeholfen“) nicht übernehmen, wenn die Fakten mehr hergeben. Zahlen in der Einheit, die die Leistung zeigt (Steigerung, Vergleich), nie hochgerechnet. Die Grenze ist der Beleg: nichts darüber hinaus. Gilt auch für den Lebenslauf.
 
 ## Floskel-Blacklist (nie verwenden)
 

@@ -65,7 +65,7 @@ Vier Absätze, entlang der vier Fragen aus dem Grundsatz.
 
 **4. Schluss.** Keine Einschränkungen (Präsenz, Pendeln, Reisen, Teilzeit-Bedingungen): Die klärt der Nutzer im Gespräch. Der letzte Eindruck ist Vorfreude, keine Bedingung.
 - Eintrittstermin nach `profil.md`, „Eckdaten“ (z. B. „Ich kann ab dem 01.12. bei euch starten.“ oder „Starten kann ich mit einem Monat Vorlauf.“).
-- Gehaltsvorstellung **nur wenn gefordert**: „Meine Gehaltsvorstellung liegt bei X € brutto im Jahr.“ (eine Zahl oder enge Spanne, nie raten). Wert und Rahmen aus `profil.md`. Liegt die Spanne der Anzeige höher, höher ansetzen. Bei Teilzeit anteilig umrechnen.
+- Gehaltsvorstellung **nur wenn gefordert**: „Meine Gehaltsvorstellung liegt bei X € brutto im Jahr.“ (eine Zahl oder enge Spanne, nie raten). Wert nach der Regel „Welche Zahl in Bewerbungen“ im Skill `gehaltsverhandlung`. Bei Teilzeit anteilig umrechnen.
 - Aktiver Abschluss: Du „… und freue mich darauf, euch kennenzulernen.“ / Sie „… und freue mich darauf, Sie kennenzulernen.“ Nicht „Lasst uns sprechen.“
 
 ## Ansprache konsequent durchziehen

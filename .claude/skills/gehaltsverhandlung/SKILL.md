@@ -24,6 +24,7 @@ Ergebnis als Spanne: 25. Perzentil · Median · 75. Perzentil für die **Zielrol
 
 ## 3. Gehaltsvorstellung nennen
 - **Anschreiben** (nur wenn gefordert): eine Zahl oder enge Spanne (max. ~10 %): „Meine Gehaltsvorstellung liegt bei X € brutto im Jahr.“
+- **Welche Zahl in Bewerbungen** (Anschreiben, Portal-Feld), damit jede Bewerbung gleich ansetzt: Eigene Regel unter „Eckdaten“ in `profil.md` geht vor. Sonst der Standardwert. Nennt die Anzeige eine Spanne, deren Mitte über dem Standard liegt: Mitte der Spanne, höchstens die Obergrenze des Rahmens. Nie unter der Untergrenze. Wert und Grund in `analyse.md` notieren.
 - **Gespräch:** Zielwert ~5–10 % über dem, was der Nutzer mindestens will. Zahl nennen, dann schweigen.
   - Sie: „Ich gehe von X € brutto im Jahr aus. Das orientiert sich an der Verantwortung der Rolle und dem, was ich mitbringe.“
   - Du: „Ich hab an X € brutto im Jahr gedacht, passend zu dem, was die Rolle verlangt und was ich mitbringe.“

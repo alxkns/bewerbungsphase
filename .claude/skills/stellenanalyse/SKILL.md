@@ -27,7 +27,10 @@ Daraus entstehen zusammen mit „Unternehmen verstehen“ (Skill `unternehmensan
 - Gefordert: Eintrittstermin? Gehaltsvorstellung? Zeugnisse? Anschreiben überhaupt? Ist ein Pflicht-Upload dabei, den der Nutzer laut `profil.md` nicht liefern will: im Zweifel Bewerbungsformular vorab prüfen.
 - Ort, Remote-Anteil, Vollzeit/Teilzeit, befristet?, Gehaltsspanne (falls genannt)
 
-**Harte Ausschlüsse und Risiken:** aus `daten/suchprofil.md` (Abschnitte „Ort und Arbeitsmodell“, „Harte Ausschlüsse“, „Nur als Risiko markieren“). Ein harter Ausschluss beendet die Bewertung, Risiken werden vermerkt.
+**Harte Ausschlüsse und Risiken:** aus `daten/suchprofil.md` (Abschnitte „Ort und Arbeitsmodell“, „Harte Ausschlüsse“, „Nur als Risiko markieren“). Ein harter Ausschluss beendet die Bewertung, Risiken werden vermerkt. Prüfregeln:
+- **Firmengröße:** über LinkedIn-Firmenseite, Karriereseite oder Northdata. Nicht feststellbar: kein Ausschluss, Notiz „Größe klären“.
+- **Gehalt:** Obergrenze der Spanne (Teilzeit auf Vollzeit hochgerechnet) gegen die Grenze im Suchprofil. Ohne Gehaltsangabe kein Ausschluss, Notiz „Gehalt klären“.
+- **Personalvermittler:** Nennt die Anzeige den Kunden, den Kunden wie einen direkten Arbeitgeber prüfen (Größe, Gehalt, Ausschlüsse). Ohne Kundennamen nach Suchprofil; steht dort nichts, als Risiko „Kunde unbekannt“ vermerken.
 
 ## 2. Kriterien einordnen
 
@@ -44,7 +47,7 @@ Fachbegriffe und Tools in **exakter Schreibweise** der Anzeige sammeln (für Leb
 
 Gibt es `daten/markt.md`: Begriffe, die dort häufig sind, haben Vorrang, und die Schreibweise der Anzeige geht vor der des Marktes.
 
-**Gesuchte Eigenschaften:** Die 3–4 Eigenschaften aus der Tabelle „Eigenschaften und Belege“ in `profil.md`, die die Anzeige am stärksten betont (Häufigkeit, Reihenfolge, Muss), mit dem passenden Beleg festhalten. Sie steuern, was das Anschreiben zeigt. Verlangt die Anzeige eine Eigenschaft, die in der Tabelle fehlt: als offene Frage an den Nutzer notieren. Danach die 3 Eigenschaften fürs Anschreiben festlegen: zuerst die A-Merkmale nach `bewerbung/stil.md` (immer „Ergebnisse statt Aufgaben“, je nach Anzeige „Lerntempo“ oder „Eigeninitiative“), den Rest aus den gesuchten. Fehlt der Beleg für ein A-Merkmal: offene Frage an den Nutzer.
+**Gesuchte Eigenschaften:** Die 3–4 Eigenschaften aus der Tabelle „Eigenschaften und Belege“ in `profil.md`, die die Anzeige am stärksten betont (Häufigkeit, Reihenfolge, Muss), mit dem passenden Beleg festhalten. Sie steuern, was das Anschreiben zeigt. Verlangt die Anzeige eine Eigenschaft, die in der Tabelle fehlt: als offene Frage an den Nutzer notieren. Danach die 3 Eigenschaften fürs Anschreiben festlegen: zuerst die A-Merkmale nach `bewerbung/stil.md` (immer „Ergebnisse statt Aufgaben“, je nach Anzeige „Lerntempo“ oder „Eigeninitiative“), den Rest aus den gesuchten. Fehlt der Beleg für ein A-Merkmal: offene Frage an den Nutzer. Welcher Aspekt vorne steht, sagt „Zielrollen“ in `profil.md` (bei einem Wechsel auch „Wechsel“).
 
 ## 4. Match berechnen
 Muss-Kriterien zählen 70 %, Kann-Kriterien 30 %. Pro Kriterium: ✅ erfüllt (Beleg aus Lebenslauf nennen) · 🟡 teilweise/übertragbar · ❌ fehlt.

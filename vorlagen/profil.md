@@ -17,6 +17,8 @@
 ## Zielrollen
 <!-- Rollentitel, die passen. Liefert auch Suchbegriffe für daten/suchprofil.md. -->
 
+**Welcher Aspekt je Zielrolle vorne steht:** <!-- Bei mehreren Zielrollen: je Rolle der Aspekt und Beleg, der zuerst kommt. -->
+
 ## Eckdaten
 | Feld | Wert |
 |---|---|
@@ -24,9 +26,12 @@
 | Anschrift, Telefon, E-Mail | |
 | Frühester Eintritt | |
 | Kündigungsfrist | |
-| Gehaltsvorstellung (Jahresbrutto) | Standard: · Rahmen: · Untergrenze im Gespräch: |
+| Gehaltsvorstellung (Jahresbrutto) | Standard: · Rahmen: · Höher ansetzen, wenn: · Untergrenze im Gespräch: |
 | Ort / Remote | |
 | Arbeitszeit | |
+| Wochenstunden bei Vollzeit | |
+| Geburtsdatum (nur für Pflichtfelder in Portalen, nie in die Unterlagen) | |
+| Staatsangehörigkeit / Arbeitserlaubnis | |
 | Sprachen (mit Niveau, schriftlich/mündlich) | |
 
 Fehlt ein Wert und wird er gebraucht: den Nutzer fragen, Antwort hier eintragen.

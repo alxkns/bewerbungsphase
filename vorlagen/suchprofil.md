@@ -34,6 +34,7 @@
 ## Match und Zeitraum
 - Vorschlagen ab Match: 70 %
 - Anzeigen nicht älter als: 7 Tage
+- Höchstens neue Vorschläge pro Kalenderwoche: <!-- leer = kein Limit -->
 
 ## Tracker
 - Art: lokal <!-- lokal = daten/tracker/ (JSON je Bewerbung), Dashboard = dashboard/tracker.html direkt im Browser, jede KI · claude.ai = Artifact mit Datenbank, auch am Handy, nur Claude -->

@@ -39,7 +39,7 @@ git config core.hooksPath .githooks
 
 ## 3. Suchprofil abfragen → `daten/suchprofil.md`
 
-Kurz erklären, was gleich passiert (Suchprofil, dann Lebenslauf), dann in zwei Runden fragen. Freitext im Chat, feste Auswahl als Auswahlfrage (siehe `AGENTS.md`, „Werkzeuge“).
+Kurz erklären, was gleich passiert (Suchprofil, dann Lebenslauf), dann in drei Runden fragen. Freitext im Chat, feste Auswahl als Auswahlfrage (siehe `AGENTS.md`, „Werkzeuge“).
 
 **Runde 1, im Chat (Freitext, eine Nachricht):**
 1. Welche Position(en) suchst du? Gern mehrere Titel oder eine Beschreibung der Arbeit.
@@ -56,12 +56,19 @@ Kurz erklären, was gleich passiert (Suchprofil, dann Lebenslauf), dann in zwei 
 - Außerhalb des Umkreises: nur vollständig remote · auch hybrid mit Pendeln · gar nicht
 - Arbeitszeit: Vollzeit · Teilzeit (ab wie vielen Std. per „Other“) · beides
 
+**Runde 3, als Auswahlfragen (Filter für die Stellensuche):**
+- Firmengröße mindestens: egal · ab 50 Mitarbeitern · ab 200 · ab 1.000 (Ausnahmen, z. B. finanzierte Start-ups, per „Other“)
+- Gehaltsspanne, deren Obergrenze unter der Untergrenze aus Frage 6 liegt: aussortieren · nur als Risiko markieren
+- Personalvermittler ohne Kundennamen: aussortieren · nur als Risiko markieren · egal
+- Neue Vorschläge pro Woche höchstens: 5 · 10 · 20 · kein Limit
+
 Daraus `daten/suchprofil.md` füllen:
 - **Ort und Arbeitsmodell:** alle Antworten aus Runde 2, auch die Arbeitszeit. Die Arbeitszeit ist kein eigener Ausschluss-Eintrag.
 - **Zielrollen:** die Positionen aus Frage 1, zusätzlich in `daten/profil.md` → „Zielrollen“. **Wunschumfeld:** Frage 5.
 - **Suchbegriffe:** aus den Positionen 5–10 kurze Begriffe aus ein bis zwei Wörtern ableiten. Jobbörsen suchen wörtlich: Zusammengesetzte Wörter getrennt schreiben („Kampagnen Manager“ statt „Kampagnenmanager“), die männliche Form reicht, Reihenfolge ist egal. Deutsche und englische Titel, wenn der Markt beide nutzt. Dem Nutzer zur Bestätigung zeigen. Die Marktanalyse schärft sie später nach.
-- **Harte Ausschlüsse:** nur, was der Nutzer in Frage 3 genannt hat, plus Ortsregel aus Runde 2. Nichts dazu erfinden.
-- **Nur als Risiko markieren:** Frage 4.
+- **Harte Ausschlüsse:** nur, was der Nutzer in Frage 3 genannt hat, plus Ortsregel aus Runde 2 und die Antworten „aussortieren“ bzw. die Mindestgröße aus Runde 3. Nichts dazu erfinden.
+- **Nur als Risiko markieren:** Frage 4 und die Antworten „nur als Risiko“ aus Runde 3.
+- **Wochenlimit:** aus Runde 3 unter „Match und Zeitraum“.
 - **Match-Grenze:** 70 % als Standard, erklären, dass der Nutzer sie ändern kann.
 - **Tracker:** leer lassen (füllt Schritt 7).
 - **Quellen:** Bundesagentur und XING/StepStone auf „ja“. „Eigene Quellen“ nur füllen, wenn der Nutzer selbst welche nennt (siehe README, „Genauer recherchieren“).
