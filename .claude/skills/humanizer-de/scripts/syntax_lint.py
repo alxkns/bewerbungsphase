@@ -1,0 +1,305 @@
+#!/usr/bin/env python3
+"""Optional spaCy precision stage; without spaCy, regex linters stay authoritative."""
+
+from __future__ import annotations
+
+import argparse
+from functools import cache
+import sys
+from pathlib import Path
+from typing import Any
+
+
+MODEL = "de_core_news_sm"
+SCRIPT_DIR = Path(__file__).resolve().parent
+if str(SCRIPT_DIR) not in sys.path:
+    sys.path.insert(0, str(SCRIPT_DIR))
+
+from cli_output import handle_cli_input_errors, print_json, read_user_text, require_file
+
+NOUN_POS = {"NOUN", "PROPN"}
+VERB_POS = {"VERB", "AUX"}
+FINITE_VERB_POS = {"VERB", "AUX"}
+
+def load_nlp() -> tuple[Any | None, str | None]:
+    try:
+        import spacy
+    except Exception:
+        return None, "spacy_missing"
+
+    try:
+        return spacy.load(MODEL), None
+    except Exception:
+        return None, "model_missing"
+
+
+@cache
+def _precise_nlp() -> tuple[Any | None, str | None]:
+    """Share one model or unavailable result across the optional precision stage."""
+    return load_nlp()
+
+
+def precise_context(precise: bool) -> tuple[dict | None, Any | None]:
+    if not precise:
+        return None, None
+
+    nlp, reason = _precise_nlp()
+    if nlp is None:
+        return {"requested": True, "active": False, "reason": reason or "spacy_missing"}, None
+    return {"requested": True, "active": True}, nlp
+
+
+def mask_range(chars: list[str], start: int, end: int) -> None:
+    for index in range(start, end):
+        if chars[index] != "\n":
+            chars[index] = " "
+
+
+def prose_text(text: str) -> str:
+    import unicode_lint
+    import rhythm_lint
+
+    chars = list(text)
+
+    for start, end in unicode_lint.protected_ranges(text):
+        mask_range(chars, start, end)
+
+    offset = 0
+    for line in text.splitlines(keepends=True):
+        body_end = len(line.rstrip("\r\n"))
+        body = line[:body_end]
+        if rhythm_lint.is_markdown_heading(body) or rhythm_lint.is_list_item(body):
+            mask_range(chars, offset, offset + body_end)
+        offset += len(line)
+
+    for index, char in enumerate(chars):
+        if char in {"*", "_"}:
+            chars[index] = " "
+
+    return "".join(chars)
+
+
+def token_lemma(token: Any) -> str:
+    return token.lemma_.lower()
+
+
+def has_morph(token: Any, key: str, value: str) -> bool:
+    return value in token.morph.get(key)
+
+
+def sentence_text(span: Any) -> str:
+    return span.text.replace("\r\n", "\n").replace("\r", "\n").strip()
+
+
+def is_passive_aux(token: Any) -> bool:
+    if token.pos_ != "AUX" or token_lemma(token) != "werden":
+        return False
+    for child in token.children:
+        if (
+            child.dep_ == "oc"
+            and child.pos_ == "VERB"
+            and child.tag_ == "VVPP"
+            and has_morph(child, "VerbForm", "Part")
+        ):
+            return True
+    return False
+
+
+def detect_passive(doc: Any) -> list[dict]:
+    findings: list[dict] = []
+    for sent in doc.sents:
+        passive_auxes = [token for token in sent if is_passive_aux(token)]
+        if not passive_auxes:
+            continue
+        agent_tokens = [
+            token
+            for token in sent
+            if token.dep_ == "sbp" and token_lemma(token) in {"von", "durch"}
+        ]
+        findings.append(
+            {
+                "kind": "passive",
+                "sentence": sentence_text(sent),
+                "aux": [token.text for token in passive_auxes],
+                "agent_phrase": [token.text for token in agent_tokens],
+            }
+        )
+    return findings
+
+
+def is_finite_verb_or_aux(token: Any) -> bool:
+    return token.pos_ in FINITE_VERB_POS and has_morph(token, "VerbForm", "Fin")
+
+
+def has_subject(sent: Any) -> bool:
+    return any(token.dep_ == "sb" for token in sent)
+
+
+def detect_subjectless_fragment(doc: Any) -> list[dict]:
+    findings: list[dict] = []
+    for sent in doc.sents:
+        content = [token for token in sent if not token.is_punct and not token.is_space]
+        if not content:
+            continue
+        if not any(token.is_alpha for token in content):
+            continue
+        finite_verbs = [token for token in sent if is_finite_verb_or_aux(token)]
+        root = sent.root
+        no_finite_clause = root.pos_ not in FINITE_VERB_POS and not finite_verbs
+        finite_without_subject = bool(finite_verbs) and not has_subject(sent)
+        if no_finite_clause or finite_without_subject:
+            findings.append(
+                {
+                    "kind": "subjectless_fragment",
+                    "sentence": sentence_text(sent),
+                    "root": root.text,
+                    "root_pos": root.pos_,
+                    "finite_verbs": [token.text for token in finite_verbs],
+                }
+            )
+    return findings
+
+
+def nominal_verb_ratio(doc: Any) -> dict:
+    total_nouns = 0
+    total_verbs = 0
+    for sent in doc.sents:
+        tokens = [token for token in sent if not token.is_punct and not token.is_space]
+        noun_count = sum(1 for token in tokens if token.pos_ in NOUN_POS)
+        verb_count = sum(1 for token in tokens if token.pos_ in VERB_POS)
+        total_nouns += noun_count
+        total_verbs += verb_count
+    return {
+        "nouns": total_nouns,
+        "verbs": total_verbs,
+        "ratio": ratio(total_nouns, total_verbs),
+    }
+
+
+def verb_bracket_spans(doc: Any) -> list[int]:
+    spans: list[int] = []
+    for sent in doc.sents:
+        for token in sent:
+            if not is_finite_verb_or_aux(token):
+                continue
+            for child in token.children:
+                if (
+                    child.dep_ == "oc"
+                    and child.pos_ == "VERB"
+                    and child.tag_ == "VVPP"
+                    and has_morph(child, "VerbForm", "Part")
+                ) or (child.dep_ == "svp" and child.tag_ == "PTKVZ"):
+                    spans.append(abs(token.i - child.i))
+    return spans
+
+
+def finite_verb_embedding_depth(token: Any, sent: Any) -> int:
+    depth = 0
+    ancestor = token.head
+    while ancestor != token and ancestor in sent:
+        if is_finite_verb_or_aux(ancestor):
+            depth += 1
+        if ancestor.head == ancestor:
+            break
+        ancestor = ancestor.head
+    return depth
+
+
+def max_embedding_depth(doc: Any) -> int:
+    max_depth = 0
+    for sent in doc.sents:
+        for token in sent:
+            if is_finite_verb_or_aux(token):
+                max_depth = max(max_depth, finite_verb_embedding_depth(token, sent))
+    return max_depth
+
+
+def mean_dependency_distance(doc: Any) -> float:
+    distances = [
+        abs(token.i - token.head.i)
+        for token in doc
+        if not token.is_punct and not token.is_space
+    ]
+    # Root tokens stay in the denominator with distance 0.
+    return ratio(sum(distances), len(distances))
+
+
+def ratio(numerator: int, denominator: int) -> float:
+    if denominator == 0:
+        return float(numerator) if numerator else 0.0
+    return numerator / denominator
+
+
+def unavailable_report(reason: str) -> dict:
+    return {"available": False, "reason": reason, "metrics": None, "findings": []}
+
+
+def lint(text: str, nlp: Any | None = None) -> dict:
+    if nlp is None:
+        nlp, reason = load_nlp()
+        if nlp is None:
+            return unavailable_report(reason or "spacy_missing")
+
+    doc = nlp(prose_text(text).replace("\r\n", "\n").replace("\r", "\n"))
+    sentences = list(doc.sents)
+    passive_findings = detect_passive(doc)
+    fragment_findings = detect_subjectless_fragment(doc)
+    noun_verb = nominal_verb_ratio(doc)
+    bracket_spans = verb_bracket_spans(doc)
+
+    findings = [
+        {
+            "pattern": 39,
+            "kind": "passive_sentence",
+            "severity": "info",
+            "sentence": item["sentence"],
+            "aux": item["aux"],
+            "agent_phrase": item["agent_phrase"],
+        }
+        for item in passive_findings
+    ]
+    findings.extend(
+        {
+            "kind": "subjectless_fragment",
+            "severity": "info",
+            "sentence": item["sentence"],
+        }
+        for item in fragment_findings
+    )
+
+    return {
+        "available": True,
+        "metrics": {
+            "noun_verb_ratio": noun_verb["ratio"],
+            "sentence_count": len(sentences),
+            "passive_sentence_count": len(passive_findings),
+            "passive_ratio": ratio(len(passive_findings), len(sentences)),
+            "verb_bracket_span_mean": ratio(sum(bracket_spans), len(bracket_spans)),
+            "verb_bracket_span_max": max(bracket_spans, default=0),
+            "max_embedding_depth": max_embedding_depth(doc),
+            "mean_dependency_distance": mean_dependency_distance(doc),
+        },
+        "findings": findings,
+    }
+
+
+def parse_args(argv: list[str]) -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description="Report optional spaCy-backed syntax metrics.")
+    source = parser.add_mutually_exclusive_group(required=True)
+    source.add_argument("--text")
+    source.add_argument("--file", type=Path)
+    args = parser.parse_args(argv)
+    require_file(parser, args.file, "--file")
+    return args
+
+
+@handle_cli_input_errors
+def main(argv: list[str] | None = None) -> int:
+    args = parse_args(sys.argv[1:] if argv is None else argv)
+    text = read_user_text(args.file) if args.file else args.text or ""
+    print_json(lint(text))
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

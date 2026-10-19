@@ -1,0 +1,11 @@
+# Persönliche Daten: Profil, Lebenslauf, Foto, Unterschrift, alle Bewerbungen
+daten/
+
+# Lokale Claude-Einstellungen (Pfade, Freigaben)
+.claude/settings.local.json
+.claude/scheduled_tasks.lock
+
+# Persönliche Stilvorlieben von humanizer-de
+.humanizer/
+
+.DS_Store

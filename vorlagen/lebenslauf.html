@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<!-- Gerüst für den Master-Lebenslauf. Bei der Einrichtung aus dem hochgeladenen CV befüllen und als
+     daten/bewerbungen/_vorlage/lebenslauf.html speichern. Nur Fakten aus dem CV oder vom Nutzer bestätigt.
+     Pfade gelten ab daten/bewerbungen/<ordner>/. title = Dateiname des PDFs -->
+<title>Lebenslauf_{Name}</title>
+<link rel="stylesheet" href="../../../vorlagen/style.css">
+</head>
+<body class="cv">
+
+<header class="band">
+  <h1>{Name}</h1>
+  <p class="untertitel">{Untertitel, z. B. Zielrolle}</p>
+</header>
+<!-- Foto optional (in Deutschland nicht Pflicht). Ohne Foto die Zeile löschen. -->
+<img class="foto" src="../_vorlage/assets/foto.jpg" alt="">
+
+<main>
+  <section>
+    <h2>Kontakt</h2>
+    <div class="text kontakt">
+      <span>Telefon:</span><span>{Telefon}</span>
+      <span>E-Mail:</span><span>{E-Mail}</span>
+      <span>Adresse:</span><span>{Straße},<br>{PLZ Ort}</span>
+    </div>
+  </section>
+
+  <section>
+    <h2>Profil</h2>
+    <p class="text">{3–5 Sätze: Kernkompetenz, wichtigstes Ergebnis, Erfahrung, was ich künftig machen will.}</p>
+  </section>
+
+  <section>
+    <h2>Berufserfahrung</h2>
+
+    <div class="eintrag">
+      <div class="zeit">{MM/JJJJ} – heute</div>
+      <div>
+        <h3>{Position}</h3>
+        <p class="firma">{Firma, Branche (Größe), Ort}</p>
+        <ul>
+          <li>{Aufgabe oder Ergebnis, konkret, mit Zahl wenn belegt}</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Kenntnisse</h2>
+    <ul class="text">
+      <li>{Kategorie}: {Tools und Methoden, ehrlich eingestuft}</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Aus- und Weiterbildung</h2>
+    <div class="eintrag kompakt">
+      <div class="zeit">{MM/JJJJ – MM/JJJJ}</div>
+      <div><b>{Abschluss}</b>, {Einrichtung, Ort}</div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Sprachen und Interessen</h2>
+    <p class="text">{Sprachen mit Niveau}</p>
+    <p class="text">{Interessen, optional}</p>
+  </section>
+
+  <div class="abschluss">
+    <div class="ort"><img class="unterschrift" src="../_vorlage/assets/unterschrift.png" alt="">{Ort}, {Name}</div>
+  </div>
+</main>
+</body>
+</html>

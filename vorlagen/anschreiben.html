@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<!-- Briefkopf-Vorlage. Bei der Einrichtung nach daten/bewerbungen/_vorlage/anschreiben.html kopieren
+     und {Name}, {Untertitel}, {Straße}, {PLZ Ort}, {Telefon}, {E-Mail}, {Ort} einmalig ersetzen.
+     Die [eckigen] Platzhalter füllt der Skill anschreiben pro Bewerbung.
+     Pfade gelten ab daten/bewerbungen/<ordner>/. title = Dateiname des PDFs -->
+<title>Anschreiben_[Firma]_{Name}</title>
+<link rel="stylesheet" href="../../../vorlagen/style.css">
+<style>@page { margin: 0; }</style>
+</head>
+<body>
+<div class="brief">
+
+  <header class="band">
+    <div>
+      <h1>{Name}</h1>
+      <p class="untertitel">{Untertitel}</p>
+    </div>
+    <div class="kontakt">
+      {Straße}<br>
+      {PLZ Ort}<br>
+      {Telefon}<br>
+      {E-Mail}
+    </div>
+  </header>
+
+  <div class="anschrift">
+    <p class="ruecksende">{Name} · {Straße} · {PLZ Ort}</p>
+    [Firma GmbH]<br>
+    [z. Hd. Vorname Nachname]<br>
+    [Straße Nr.]<br>
+    [PLZ Ort]
+  </div>
+
+  <div class="datum">{Ort}, [TT.MM.JJJJ]</div>
+
+  <div class="inhalt">
+    <p class="betreff">Bewerbung als [Stellentitel (m/w/d)][, Kennziffer 123]</p>
+
+    <p>[Anrede, z. B. „Hallo Marie,“ oder „Guten Tag Frau Muster,“]</p>
+
+    <p>[Absatz 1: Worauf ich Lust habe.]</p>
+
+    <p>[Absatz 2: Die drei gesuchten Eigenschaften mit je einem kurzen Beleg.]</p>
+
+    <p>[Absatz 3: Warum ich passe und wie ich unterstütze.]</p>
+
+    <p>[Schluss: Eintrittstermin, ggf. Gehaltsvorstellung, Vorfreude aufs Gespräch.]</p>
+
+    <p class="gruss">[Viele Grüße / Beste Grüße]</p>
+    <img class="unterschrift" src="../_vorlage/assets/unterschrift.png" alt="">
+    <p>[Vorname / Vorname Nachname]</p>
+
+    <p class="anlagen">Anlage: Lebenslauf</p>
+  </div>
+
+</div>
+</body>
+</html>

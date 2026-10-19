@@ -1,0 +1,105 @@
+/* Gemeinsames Layout für Anschreiben und Lebenslauf (A4, Chrome-Druck) */
+:root {
+  --navy: #14294b;
+  --blau: #3d5a80;
+  --grau: #6b7280;
+  --band: #e6ecf5;
+  --text: #1f2937;
+  --links: 12.5mm;   /* linker Rand bis Label-Spalte */
+  --spalte: 50mm;    /* Beginn Inhaltsspalte */
+  --rechts: 15mm;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+body {
+  font-family: "Manrope", sans-serif;
+  font-weight: 400;
+  font-size: 10pt;
+  line-height: 1.4;
+  font-variant-ligatures: none; /* sonst gehen beim Kopieren aus dem PDF z. B. "tt" verloren */
+  color: var(--text);
+}
+b, strong, h1, h2, h3 { font-weight: 600; color: #000; }
+
+/* <img class="unterschrift" src="../_vorlage/assets/unterschrift.png">, Bild liegt in daten/ */
+.unterschrift {
+  display: block;
+  width: 36mm;
+  height: 30mm;
+  object-fit: contain;
+  object-position: left center;
+}
+
+/* ---------- Kopfband (beide Dokumente) ---------- */
+.band {
+  background: var(--band);
+  padding: 14mm var(--rechts) 0 var(--links);
+  height: 41.5mm;
+}
+.band h1 { font-size: 30pt; font-weight: 400; color: var(--navy); line-height: 1.1; }
+.band .untertitel { margin-top: 2.5mm; font-size: 10.5pt; }
+
+/* ---------- Lebenslauf ---------- */
+@page { size: A4; margin: 14mm 0; }
+@page :first { margin-top: 0; }
+
+.cv .foto {
+  position: absolute;
+  top: 13.5mm;
+  left: 132mm;
+  width: 53mm;
+  height: 67.5mm;
+  object-fit: cover;
+  object-position: center 25%;
+}
+.cv main { padding: 0 var(--rechts) 0 var(--links); }
+.cv section { margin-top: 8mm; }
+.cv h2 {
+  font-size: 10pt;
+  color: var(--navy);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  margin-bottom: 4mm;
+  break-after: avoid;
+}
+.cv .text { margin-left: calc(var(--spalte) - var(--links)); }
+.cv .kontakt { display: grid; grid-template-columns: 26mm 1fr; width: 75mm; }
+.cv .kontakt + .text, .cv .text + .text { margin-top: 0; }
+
+.eintrag {
+  display: grid;
+  grid-template-columns: calc(var(--spalte) - var(--links)) 1fr;
+  margin-bottom: 5.5mm;
+}
+.eintrag .zeit { font-style: italic; color: var(--navy); }
+.eintrag h3 { font-size: 10.5pt; margin-bottom: 2.5mm; break-after: avoid; }
+.eintrag h4 { font-size: 10pt; font-weight: 600; color: #000; margin: 4mm 0 2.5mm; break-after: avoid; }
+.eintrag .firma { color: var(--blau); margin-bottom: 2.5mm; }
+.eintrag .info { font-style: italic; color: var(--grau); margin-bottom: 2.5mm; }
+.eintrag.kompakt { margin-bottom: 5mm; }
+.eintrag.rolle { margin-bottom: 4mm; }   /* zweite Rolle beim selben Arbeitgeber folgt direkt */
+.eintrag.kompakt h3 { margin-bottom: 0; }
+
+ul { padding-left: 5mm; }
+li { margin-bottom: 0.6mm; break-inside: avoid; }
+
+.cv .abschluss { margin-top: 4mm; display: flex; justify-content: flex-end; break-inside: avoid; }
+.cv .abschluss .ort { position: relative; padding-top: 16mm; }
+.cv .abschluss .unterschrift { position: absolute; top: 0; left: -8mm; height: 24mm; }
+
+/* ---------- Anschreiben (DIN 5008, Form B angelehnt) ---------- */
+.brief { width: 210mm; height: 297mm; position: relative; overflow: hidden; }
+.brief .band { height: 32mm; padding: 11mm 20mm 0 25mm; display: flex; justify-content: space-between; }
+.brief .band h1 { font-size: 24pt; }
+.brief .band .kontakt { text-align: right; font-size: 8.5pt; line-height: 1.5; padding-top: 1.5mm; }
+.brief .seite { padding: 0 20mm 0 25mm; }
+.brief .anschrift { position: absolute; top: 50.7mm; left: 25mm; width: 85mm; line-height: 1.4; }
+.brief .anschrift .ruecksende { font-size: 7pt; color: var(--grau); margin-bottom: 2mm; }
+.brief .datum { position: absolute; top: 90mm; right: 20mm; }
+.brief .inhalt { position: absolute; top: 103mm; left: 25mm; right: 20mm; }
+.brief .betreff { font-weight: 700; color: #000; margin-bottom: 7mm; }
+.brief p { margin-bottom: 4mm; }
+.brief .gruss { margin-top: 6mm; margin-bottom: 0; }
+.brief .gruss + .unterschrift { margin: -3mm 0 -4mm -3mm; }
+.brief .anlagen { margin-top: 6mm; font-size: 8.5pt; color: var(--grau); }
