@@ -30,7 +30,7 @@ curl -s -H 'X-API-Key: jobboerse-jobsuche' \
 - **Volltext:** `curl -sL -A 'Mozilla/5.0' 'https://www.arbeitsagentur.de/jobsuche/jobdetail/<referenznummer>'`. Im HTML steckt JSON in `<script id="ng-state" type="application/json">`, Text unter `jobdetail.stellenangebotsBeschreibung`, dazu `jobdetail.homeofficemoeglich`, `gehaltsspanneVon/Bis`, `verguetungsangabe`. Ist der Text leer, sehr kurz oder bricht mitten im Satz ab: Originalanzeige über `externeURL` bzw. `allianzpartnerUrl` oder per WebSearch (Firma + Titel) suchen und mit WebFetch lesen.
 - Nur `v6`-Pfade funktionieren.
 
-**Zusatzquellen** (wenn die Bundesagentur zu wenig liefert, z. B. bei englischsprachigen oder Start-up-Rollen): WebSearch nach „<Begriff> Stellenangebot <Ort>“ und Karriereseiten bzw. Portale (Personio, JOIN, softgarden) mit WebFetch lesen. Ist ein Apify-Connector verbunden, geht LinkedIn über den Actor `valig/linkedin-jobs-scraper` (Kosten vorher nennen). Indeed und Glassdoor direkt blocken (Cloudflare), nicht versuchen.
+**Zusatzquellen** (wenn die Bundesagentur zu wenig liefert, z. B. bei englischsprachigen oder Start-up-Rollen): WebSearch nach „<Begriff> Stellenangebot <Ort>“ und Karriereseiten bzw. Portale (Personio, JOIN, softgarden) mit WebFetch lesen. Hat der Nutzer in `suchprofil.md` „Eigene Quellen“ beschrieben, die auch nutzen. Indeed und Glassdoor direkt blocken (Cloudflare), nicht versuchen.
 
 **Auswahl:**
 - Titel grob vorfiltern (Praktikum, Werkstudent, Ausbildung, offensichtlich andere Rolle raus).

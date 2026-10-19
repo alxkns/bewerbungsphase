@@ -21,14 +21,11 @@ Gemeinsames Gedächtnis der Skills `stellensuche`, `bewerbungen-erstellen` und `
 - „Stelle im Rahmen der Personalvermittlung“ auf der Detailseite → Vermittler.
 
 **Stellensuche: weitere Quellen**
-- LinkedIn über Apify (optional, kostet ca. 2–4 Cent pro Lauf): Actor `valig/linkedin-jobs-scraper`, `callOptions.maxTotalChargeUsd: 0.1`. `urlParam` nur als Liste `{key, value}` (z. B. `distance`, `f_TPR` = `r1209600` für 14 Tage, `f_WT` = `2` für remote). Feld `workType` = Branche, nicht Arbeitsmodell. Remote-Filter unzuverlässig. Läufe mit `waitSecs: 0` starten, Datasets danach per `curl 'https://api.apify.com/v2/datasets/<id>/items?clean=1&fields=…'` holen (ohne Token lesbar). Bei vielen Läufen in Blöcken zu ca. 8 starten.
-- LinkedIn-Dubletten: Abgleich über Firma (Kurzname) + Stellentitel, nicht nur Link.
-- LinkedIn Guest-API (Fallback ohne Apify): `https://www.linkedin.com/jobs-guest/jobs/api/seeMoreJobPostings/search?keywords=<Begriff>&location=<Ort>&distance=50&f_TPR=r1209600&start=0` (10 pro Seite; remote `geoId=101282230&f_WT=2`), bei 429 kurz warten.
-- Indeed: nur über Apify (`valig/indeed-jobs-scraper`), kurze Begriffe; direkt blockt Cloudflare. Einzelne Indeed-Anzeigen sind in der Browser-Pane lesbar.
+- Dubletten über Quellen hinweg: Abgleich über Firma (Kurzname) + Stellentitel, nicht nur über den Link (Aggregatoren verlinken anders als die Karriereseite).
+- Indeed: direkt blockt Cloudflare. Einzelne Indeed-Anzeigen sind in der Browser-Pane lesbar.
 - Glassdoor direkt: 403, nicht versuchen.
-- StepStone: Suchseite `https://www.stepstone.de/jobs/<begriff-mit-bindestrich>/in-<ort>?radius=<km>&ag=age_7` (Browser-User-Agent) enthält JSON mit `title`, `url`, `companyName`, `workFromHome`. Detailseite per curl nicht lesbar, über Apify `apify--rag-web-browser` schon.
+- StepStone: Suchseite `https://www.stepstone.de/jobs/<begriff-mit-bindestrich>/in-<ort>?radius=<km>&ag=age_7` (Browser-User-Agent) enthält JSON mit `title`, `url`, `companyName`, `workFromHome`. Detailseite per curl nicht lesbar: Originalanzeige beim Arbeitgeber suchen oder Browser-Pane.
 - XING: Such-URL leitet um, immer `curl -L`. Suchseite enthält `VisibleJob`-Blöcke (`refreshedAt`, `salary` = XING-Schätzung). `applyUrl` führt oft zu Jobware (blockt curl).
-- Bewerberportale kleiner Firmen (JOIN, softgarden, Personio) über Apify `apify/google-search-scraper` (`maxTotalChargeUsd` mindestens 0.5), die eingebaute WebSearch ignoriert `site:`. Personio nur ohne `quickDateRange`. Recruitee/Teamtailor liefern über Google nichts.
 - Viele Konzerne schalten dieselbe Stelle pro Standort und manche Firmen dieselbe Anzeige unter neuem Titel: neue Treffer bekannter Firmen gegen `anzeige.md` im Bewerbungsordner prüfen.
 
 **Anzeige und Bewerbungsformular prüfen (ohne Browser)**
@@ -45,7 +42,7 @@ Gemeinsames Gedächtnis der Skills `stellensuche`, `bewerbungen-erstellen` und `
 - Karriereseiten mit JSON-LD `JobPosting`: `datePosted`, `baseSalary`, `jobLocationType: TELECOMMUTE` (= remote).
 - Microsoft Power Pages, P&I Bewerber-Web, jobvector: nur in der Browser-Pane lesbar.
 - „Kein Anschreiben gewünscht“ steht teils nur auf der Karriereseite: bei Portalen mit nur einem Upload-Feld dort nach „Anschreiben“ suchen.
-- LinkedIn „Extern bewerben“ ist hinter dem Login: `<firma>.jobs.personio.de` probieren oder auf der Karriereseite suchen.
+- Anzeigen, die der Nutzer von LinkedIn schickt („Extern bewerben“ ist hinter dem Login): Originalanzeige auf der Karriereseite oder unter `<firma>.jobs.personio.de` suchen.
 - E-Mail-Bewerbung: `mailto:`-Link im HTML liefert Empfänger und vorgegebenen Betreff; Postanschrift aus `/impressum`.
 
 **Bewerbung erstellen**

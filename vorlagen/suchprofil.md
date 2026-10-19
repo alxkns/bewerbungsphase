@@ -26,12 +26,14 @@
 
 ## Quellen
 - Bundesagentur für Arbeit: ja (kostenlos)
-- Apify (LinkedIn, Indeed, StepStone-Details, Portale über Google): nein <!-- ja = Apify-Connector nötig, kostet ca. 0,50–2 $ pro Suchlauf -->
 - XING, StepStone-Suchseiten: ja (kostenlos)
+
+## Eigene Quellen
+<!-- Optional, vom Nutzer selbst beschrieben: weitere Jobbörsen, Branchenportale, eigene Tools oder Connectors, mit allem, was die Stellensuche dafür wissen muss. Hinweise in der README unter „Genauer recherchieren“. -->
 
 ## Match und Zeitraum
 - Vorschlagen ab Match: 70 %
-- Anzeigen nicht älter als: 7 Tage (LinkedIn 14 Tage)
+- Anzeigen nicht älter als: 7 Tage
 
 ## Tracker
 - Dashboard-Artifact (URL):

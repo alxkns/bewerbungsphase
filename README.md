@@ -35,6 +35,18 @@ Drei Routinen laufen auf Wunsch automatisch (geplante Aufgaben in der Claude-Des
 
 Die geplanten Aufgaben verweisen nur auf die Skills. Nach `git pull` laufen sie mit der neuen Fassung. Alle Skills lassen sich auch von Hand starten („such neue Stellen“). Routinen laufen nur, solange die Desktop-App offen ist. Gesendet wird nie etwas, Abschicken machst du selbst.
 
+## Genauer recherchieren
+
+Die Stellensuche nutzt von sich aus nur frei zugängliche Quellen: die Jobbörse der Bundesagentur für Arbeit (offizielle Schnittstelle, enthält viele Partner-Anzeigen von StepStone, Indeed u. a.) sowie die öffentlichen Suchseiten von XING und StepStone. Damit ist ein großer Teil des Marktes abgedeckt, aber nicht alles. So wird die Suche genauer:
+
+- **Suchbegriffe schärfen.** Jobbörsen suchen wörtlich. Kurze Begriffe aus ein bis zwei Wörtern, zusammengesetzte Wörter getrennt („Kampagnen Manager“), deutsche und englische Titel. Nach der Marktanalyse die Begriffe übernehmen, die dort häufig vorkommen.
+- **Zeitraum.** Viele Anzeigen werden nur neu geschaltet. Wer zu wenig findet, stellt im Suchprofil 14 statt 7 Tage ein.
+- **Selbst gefundene Stellen schicken.** Was du auf LinkedIn, Indeed, in Branchenportalen oder über Empfehlungen findest: Link an Claude schicken („bewirb mich bei …“ oder „trag das als Vorschlag ein“). Das ist oft der beste Weg zu Stellen, die keine freie Quelle führt.
+- **Job-Alerts per Mail.** Bei LinkedIn, Indeed oder StepStone Suchaufträge mit deinen Suchbegriffen anlegen und die Mails selbst durchsehen.
+- **Zielfirmen direkt.** Viele Stellen stehen nur auf der Karriereseite. Eine Liste von Wunschfirmen unter „Eigene Quellen“ im Suchprofil eintragen, dann prüft die Stellensuche deren Karriereseiten mit.
+- **Nachsehen, was aussortiert wurde.** `daten/bewerbungen/stellensuche-verworfen.md` zeigt jede gesichtete, aber nicht vorgeschlagene Stelle mit Grund. Fehlt dir eine Stelle, steht dort, ob sie übersehen oder bewusst aussortiert wurde.
+- **Weitere Plattformen anbinden (auf eigenes Risiko).** LinkedIn und Indeed haben keine offene Schnittstelle. Wer sie automatisch durchsuchen will, braucht einen Scraping-Dienst (z. B. Apify) als Connector. Das kostet pro Suchlauf und verstößt in der Regel gegen die Nutzungsbedingungen der Plattformen. Das Repo liefert dafür bewusst nichts mit. Wer es trotzdem nutzt, beschreibt Dienst, Einstellungen und Kostengrenze unter „Eigene Quellen“ in `daten/suchprofil.md`.
+
 ## Voraussetzungen
 
 - Claude Code in der Claude-Desktop-App (für Routinen), claude.ai-Konto mit Artifacts (für das Dashboard)

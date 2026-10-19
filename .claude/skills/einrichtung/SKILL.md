@@ -59,7 +59,7 @@ Daraus `daten/suchprofil.md` füllen:
 - **Nur als Risiko markieren:** Frage 4.
 - **Match-Grenze:** 70 % als Standard, erklären, dass der Nutzer sie ändern kann.
 - **Tracker:** leer lassen (füllt Schritt 7).
-- **Quellen:** Bundesagentur und XING/StepStone auf „ja“. Apify nur auf „ja“, wenn der Nutzer es will und den Apify-Connector verbunden hat (Kosten pro Suchlauf nennen, LinkedIn-Abruf verstößt gegen deren Nutzungsbedingungen).
+- **Quellen:** Bundesagentur und XING/StepStone auf „ja“. „Eigene Quellen“ nur füllen, wenn der Nutzer selbst welche nennt (siehe README, „Genauer recherchieren“).
 
 Gehalt, Eintritt, Kündigungsfrist, Ort/Remote und Arbeitszeit zusätzlich in `daten/profil.md` → „Eckdaten“.
 
