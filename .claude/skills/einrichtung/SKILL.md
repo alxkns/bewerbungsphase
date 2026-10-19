@@ -1,6 +1,6 @@
 ---
 name: einrichtung
-description: Ersteinrichtung für neue Nutzer. Prüft Voraussetzungen, legt daten/ an, fragt das Suchprofil ab (Position, Ort, Umkreis, Remote, Arbeitszeit, Gehalt, Ausschlüsse), baut aus dem hochgeladenen Lebenslauf (PDF/Word) den Master-Lebenslauf und den Briefkopf und macht einen PDF-Probedruck; richtet Dashboard und geplante Routinen ein. Nutzen beim ersten Start, wenn daten/profil.md fehlt, bei „richte ein“, „los geht's“, „neuer Lebenslauf“ oder „Suchprofil ändern“.
+description: Ersteinrichtung für neue Nutzer. Prüft Voraussetzungen, legt daten/ an, fragt das Suchprofil ab (Position, Ort, Umkreis, Remote, Arbeitszeit, Gehalt, Ausschlüsse), baut aus dem hochgeladenen Lebenslauf (PDF/Word) den Master-Lebenslauf und den Briefkopf und macht einen PDF-Probedruck; richtet Tracker, Dashboard und geplante Routinen ein (Claude-App oder cron mit beliebiger KI). Nutzen beim ersten Start, wenn daten/profil.md fehlt, bei „richte ein“, „los geht's“, „neuer Lebenslauf“ oder „Suchprofil ändern“.
 ---
 
 # Einrichtung: vom leeren Repo zum ersten Probedruck
@@ -34,7 +34,7 @@ cp -n vorlagen/lebenslauf.html vorlagen/anschreiben.html daten/bewerbungen/_vorl
 
 ## 3. Suchprofil abfragen → `daten/suchprofil.md`
 
-Kurz erklären, was gleich passiert (Suchprofil, dann Lebenslauf), dann in zwei Runden fragen. Freitext im Chat, feste Auswahl per `AskUserQuestion` (max. 4 Fragen pro Aufruf).
+Kurz erklären, was gleich passiert (Suchprofil, dann Lebenslauf), dann in zwei Runden fragen. Freitext im Chat, feste Auswahl als Auswahlfrage (siehe `AGENTS.md`, „Werkzeuge“).
 
 **Runde 1, im Chat (Freitext, eine Nachricht):**
 1. Welche Position(en) suchst du? Gern mehrere Titel oder eine Beschreibung der Arbeit.
@@ -45,7 +45,7 @@ Kurz erklären, was gleich passiert (Suchprofil, dann Lebenslauf), dann in zwei 
 6. Gehaltsvorstellung brutto im Jahr: Wunsch und Untergrenze? (Unsicher ist ok, dann später Skill `gehaltsverhandlung`.)
 7. Frühester Eintritt und Kündigungsfrist?
 
-**Runde 2, per `AskUserQuestion`:**
+**Runde 2, als Auswahlfragen:**
 - Umkreis für Stellen mit Präsenz: 10 km · 25 km · 50 km · 100 km
 - Arbeitsmodell: vor Ort ok · hybrid · nur remote · egal
 - Außerhalb des Umkreises: nur vollständig remote · auch hybrid mit Pendeln · gar nicht
@@ -72,7 +72,7 @@ pdftotext -layout "<lebenslauf.pdf>" <scratchpad>/cv.txt      # PDF
 textutil -convert txt -stdout "<lebenslauf.docx>" > <scratchpad>/cv.txt   # Word (macOS)
 ```
 
-Ist der PDF-Text leer oder zerstückelt (Scan, Grafik-Lebenslauf): die PDF mit dem Read-Tool seitenweise ansehen und daraus lesen. Bei Mehrspalten-Layouts immer zusätzlich das PDF ansehen, damit Zeiträume den richtigen Stationen zugeordnet werden.
+Ist der PDF-Text leer oder zerstückelt (Scan, Grafik-Lebenslauf): die PDF seitenweise als Bild ansehen (z. B. `pdftoppm -r 80 -png`) und daraus lesen. Bei Mehrspalten-Layouts immer zusätzlich das PDF ansehen, damit Zeiträume den richtigen Stationen zugeordnet werden.
 
 `daten/bewerbungen/_vorlage/lebenslauf.html` aus dem Gerüst befüllen:
 - `{Platzhalter}` ersetzen, Abschnitte nach Bedarf wiederholen (`.eintrag` je Station, `<li>` je Stichpunkt). Klassen aus `vorlagen/style.css`, keine Inline-Styles.
@@ -106,22 +106,30 @@ pdftoppm -r 50 -png "$T"/Anschreiben_*.pdf <scratchpad>/probe-brief
 
 Vorschau-PNGs ansehen: Kopf, Foto, Unterschrift, Umbrüche, keine `{Platzhalter}` mehr außer den `[eckigen]` im Anschreiben. Fehler beheben, dann dem Nutzer die erste Seite des Lebenslaufs zeigen und fragen, ob Inhalt und Kopf stimmen. Erst nach seinem Ok den Ordner `0000-00-00_Probedruck` löschen.
 
-## 7. Dashboard (Bewerbungs-Tracker)
+## 7. Tracker und Dashboard
 
-Das Dashboard ist `dashboard/tracker.html`: Kennzahlen, Trichter, Versand pro Woche und eine Tabelle aller Bewerbungen, in der der Nutzer Status ändert und Vorschläge per „Bewerbung erstellen“ anfordert. Es läuft als privates claude.ai-Artifact mit eigener Datenbank (Collection `bewerbungen`), auch am Handy. Die Routinen lesen und schreiben dieselbe Datenbank.
+Der Tracker ist die Liste aller Bewerbungen. Das Dashboard (`dashboard/tracker.html`) zeigt Kennzahlen, Trichter, Versand pro Woche und eine Tabelle, in der der Nutzer Status ändert und Vorschläge per „Bewerbung erstellen“ anfordert. Die Routinen lesen und schreiben dieselbe Liste. Nutzer fragen (Auswahlfrage):
 
-Nutzer fragen, ob er es will (braucht ein claude.ai-Konto mit Artifacts). Ja:
+- **Lokal (Standard):** Datei `daten/tracker.sqlite`, funktioniert mit jeder KI und offline. Dashboard im Browser auf diesem Rechner.
+- **claude.ai:** privates Artifact mit Datenbank, auch am Handy. Nur, wenn der Nutzer mit Claude arbeitet und ein claude.ai-Konto mit Artifacts hat.
+
+**Lokal:**
+1. `python3 tracker/tracker.py list` einmal ausführen (legt die Datei an, Ausgabe `[]`).
+2. In `daten/suchprofil.md` → „Tracker“: `Art: lokal`.
+3. Dem Nutzer zeigen, wie er das Dashboard öffnet: `python3 tracker/tracker.py serve`, dann http://localhost:8765 (in Claude Code: Startkonfiguration „tracker“ aus `.claude/launch.json`). Kurz selbst starten, Seite laden, wieder beenden.
+
+**claude.ai** (nur mit Claude):
 1. Skill `artifact-capabilities` laden (Pflicht, bevor `capabilities` übergeben werden).
 2. `Artifact` publish mit `file_path` `dashboard/tracker.html`, `icon` „chart“, `description` „Bewerbungen, Status und Quoten auf einen Blick“ und
    `capabilities` `{"db": {"rules": [{"path": "", "read": "view", "write": "owner"}]}, "user": {}}`.
-3. Die URL aus dem Ergebnis in `daten/suchprofil.md` → „Tracker“ eintragen. Anbieten, das Dashboard anzupinnen (nur auf Ja).
-4. Steht `capabilities` laut Ergebnis nicht zur Verfügung: Schritt abbrechen, dem Nutzer sagen, dass es ohne Dashboard geht (Bewerbungen auf Zuruf mit Skill `bewerbung`, ohne Routinen 1–3 in Schritt 8).
+3. In `daten/suchprofil.md` → „Tracker“: `Art: claude.ai` und die URL aus dem Ergebnis. Anbieten, das Dashboard anzupinnen (nur auf Ja).
+4. Steht `capabilities` laut Ergebnis nicht zur Verfügung: auf „Lokal“ wechseln.
 
-Spätere Updates von `dashboard/tracker.html` (nach `git pull`): erneut publishen mit `url` = Tracker-URL. Die Daten bleiben erhalten.
+Spätere Updates von `dashboard/tracker.html` (nach `git pull`): lokal sofort aktiv; claude.ai erneut publishen mit `url` = Tracker-URL, die Daten bleiben erhalten. Wechsel von claude.ai zu lokal: Datenbank mit `ArtifactData` `list` (`out_dir`) exportieren, dann `python3 tracker/tracker.py import <out_dir>/bewerbungen`.
 
 ## 8. Automatik (geplante Routinen)
 
-Nur mit Dashboard aus Schritt 7. Per `AskUserQuestion` (multiSelect) fragen, welche Routinen laufen sollen:
+Nur mit Tracker aus Schritt 7. Fragen, welche Routinen laufen sollen (Mehrfachauswahl):
 
 | Routine | Skill | Vorschlag Zeitplan | cron |
 |---|---|---|---|
@@ -129,24 +137,33 @@ Nur mit Dashboard aus Schritt 7. Per `AskUserQuestion` (multiSelect) fragen, wel
 | Angeforderte Bewerbungen bauen | `bewerbungen-erstellen` | stündlich 8–22 Uhr | `0 8-22 * * *` |
 | Gmail nach Antworten durchsuchen | `gmail-abgleich` | 8 und 18 Uhr | `0 8,18 * * *` |
 
-Gmail-Abgleich nur anbieten, wenn Gmail-Tools da sind (ToolSearch „gmail search_threads“), sonst sagen, dass er den Gmail-Connector braucht.
+Gmail-Abgleich nur anbieten, wenn das Werkzeug, das die Routine ausführt, Gmail lesen kann (in Claude: Gmail-Connector).
 
-Anlegen:
-1. `mcp__scheduled-tasks__list_scheduled_tasks` und `…__create_scheduled_task` per ToolSearch laden. Erst listen: Gibt es schon eine Aufgabe mit derselben `taskId`, den Nutzer fragen, nie überschreiben.
-2. Je Routine `create_scheduled_task` mit `taskId` `bewerbung-<skill>`, `title` aus der Tabelle, `description` = Spalte „Routine“, `cronExpression` (oder die Zeit, die der Nutzer will) und diesem `prompt` (`<Projektordner>` = absoluter Pfad, per `pwd`):
-   ```
-   Projektordner: <Projektordner>
-   Wechsle per cd in diesen Ordner und arbeite nur dort. Lies .claude/skills/<skill>/SKILL.md und befolge es vollständig. Antworte auf Deutsch, kurz.
-   ```
-   Der Auftrag enthält bewusst keine Logik: Nach einem `git pull` gilt sofort die neue Fassung des Skills.
-3. Dem Nutzer sagen:
-   - Routinen laufen nur, wenn die Claude-Desktop-App offen ist; verpasste Läufe holt sie beim nächsten Start nach.
-   - Ohne passenden Berechtigungsmodus bleiben Läufe an Freigaben hängen (Bash, Dateien, Datenbank). Empfehlung: Routinen im Auto-Modus anlegen bzw. die Freigaben beim ersten Lauf erteilen.
-   - Jede Routine schreibt ihr Log nach `daten/prozess-learnings.md`. Dort stehen auch Vorschläge an den Nutzer.
+Der Auftrag jeder Routine ist immer derselbe, ohne eigene Logik (nach `git pull` gilt sofort die neue Fassung des Skills; `<Projektordner>` = absoluter Pfad per `pwd`):
+```
+Projektordner: <Projektordner>
+Wechsle per cd in diesen Ordner und arbeite nur dort. Lies .claude/skills/<skill>/SKILL.md und befolge es vollständig. Antworte auf Deutsch, kurz.
+```
+
+**Weg A: Claude-Desktop-App** (wenn diese Sitzung dort läuft und es das Werkzeug für geplante Aufgaben gibt, `mcp__scheduled-tasks__…`, per ToolSearch laden):
+1. Erst `list_scheduled_tasks`: Gibt es schon eine Aufgabe mit derselben `taskId`, den Nutzer fragen, nie überschreiben.
+2. Je Routine `create_scheduled_task` mit `taskId` `bewerbung-<skill>`, `title` und `description` aus der Tabelle, `cronExpression`, `prompt` = Auftrag oben.
+3. Hinweise: Routinen laufen nur bei offener App, verpasste holt sie beim nächsten Start nach. Ohne passenden Berechtigungsmodus bleiben Läufe an Freigaben hängen: Routinen im Auto-Modus anlegen oder die Freigaben beim ersten Lauf erteilen.
+
+**Weg B: Systemzeitplan mit beliebiger KI-Kommandozeile** (Claude Code, Codex, Gemini CLI …; macOS/Linux per `cron`):
+1. Absoluten Pfad der Kommandozeile ermitteln (`command -v claude`, `command -v codex` …), cron kennt den normalen PATH nicht.
+2. Je Routine eine Zeile, Muster:
+   `<cron> cd "<Projektordner>" && <befehl> >> daten/logs/<skill>.log 2>&1`
+   Der `<befehl>` führt den Auftrag oben ohne Rückfragen aus. Beispiele (Optionen ändern sich, vorher mit `--help` prüfen):
+   - Claude Code: `/pfad/claude -p "<Auftrag>" --permission-mode acceptEdits --allowedTools "Bash Read Write Edit WebFetch WebSearch"`
+   - Codex: `/pfad/codex exec --full-auto "<Auftrag>"`
+   - Gemini CLI: `/pfad/gemini --yolo -p "<Auftrag>"`
+3. Dem Nutzer die fertigen Zeilen zeigen und erklären: Die KI arbeitet dann unbeaufsichtigt mit Schreib- und Shell-Rechten im Projektordner. Erst nach seinem ausdrücklichen Ok eintragen: `mkdir -p daten/logs`, dann `(crontab -l 2>/dev/null; echo '<zeile>') | crontab -`. Bestehende Einträge nie entfernen.
+4. Hinweise: Der Rechner muss zur geplanten Zeit an sein. Unter macOS braucht `cron` ggf. „Festplattenvollzugriff“ (Systemeinstellungen → Datenschutz), sonst darf es nicht in `Dokumente` schreiben; das richtet der Nutzer selbst ein. Logs liegen in `daten/logs/`.
 
 ## 9. Übergabe
 
-Kurz im Chat: was eingerichtet ist, was fehlt (Voraussetzungen, Foto, Unterschrift, offene Punkte im Lebenslauf, Dashboard, Routinen). Dann den nächsten Schritt vorschlagen:
+Kurz im Chat: was eingerichtet ist, was fehlt (Voraussetzungen, Foto, Unterschrift, offene Punkte im Lebenslauf, Tracker, Routinen). Dann den nächsten Schritt vorschlagen:
 1. `marktanalyse`: passende Anzeigen sammeln und auswerten, was der Markt verlangt
 2. `kennenlernen`: Interview, das `profil.md` füllt (braucht die Marktanalyse für gezielte Fragen)
 

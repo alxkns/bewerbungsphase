@@ -1,39 +1,51 @@
 # Bewerbungsphase
 
-Claude-Code-Skills, die deutsche Bewerbungen von der Stellenanzeige bis zur fertigen PDF-Mappe bauen: Analyse, Lebenslauf, Anschreiben, Recruiter-Check, Gespräch, Gehalt. Es wird nichts erfunden, alle Fakten kommen aus deinem Profil.
+Anleitungen für KI-Assistenten, die deutsche Bewerbungen von der Stellenanzeige bis zur fertigen PDF-Mappe bauen: Analyse, Lebenslauf, Anschreiben, Recruiter-Check, Gespräch, Gehalt. Es wird nichts erfunden, alle Fakten kommen aus deinem Profil.
+
+Läuft mit Claude Code und mit anderen Werkzeugen, die Dateien lesen und Befehle ausführen können (Codex, Cursor, Gemini CLI …). Einstieg für jede KI ist `AGENTS.md`. Erprobt ist es mit Claude.
 
 ## Aufbau
 
 | Ordner | Inhalt | Im Git |
 |---|---|---|
-| `.claude/skills/` | Die Methode: Skills für jeden Schritt | ja |
+| `AGENTS.md` | Einstieg für jede KI: Aufbau, Regeln, welcher Ablauf wann, Ersatz für Claude-Werkzeuge | ja |
+| `.claude/skills/` | Die Methode: eine Anleitung (`SKILL.md`) je Schritt | ja |
 | `vorlagen/` | Layout (`style.css`) und leere Vorlagen für Profil, Suchprofil, Lebenslauf, Anschreiben, Lern-Datei der Routinen | ja |
-| `dashboard/` | Bewerbungs-Tracker (`tracker.html`), wird als eigenes privates claude.ai-Artifact veröffentlicht | ja |
-| `daten/` | Deine Daten: `profil.md`, `suchprofil.md`, Master-Lebenslauf, Foto, Unterschrift, alle Bewerbungen | **nein** (`.gitignore`) |
+| `dashboard/` | Dashboard für den Bewerbungs-Tracker (`tracker.html`) | ja |
+| `tracker/` | Lokaler Tracker: `tracker.py` (SQLite, nur Python-Standardbibliothek) und Selbsttest | ja |
+| `daten/` | Deine Daten: `profil.md`, `suchprofil.md`, Master-Lebenslauf, Foto, Unterschrift, alle Bewerbungen, `tracker.sqlite` | **nein** (`.gitignore`) |
 
 Skills lesen nur aus `daten/`. Updates der Skills überschreiben deshalb nie dein Profil.
 
 ## Los geht's
 
-Repo klonen, Claude Code im Ordner starten und nacheinander:
+Repo klonen, deine KI (z. B. Claude Code) im Ordner starten und nacheinander:
 
-1. **„Richte mich ein“** (Skill `einrichtung`): prüft die Voraussetzungen, fragt dein Suchprofil ab (Position, Ort, Umkreis, Remote, Gehalt, Ausschlüsse), baut aus deinem Lebenslauf (PDF/Word) den Master-Lebenslauf, macht einen Probedruck und richtet auf Wunsch Dashboard und Routinen ein.
+1. **„Richte mich ein“** (Skill `einrichtung`): prüft die Voraussetzungen, fragt dein Suchprofil ab (Position, Ort, Umkreis, Remote, Gehalt, Ausschlüsse), baut aus deinem Lebenslauf (PDF/Word) den Master-Lebenslauf, macht einen Probedruck und richtet auf Wunsch Tracker, Dashboard und Routinen ein.
 2. **„Mach die Marktanalyse“** (Skill `marktanalyse`): sammelt 20–40 passende Anzeigen und wertet aus, was die Stellen wirklich verlangen, welche Eigenschaften und Begriffe gefragt sind und wo dein Lebenslauf passt oder Lücken hat.
 3. **„Lern mich kennen“** (Skill `kennenlernen`): Interview in Runden, das dein Profil füllt. Darf über mehrere Sitzungen gehen. Je gründlicher, desto persönlicher die Anschreiben.
 
-## Dashboard und Routinen
+## Tracker, Dashboard und Routinen
 
-Das Dashboard zeigt alle Bewerbungen mit Status, Quoten und Versand pro Woche. Jeder Nutzer bekommt bei der Einrichtung eine eigene, private Kopie auf claude.ai, auch am Handy nutzbar.
+Der Tracker ist die Liste aller Bewerbungen mit Status. Das Dashboard zeigt sie mit Quoten, Trichter und Versand pro Woche; dort änderst du Status und forderst Bewerbungen an. Zwei Arten, Wahl bei der Einrichtung:
 
-Drei Routinen laufen auf Wunsch automatisch (geplante Aufgaben in der Claude-Desktop-App):
+| | Lokal (Standard) | claude.ai |
+|---|---|---|
+| Daten | `daten/tracker.sqlite` auf deinem Rechner | Datenbank deines privaten claude.ai-Artifacts |
+| Dashboard | `python3 tracker/tracker.py serve`, dann http://localhost:8765 | Link auf claude.ai, auch am Handy |
+| Funktioniert mit | jeder KI, offline | nur Claude |
+
+Die KI liest und schreibt den lokalen Tracker per Kommandozeile (`python3 tracker/tracker.py list`, `set`, `update`; Hilfe mit `--help`).
+
+Drei Routinen laufen auf Wunsch automatisch:
 
 | Skill | Was | Standard |
 |---|---|---|
 | `stellensuche` | sucht neue Stellen nach deinem Suchprofil und schlägt passende im Dashboard vor | werktags 7 Uhr |
 | `bewerbungen-erstellen` | baut die Mappe, sobald du im Dashboard „Bewerbung erstellen“ klickst | stündlich 8–22 Uhr |
-| `gmail-abgleich` | trägt Versand, Einladungen und Absagen aus Gmail ein (Gmail-Connector nötig) | 8 und 18 Uhr |
+| `gmail-abgleich` | trägt Versand, Einladungen und Absagen aus Gmail ein (Gmail-Zugriff der KI nötig) | 8 und 18 Uhr |
 
-Die geplanten Aufgaben verweisen nur auf die Skills. Nach `git pull` laufen sie mit der neuen Fassung. Alle Skills lassen sich auch von Hand starten („such neue Stellen“). Routinen laufen nur, solange die Desktop-App offen ist. Gesendet wird nie etwas, Abschicken machst du selbst.
+Geplant werden sie entweder in der Claude-Desktop-App (läuft, solange die App offen ist) oder per `cron` mit der Kommandozeile deiner KI (`claude -p`, `codex exec`, `gemini -p`; läuft, solange der Rechner an ist). Der Zeitplan verweist nur auf den Skill, nach `git pull` gilt sofort die neue Fassung. Alle Routinen lassen sich auch von Hand starten („such neue Stellen“). Gesendet wird nie etwas, Abschicken machst du selbst.
 
 ## Genauer recherchieren
 
@@ -41,7 +53,7 @@ Die Stellensuche nutzt von sich aus nur frei zugängliche Quellen: die Jobbörse
 
 - **Suchbegriffe schärfen.** Jobbörsen suchen wörtlich. Kurze Begriffe aus ein bis zwei Wörtern, zusammengesetzte Wörter getrennt („Kampagnen Manager“), deutsche und englische Titel. Nach der Marktanalyse die Begriffe übernehmen, die dort häufig vorkommen.
 - **Zeitraum.** Viele Anzeigen werden nur neu geschaltet. Wer zu wenig findet, stellt im Suchprofil 14 statt 7 Tage ein.
-- **Selbst gefundene Stellen schicken.** Was du auf LinkedIn, Indeed, in Branchenportalen oder über Empfehlungen findest: Link an Claude schicken („bewirb mich bei …“ oder „trag das als Vorschlag ein“). Das ist oft der beste Weg zu Stellen, die keine freie Quelle führt.
+- **Selbst gefundene Stellen schicken.** Was du auf LinkedIn, Indeed, in Branchenportalen oder über Empfehlungen findest: Link an die KI schicken („bewirb mich bei …“ oder „trag das als Vorschlag ein“). Das ist oft der beste Weg zu Stellen, die keine freie Quelle führt.
 - **Job-Alerts per Mail.** Bei LinkedIn, Indeed oder StepStone Suchaufträge mit deinen Suchbegriffen anlegen und die Mails selbst durchsehen.
 - **Zielfirmen direkt.** Viele Stellen stehen nur auf der Karriereseite. Eine Liste von Wunschfirmen unter „Eigene Quellen“ im Suchprofil eintragen, dann prüft die Stellensuche deren Karriereseiten mit.
 - **Nachsehen, was aussortiert wurde.** `daten/bewerbungen/stellensuche-verworfen.md` zeigt jede gesichtete, aber nicht vorgeschlagene Stelle mit Grund. Fehlt dir eine Stelle, steht dort, ob sie übersehen oder bewusst aussortiert wurde.
@@ -49,7 +61,8 @@ Die Stellensuche nutzt von sich aus nur frei zugängliche Quellen: die Jobbörse
 
 ## Voraussetzungen
 
-- Claude Code in der Claude-Desktop-App (für Routinen), claude.ai-Konto mit Artifacts (für das Dashboard)
+- Eine KI mit Datei- und Shell-Zugriff, z. B. Claude Code (Routinen in der Desktop-App und Dashboard auf claude.ai nur damit)
+- Python 3 (für den lokalen Tracker und kleine Skripte)
 - Google Chrome (PDF-Druck; anderer Pfad: `CHROME=/pfad/zu/chrome`)
 - poppler (`brew install poppler`) für `pdfunite`, `pdftoppm`, `pdftotext`
 

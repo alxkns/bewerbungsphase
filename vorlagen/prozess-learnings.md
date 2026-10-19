@@ -71,7 +71,7 @@ Gemeinsames Gedächtnis der Skills `stellensuche`, `bewerbungen-erstellen` und `
 ## Offene Probleme
 
 - **Blinde Recruiter-Runden streuen:** Die letzte Runde fällt teils unter die vorige, ohne dass sich etwas verschlechtert hat. Score = letzte Runde, die vorige Fassung bleibt in `vN/` als Alternative.
-- **Recruiter-Check im automatischen Lauf:** `AskUserQuestion` gibt es dort nicht. Fakten-Fragen werden gesammelt, Änderungen, die eine Antwort brauchen, ausgelassen.
+- **Recruiter-Check im automatischen Lauf:** Rückfragen an den Nutzer gibt es dort nicht. Fakten-Fragen werden gesammelt, Änderungen, die eine Antwort brauchen, ausgelassen.
 - **Freigaben im automatischen Lauf:** Ohne passenden Berechtigungsmodus bleiben Läufe an Freigaben hängen (Bash, Edit, ArtifactData). Der Nutzer löst das in der App.
 - **Englische Bewerbungen:** `brieftext.py` erkennt „Dear“/„Kind regards“ nicht, humanizer-de ist nur für Deutsch kalibriert.
 - **humanizer-de-Fehlalarme:** „doch“ als Konjunktion und „schon“ (= bereits) werden als Partikel gemeldet.

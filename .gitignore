@@ -9,3 +9,5 @@ daten/
 .humanizer/
 
 .DS_Store
+
+__pycache__/

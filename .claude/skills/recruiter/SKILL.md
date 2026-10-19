@@ -12,14 +12,14 @@ Typische Deckel sind fehlende formale Stationen (Konzern, Beratung, Studium), fe
 ## Welche Bewerbungen
 
 - **Einzeln:** Ordner, den der Nutzer nennt.
-- **Alle ab Match-Grenze:** Tracker abfragen (`ArtifactData` `query` auf `bewerbungen`, `where: [["match", ">=", <Grenze>]]`, Grenze und URL in `daten/suchprofil.md`). Nur Status `Entworfen` umschreiben. Schon versendet → nur bewerten, nichts überschreiben (dient als Gesprächsvorbereitung).
+- **Alle ab Match-Grenze:** Tracker lesen (Skill `bewerbung`, „Tracker pflegen“; lokal `list --min-match <Grenze>`), Grenze in `daten/suchprofil.md`. Nur Status `Entworfen` umschreiben. Schon versendet → nur bewerten, nichts überschreiben (dient als Gesprächsvorbereitung).
 - Liegt schon eine `recruiter.md` vor, wird die nächste Runde angehängt, nicht neu angefangen.
 
 ## Rollen (drei getrennte Köpfe)
 
 | Rolle | Wer | Sieht |
 |---|---|---|
-| **Prüfer** | Subagent (`Agent`, general-purpose), der die Unterlagen nicht geschrieben hat | alles, schreibt `recruiter.md` (Schritte 1–4) |
+| **Prüfer** | Subagent (siehe `AGENTS.md`, „Werkzeuge“), der die Unterlagen nicht geschrieben hat | alles, schreibt `recruiter.md` (Schritte 1–4) |
 | **Schreiber** | Hauptchat. Bei mehreren Bewerbungen ein Agent pro Ordner, parallel | `recruiter.md`, setzt um (Schritt 5) |
 | **Blinder Endbewerter** | **neuer** Subagent, nie der Prüfer | nur `anzeige.md`, Endfassung, Fakten-Quellen. **Nicht** `recruiter.md`, nicht `v1/`. Sonst bewertet er seine eigenen Vorschläge oder den Abstand zur alten Fassung statt die Bewerbung (Schritt 6) |
 
@@ -29,7 +29,7 @@ Jeder Agent bekommt diese Datei und den Ordnerpfad. Ergebnisse von Agents vor de
 
 - **Lebenslauf:** Master `daten/bewerbungen/_vorlage/lebenslauf.html` plus „Bausteine“ aus `daten/profil.md` (dürfen bei passender Stelle als Stichpunkt rein).
 - **Anschreiben:** Master plus `profil.md`, vor allem „Motivation und Charakter“, „Hintergrund“ und „Eigenschaften und Belege“.
-- Was der Prüfer für eine 9 braucht, aber nirgends steht → **Fakten-Frage** an den Nutzer. Alle Fragen gesammelt in einer `AskUserQuestion`, bevor umgeschrieben wird. Bestätigte Fakten zuerst in den Master (bzw. `profil.md`), dann in die Bewerbung.
+- Was der Prüfer für eine 9 braucht, aber nirgends steht → **Fakten-Frage** an den Nutzer. Alle Fragen gesammelt in einer Nachricht (oder Auswahlfrage), bevor umgeschrieben wird. Läuft der Check unbeaufsichtigt (Routine), Fragen nur sammeln. Bestätigte Fakten zuerst in den Master (bzw. `profil.md`), dann in die Bewerbung.
 - Nie: Tools, Zahlen, Ergebnisse oder Verantwortung erfinden; etwas aus „Grenzen“ in `profil.md` vorschlagen.
 
 ## 1. Rolle einnehmen
@@ -127,4 +127,4 @@ Neuer Subagent (siehe Rollen), bekommt keine Vorgeschichte. Er liest die Endfass
 
 ## Übergabe
 
-Im Chat pro Bewerbung: Punkte je Runde, die 3 wichtigsten Änderungen, Deckel und Fakten-Fragen. Im Tracker `score` auf die letzte Bewertung setzen (Zahl, z. B. `9.1`) und `notiz` ergänzen: `Recruiter-Check: 6,4 → 8,6 → 9,1` (ein `update` mit `if_version`). Abschicken macht der Nutzer selbst.
+Im Chat pro Bewerbung: Punkte je Runde, die 3 wichtigsten Änderungen, Deckel und Fakten-Fragen. Im Tracker `score` auf die letzte Bewertung setzen (Zahl, z. B. `9.1`) und `notiz` ergänzen: `Recruiter-Check: 6,4 → 8,6 → 9,1` (ein `update` mit Version aus dem letzten Lesen, siehe Skill `bewerbung`, „Tracker pflegen“). Abschicken macht der Nutzer selbst.

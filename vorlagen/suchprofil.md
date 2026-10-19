@@ -36,5 +36,5 @@
 - Anzeigen nicht älter als: 7 Tage
 
 ## Tracker
-- Dashboard-Artifact (URL):
-- Collection: `bewerbungen`
+- Art: lokal <!-- lokal = daten/tracker.sqlite, Dashboard per `python3 tracker/tracker.py serve`, jede KI · claude.ai = Artifact mit Datenbank, auch am Handy, nur Claude -->
+- Dashboard-Artifact (URL, nur bei claude.ai):

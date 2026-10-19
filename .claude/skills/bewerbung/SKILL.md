@@ -8,7 +8,7 @@ description: Kompletter Bewerbungsablauf von der Stellenanzeige bis zu fertigen 
 Steuert den Ablauf und ruft die Fach-Skills auf. Vor dem Schreiben immer lesen:
 - `.claude/skills/bewerbung/stil.md`: allgemeiner Schreibstil + Du/Sie-Regel
 - `daten/profil.md`: Eckdaten, ehrliches Level, Motivation und Charakter, Belege, Grenzen, Stil-Vorlieben
-- `daten/suchprofil.md`: Ausschlüsse, Match-Grenze, Tracker-URL
+- `daten/suchprofil.md`: Ausschlüsse, Match-Grenze, Art des Trackers
 - `daten/bewerbungen/_vorlage/lebenslauf.html`: Master-Lebenslauf. Fakten nur aus Master und `profil.md`, nichts erfinden
 
 Fehlen `daten/profil.md` oder der Master-Lebenslauf: abbrechen und Skill `einrichtung` vorschlagen. Steht im Kopf von `profil.md` noch nicht „Kennenlernen abgeschlossen“: einmal darauf hinweisen, dass Skill `kennenlernen` die Anschreiben deutlich persönlicher macht, dann weitermachen, wenn der Nutzer will.
@@ -17,7 +17,7 @@ Fehlen `daten/profil.md` oder der Master-Lebenslauf: abbrechen und Skill `einric
 
 ## Ablauf
 
-1. **Anzeige sichern.** Link → Text holen (WebFetch oder Browser-Pane). Ordner anlegen:
+1. **Anzeige sichern.** Link → Text holen (Seite abrufen, notfalls im Browser). Ordner anlegen:
    `daten/bewerbungen/JJJJ-MM-TT_Firmenname/` (Firmenname normal geschrieben, Leerzeichen → Bindestrich).
    Anzeige komplett als `anzeige.md` speichern (Anzeigen verschwinden, fürs Gespräch braucht man sie wieder).
 
@@ -54,7 +54,7 @@ Fehlen `daten/profil.md` oder der Master-Lebenslauf: abbrechen und Skill `einric
    ```bash
    pdftoppm -r 70 -png "daten/bewerbungen/<ordner>/Anschreiben_<Firma>_<Name>.pdf" <scratchpad>/vorschau
    ```
-   Vorschau-PNGs ansehen (Read). Anschreiben **genau 1 Seite**, Unterschrift und „Anlage“ sichtbar, nichts abgeschnitten. Lebenslauf max. 2 Seiten, keine verwaisten Überschriften am Seitenende. Zu lang → kürzen, nicht die Schrift verkleinern.
+   Vorschau-PNGs ansehen (Bild öffnen). Anschreiben **genau 1 Seite**, Unterschrift und „Anlage“ sichtbar, nichts abgeschnitten. Lebenslauf max. 2 Seiten, keine verwaisten Überschriften am Seitenende. Zu lang → kürzen, nicht die Schrift verkleinern.
 
 7a. **Recruiter-Check** (ab Match-Grenze, max. 2 Verbesserungsrunden): nach Skill `recruiter` bewerten und umschreiben, Ergebnis in `recruiter.md`.
 
@@ -68,11 +68,17 @@ Fehlen `daten/profil.md` oder der Master-Lebenslauf: abbrechen und Skill `einric
 
 ## Tracker pflegen
 
-Einzige Liste aller Bewerbungen ist die Datenbank des Bewerbungs-Trackers: URL in `daten/suchprofil.md`, Abschnitt „Tracker“, Collection `bewerbungen`, ein Dokument pro Bewerbung. Der Nutzer ändert dort selbst Status und Daten im Browser. Ist noch kein Tracker eingerichtet: Schritt überspringen und das sagen.
+Einzige Liste aller Bewerbungen ist die Datenbank des Bewerbungs-Trackers, ein Dokument pro Bewerbung (`id` = Ordnername ohne Umlaute und Sonderzeichen, nur `A-Z a-z 0-9 _ -`, z. B. `2026-10-15_Beispiel-GmbH`). Der Nutzer ändert dort selbst Status und Daten im Dashboard. Welche Art, steht in `daten/suchprofil.md` → „Tracker“. Ist noch keiner eingerichtet: Schritt überspringen und das sagen.
 
-- **Lesen:** `ArtifactData` `list` auf `bewerbungen` (Seiten mit `query.cursor`).
-- **Neu:** `ArtifactData` `set` mit `doc_id` = Ordnername ohne Umlaute und Sonderzeichen (nur `A-Z a-z 0-9 _ -`, z. B. `2026-10-15_Beispiel-GmbH`).
-- **Ändern:** `ArtifactData` `update` nur mit den geänderten Feldern und `if_version` aus dem letzten Lesen. Der Nutzer kann parallel im Browser ändern.
+**Lokal** (Standard, funktioniert mit jeder KI; Daten in `daten/tracker.sqlite`):
+```bash
+python3 tracker/tracker.py list [--status Angefordert] [--min-match 70]   # [{"id", "version", "data"}]
+python3 tracker/tracker.py set <id> '<json mit allen Feldern>'            # neu anlegen
+python3 tracker/tracker.py update <id> '<json nur geänderte Felder>' --if-version <N>
+```
+JSON in einfache Anführungszeichen, einfache Anführungszeichen im Text als `'\''` schreiben. Meldet `update` „Version passt nicht“, hat der Nutzer parallel im Dashboard geändert: neu lesen, erneut schreiben. Dashboard: `python3 tracker/tracker.py serve`, dann http://localhost:8765.
+
+**claude.ai** (Dashboard als Artifact, nur mit Claude): Tool `ArtifactData` auf die URL aus `suchprofil.md`, Collection `bewerbungen`. Lesen mit `list` (Seiten mit `query.cursor`) oder `query` mit `where`, neu mit `set` (`doc_id`), ändern mit `update` nur mit den geänderten Felder und `if_version`, mehrere Änderungen als `batch`.
 
 ```json
 {"firma": "", "stelle": "", "ort": null, "weg": "", "match": 75, "score": null,

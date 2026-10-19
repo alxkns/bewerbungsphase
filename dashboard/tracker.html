@@ -1,5 +1,6 @@
-<!-- Bewerbungs-Tracker. Wird bei der Einrichtung als eigenes, privates claude.ai-Artifact veröffentlicht
-     (capabilities: db mit Regel read view / write owner, user). Daten: Collection `bewerbungen`. -->
+<!-- Bewerbungs-Tracker, zwei Betriebsarten:
+     lokal: python3 tracker/tracker.py serve, Daten in daten/tracker.sqlite (jede KI)
+     claude.ai: als privates Artifact veröffentlicht (capabilities: db mit Regel read view / write owner, user), Collection `bewerbungen` -->
 <title>Bewerbungs-Tracker</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -471,21 +472,54 @@ document.querySelectorAll('#table th[data-f] button').forEach((b) => b.addEventL
 }));
 let rw; new ResizeObserver(() => { clearTimeout(rw); rw = setTimeout(renderWeeks, 120); }).observe($('#weeks'));
 
+// Lokaler Modus: tracker/tracker.py serve liefert dieselbe Schnittstelle wie die claude.ai-Datenbank
+function localDb() {
+  const api = 'api/bewerbungen', subs = [];
+  let last = '';
+  const refresh = async () => {
+    try {
+      const r = await fetch(api, { cache: 'no-store' });
+      if (!r.ok) throw new Error(r.status);
+      const txt = await r.text();
+      if (txt === last) return;
+      last = txt;
+      const snap = { docs: JSON.parse(txt).map((x) => ({ id: x.id, data: () => x.data })) };
+      subs.forEach(([cb]) => cb(snap));
+    } catch (e) { subs.forEach(([, err]) => err && err(e)); }
+  };
+  const call = async (method, id, body) => {
+    const r = await fetch(api + '/' + encodeURIComponent(id), { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body || {}) });
+    if (!r.ok) { const e = new Error(await r.text()); e.code = r.status; throw e; }
+    refresh();
+  };
+  return {
+    collection: () => ({
+      doc: (id) => ({ update: (p) => call('PATCH', id, p), set: (d) => call('PUT', id, d), delete: () => call('DELETE', id) }),
+      onSnapshot(cb, err) { subs.push([cb, err]); refresh(); setInterval(refresh, 5000); },
+    }),
+  };
+}
+
 renderAll();
 (async () => {
-  db = window.claude ? await window.claude.use('db') : null;
+  const lokal = !window.claude && location.protocol.startsWith('http');
+  db = window.claude ? await window.claude.use('db') : lokal ? localDb() : null;
   if (!db) {
-    $('#take').textContent = 'Die Bewerbungen sind nur angemeldet auf claude.ai sichtbar.';
-    const b = $('#banner'); b.textContent = 'Keine Verbindung zur Datenbank. Öffne die Seite angemeldet über claude.ai.'; b.hidden = false;
+    $('#take').textContent = 'Keine Verbindung zur Datenbank.';
+    const b = $('#banner'); b.textContent = 'Lokal starten mit „python3 tracker/tracker.py serve“ und http://localhost:8765 öffnen, oder die Seite angemeldet über claude.ai öffnen.'; b.hidden = false;
     return;
   }
-  const user = await window.claude.use('user');
-  if (user) { const w = await user.can('data.write'); canWrite = (await user.isOwner()) || w !== false; }
+  if (lokal) canWrite = true;
+  else {
+    const user = await window.claude.use('user');
+    if (user) { const w = await user.can('data.write'); canWrite = (await user.isOwner()) || w !== false; }
+  }
   $('#add').hidden = !canWrite;
   $('#table-note').textContent = canWrite ? 'Status direkt in der Tabelle ändern, Details über „Bearbeiten“' : 'Nur ansehen: Ändern kann nur der Besitzer';
   db.collection('bewerbungen').onSnapshot((snap) => {
+    $('#banner').hidden = true;
     rows = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
     renderAll();
-  }, () => { const b = $('#banner'); b.textContent = 'Die Verbindung zur Datenbank ist abgerissen. Lade die Seite neu.'; b.hidden = false; });
+  }, () => { const b = $('#banner'); b.textContent = lokal ? 'Keine Verbindung zum lokalen Tracker. Läuft „python3 tracker/tracker.py serve“ noch?' : 'Die Verbindung zur Datenbank ist abgerissen. Lade die Seite neu.'; b.hidden = false; });
 })();
 </script>

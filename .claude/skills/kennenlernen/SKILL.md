@@ -12,7 +12,7 @@ Vorher lesen: `daten/profil.md` (was steht schon, was ist leer), Master-Lebensla
 ## Wie fragen
 
 - **Eine Runde, ein Thema, 3–5 Fragen.** Nie 20 Fragen auf einmal. Kurz sagen, wozu die Runde dient („Damit das Anschreiben zeigt, warum du diese Arbeit willst“).
-- **Offene Fragen im Chat**, Auswahlfragen per `AskUserQuestion` (z. B. Level je Tool, Ja/Nein-Grenzen, max. 4 Fragen pro Aufruf).
+- **Offene Fragen im Chat**, Auswahlfragen (z. B. Level je Tool, Ja/Nein-Grenzen; siehe `AGENTS.md`, „Werkzeuge“).
 - **Nach Beispielen fragen, nicht nach Adjektiven.** Auf „Ich bin kommunikativ“ folgt „Wann hat das einen Unterschied gemacht? Was hast du gesagt oder getan, was kam dabei raus?“
 - **Nachhaken bei Vagem:** „Woran hat man das gemerkt?“, „Gibt es dazu eine Zahl, oder eher nicht gemessen?“, „Was war dein Teil, was der des Teams?“ Höchstens zweimal pro Punkt, dann so festhalten, wie es ist.
 - **Nichts in den Mund legen.** Keine Vorschläge wie „Du hast sicher auch …“. Was der Nutzer nicht bestätigt, steht nicht im Profil.
@@ -34,7 +34,7 @@ Reihenfolge ist Empfehlung. Runden, deren Abschnitte in `profil.md` schon gefül
 Offene Punkte aus `profil.md` → „Offen aus der Einrichtung“ (danach dort löschen, inkl. Profiltext im Lebenslauf neu schreiben), Lücken > 3 Monate, Wechsel zwischen Stationen (warum?), Umfang der Verantwortung je Station (Team, Budget, Kunden), Zahlen, die belegt sind. Zeitstrahl in eigenen Worten bestätigen lassen: Was kam wann, was davon klingt im Lebenslauf größer oder kleiner, als es war?
 
 **2. Ehrliches Level** → „Hintergrund“ → „Ehrliches Level“, „Grenzen“
-Für jedes Tool und jedes Fachthema aus den Muss- und Kann-Kriterien in `markt.md` (Anteil ≥ 20 %) plus den Kenntnissen im Lebenslauf per `AskUserQuestion`: produktiv im Alltag genutzt · Grundkenntnisse · nur ausprobiert · nie genutzt. Bei „produktiv“: wofür, wie lange? „Nur ausprobiert“ und „nie“ wandern unter „Grenzen“ → „Nie behaupten“. Auch fragen: Was traust du dir zu, wäre aber im Lebenslauf übertrieben?
+Für jedes Tool und jedes Fachthema aus den Muss- und Kann-Kriterien in `markt.md` (Anteil ≥ 20 %) plus den Kenntnissen im Lebenslauf als Auswahlfrage: produktiv im Alltag genutzt · Grundkenntnisse · nur ausprobiert · nie genutzt. Bei „produktiv“: wofür, wie lange? „Nur ausprobiert“ und „nie“ wandern unter „Grenzen“ → „Nie behaupten“. Auch fragen: Was traust du dir zu, wäre aber im Lebenslauf übertrieben?
 
 **3. Belege für die gesuchten Eigenschaften** → „Eigenschaften und Belege“, „Geschichten (STAR)“
 Für die 6–10 Eigenschaften aus `markt.md` je eine Frage nach einer echten Situation: Situation, Aufgabe, was hast du getan, Ergebnis. Dazu die „Fragen fürs Kennenlernen“ aus `markt.md`. Je Eigenschaft in die Tabelle: Beleg (Anschreiben-tauglich, auf Systemebene, Regel „Flughöhe“ in `bewerbung/stil.md`) und Grenze (was man daraus nicht ableiten darf). Gute Geschichten zusätzlich als STAR-Zeile. Fehlt für eine häufig gesuchte Eigenschaft jeder Beleg: als Lücke unter „Stärken und Schwächen“ notieren, nicht schönreden.
@@ -65,7 +65,7 @@ Warum weg vom jetzigen Arbeitgeber? Lücken, Abbrüche, Kündigungen? Wo in 5 Ja
 Zusammenfassen, was aus den Runden 1–7 schon als Grenze feststeht, und ergänzen: Gibt es etwas, das stimmt, aber nie erwähnt werden soll? Kunden, Arbeitgeber oder Projekte, die nicht oder nur eingeschränkt genannt werden dürfen? Zahlen, die vertraulich sind? Themen, über die nicht schlecht geredet werden darf?
 
 **9. Formales und Stil** → „Hintergrund“ → „Formales und Ablauf“, „Stil-Vorlieben“, „Privat“
-Per `AskUserQuestion` wo möglich: Zeugnisse beilegen? Links (LinkedIn, Portfolio)? Foto? Reisebereitschaft, Führerschein? Bewerben ab welchem Match? Niveau der Zielstellen, maximale Länge des Anschreibens. Eigene No-gos bei Wörtern oder Ton. Gibt es ein früheres Anschreiben, das gut ankam? Dann als Textprobe lesen, Ton und gute Absätze unter „Stil-Vorlieben“ festhalten (nichts Erfundenes übernehmen). Hobbys nur kurz, für „Privat“.
+Als Auswahlfragen, wo möglich: Zeugnisse beilegen? Links (LinkedIn, Portfolio)? Foto? Reisebereitschaft, Führerschein? Bewerben ab welchem Match? Niveau der Zielstellen, maximale Länge des Anschreibens. Eigene No-gos bei Wörtern oder Ton. Gibt es ein früheres Anschreiben, das gut ankam? Dann als Textprobe lesen, Ton und gute Absätze unter „Stil-Vorlieben“ festhalten (nichts Erfundenes übernehmen). Hobbys nur kurz, für „Privat“.
 
 **10. Bausteine** → „Bausteine“
 Was hat der Nutzer neben dem Kern gemacht, das bei manchen Stellen zieht (Einkauf, Controlling, Ausbildung von Azubis, Events, Ehrenamt …)? Je Bereich: was konkret, bei welchen Stellen es zieht.

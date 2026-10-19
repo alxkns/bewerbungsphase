@@ -9,16 +9,16 @@ Der Nutzer klickt im Dashboard bei einem Vorschlag „Bewerbung erstellen“ (St
 
 Alle Pfade relativ zum Projektordner (im geplanten Lauf nennt der Auftrag ihn, vorher `cd` dorthin).
 
-**Vorher lesen:** `daten/prozess-learnings.md` („Gültige Workarounds“ befolgen), Tracker-URL aus `daten/suchprofil.md` → „Tracker“. Fehlt sie: mit einem Satz beenden („Kein Tracker eingerichtet“).
+**Vorher lesen:** `daten/prozess-learnings.md` („Gültige Workarounds“ befolgen), `daten/suchprofil.md` → „Tracker“. Ist keiner eingerichtet: mit einem Satz beenden („Kein Tracker eingerichtet“).
 
-Tracker: `ArtifactData` (per ToolSearch laden), Collection `bewerbungen`. Schreiben immer mit `update`, nur geänderte Felder, `if_version` aus dem letzten Lesen; bei Konflikt neu lesen.
+Tracker lesen und schreiben wie im Skill `bewerbung`, Abschnitt „Tracker pflegen“ (lokal per `tracker/tracker.py` oder claude.ai per ArtifactData, je nach `daten/suchprofil.md` → „Tracker“). Schreiben immer mit `update`, nur geänderte Felder, Version aus dem letzten Lesen; bei Konflikt neu lesen.
 
 ## Ablauf
 
-1. `query` auf `bewerbungen` mit `where: [["status", "==", "Angefordert"]]`. Leer → Log-Eintrag „ohne Befund“, mit einem Satz beenden.
+1. Alle mit Status „Angefordert“ lesen (lokal `list --status Angefordert`, claude.ai `query` mit `where: [["status", "==", "Angefordert"]]`). Leer → Log-Eintrag „ohne Befund“, mit einem Satz beenden.
 2. Für jedes Dokument:
    a. Sofort `status` = „In Arbeit“ setzen (verhindert Doppelbearbeitung durch einen parallelen Lauf).
-   b. Ordner `daten/bewerbungen/<doc_id>/` verwenden (dort liegen meist schon `anzeige.md` und `analyse.md`). Fehlen sie: Anzeige über `link` holen, `anzeige.md` speichern, Analyse nach Skill `stellenanalyse` als `analyse.md`.
+   b. Ordner `daten/bewerbungen/<id>/` verwenden (dort liegen meist schon `anzeige.md` und `analyse.md`). Fehlen sie: Anzeige über `link` holen, `anzeige.md` speichern, Analyse nach Skill `stellenanalyse` als `analyse.md`.
    c. Skill `bewerbung` ab Schritt 3 vollständig befolgen (dort genannte Dateien vorher lesen: `stil.md`, `profil.md`, Master-Lebenslauf, Skills `lebenslauf-anpassen`, `anschreiben`, KI-Sprache-Check, `pdf.sh`, Sichtprüfung).
    d. Recruiter-Check nach Skill `recruiter`, wenn Match ≥ Grenze aus `suchprofil.md`, höchstens 2 Verbesserungsrunden. Fakten-Fragen kannst du hier nicht stellen: nicht erfinden, sondern sammeln (sie landen später im Skill `kennenlernen`).
    e. Fehlende Eckdaten (z. B. Gehaltsfeld): Werte aus `profil.md`. Gibt es dort keinen Wert: offen lassen und notieren.
