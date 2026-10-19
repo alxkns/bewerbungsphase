@@ -124,7 +124,8 @@ Neuer Subagent (siehe Rollen), bekommt keine Vorgeschichte. Er liest die Endfass
 
 - **≥ 9,0** oder alle Kriterien unter 9 haben einen Deckel → fertig.
 - Sonst nächste Runde (Schreiber setzt „Weg zur 9“ um, wieder ein neuer blinder Bewerter). **Höchstens 2 Verbesserungsrunden** (Sicherungen `v1/`, `v2/`), also max. 3 Bewertungen. Danach nicht weiter umschreiben, offene Punkte entscheidet der Nutzer.
+- **Beste Fassung gewinnt:** Die Noten streuen zwischen Bewertern. Fällt die letzte Runde unter eine frühere, gilt die Fassung mit der besten Note: Die Fassung aus Runde N liegt in `vN/`. Ihre HTML-Dateien zurück in den Ordner kopieren, PDFs neu bauen, Sichtprüfung. Die schlechtere Fassung bleibt als Sicherung liegen.
 
 ## Übergabe
 
-Im Chat pro Bewerbung: Punkte je Runde, die 3 wichtigsten Änderungen, Deckel und Fakten-Fragen. Im Tracker `score` auf die letzte Bewertung setzen (Zahl, z. B. `9.1`) und `notiz` ergänzen: `Recruiter-Check: 6,4 → 8,6 → 9,1` (ein `update` mit Version aus dem letzten Lesen, siehe Skill `bewerbung`, „Tracker pflegen“). Abschicken macht der Nutzer selbst.
+Im Chat pro Bewerbung: Punkte je Runde, die 3 wichtigsten Änderungen, Deckel und Fakten-Fragen. Im Tracker `score` auf die beste Bewertung setzen (die der Endfassung) (Zahl, z. B. `9.1`) und `notiz` ergänzen: `Recruiter-Check: 6,4 → 8,6 → 9,1` (ein `update` mit Version aus dem letzten Lesen, siehe Skill `bewerbung`, „Tracker pflegen“). Abschicken macht der Nutzer selbst.
