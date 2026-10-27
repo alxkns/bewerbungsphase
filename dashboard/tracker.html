@@ -34,6 +34,11 @@ button, input, select, textarea { font: inherit; color: inherit; }
 :focus-visible { outline: 3px solid var(--pink); outline-offset: 2px; }
 
 .head { display: flex; flex-wrap: wrap; gap: 16px 24px; align-items: end; justify-content: space-between; }
+.head-actions { display: grid; gap: 10px; }
+.btn:disabled { cursor: progress; opacity: .7; }
+.link-add { display: flex; gap: 8px; }
+.link-add .field { flex: 1; }
+.link-add[hidden] { display: none; }
 .head-text { display: grid; gap: 12px; justify-items: start; min-width: 0; }
 .eyebrow { margin: 0; background: var(--pink); border: var(--b); box-shadow: var(--sh-sm); padding: 2px 10px; font-family: var(--mono); font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; }
 h1 { margin: 0; font-family: var(--display); font-weight: 400; font-size: clamp(2rem, 6vw, 3.4rem); line-height: 1.05; text-wrap: balance; }
@@ -137,8 +142,15 @@ dialog::backdrop { background: rgba(18, 18, 18, .45); }
       <h1>Bewerbungs-<span class="mark">Tracker</span></h1>
       <p class="take" id="take">Bewerbungen werden geladen …</p>
     </div>
-    <button class="btn" id="connect" type="button" hidden>Ordner verbinden</button>
-    <button class="btn" id="add" type="button" hidden>+ Bewerbung eintragen</button>
+    <div class="head-actions">
+      <button class="btn ghost" type="button" data-lauf="gmail-abgleich" title="Gmail nach Antworten durchsuchen" hidden>Aktualisieren</button>
+      <button class="btn ghost" type="button" data-lauf="stellensuche" hidden>Neue Stellen suchen</button>
+      <form class="link-add" id="link-add" hidden>
+        <input class="field" id="link-in" type="url" placeholder="Link zur Stellenanzeige" aria-label="Link zu einer selbst gefundenen Stellenanzeige" required>
+        <button class="btn" type="submit">Eintragen</button>
+      </form>
+      <button class="btn" id="connect" type="button" hidden>Ordner verbinden</button>
+    </div>
   </header>
   <p class="banner" id="banner" hidden></p>
 
@@ -171,6 +183,7 @@ dialog::backdrop { background: rgba(18, 18, 18, .45); }
     <div class="tools">
       <div class="seg" role="group" aria-label="Ansicht">
         <button type="button" data-view="todo" aria-pressed="true">To-do <span class="n" id="n-todo"></span></button>
+        <button type="button" data-view="warten" aria-pressed="false" title="Warte auf Rückmeldung">Wartet <span class="n" id="n-warten"></span></button>
         <button type="button" data-view="alle" aria-pressed="false">Alle <span class="n" id="n-alle"></span></button>
       </div>
       <input class="field" id="q" type="search" placeholder="Firma, Stelle …" aria-label="Bewerbungen durchsuchen">
@@ -250,7 +263,7 @@ const deDate = (s) => (s ? new Date(s + 'T00:00:00').toLocaleDateString('de-DE',
 
 let rows = [], db = null, canWrite = false, sortF = null, asc = false, editing = null;
 let view = 'todo';
-try { if (localStorage.getItem('ansicht') === 'alle') view = 'alle'; } catch {}
+try { const a = localStorage.getItem('ansicht'); if (a === 'alle' || a === 'warten') view = a; } catch {}
 
 STATUS.forEach((s) => { $('#filter').append(new Option(s, s)); $('#f-status').append(new Option(s, s)); });
 
@@ -354,11 +367,11 @@ function renderWeeks() {
 
 function renderTable() {
   const q = $('#q').value.trim().toLowerCase(), f = $('#filter').value;
-  const base = view === 'todo' ? rows.filter((r) => TODO.includes(r.status)) : rows;
-  $('#n-todo').textContent = rows.filter((r) => TODO.includes(r.status)).length;
-  $('#n-alle').textContent = rows.length;
+  const VIEW = { todo: (r) => TODO.includes(r.status), warten: isOpen, alle: () => true };
+  const base = rows.filter(VIEW[view]);
+  for (const v in VIEW) $('#n-' + v).textContent = rows.filter(VIEW[v]).length;
   document.querySelectorAll('.seg button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.view === view)));
-  $('#list-title').textContent = view === 'todo' ? 'Deine To-dos' : 'Alle Bewerbungen';
+  $('#list-title').textContent = { todo: 'Deine To-dos', warten: 'Warte auf Rückmeldung', alle: 'Alle Bewerbungen' }[view];
   const list = base.filter((r) => (!q || [r.firma, r.stelle, r.ort, r.weg, r.naechster_schritt, r.notiz].join(' ').toLowerCase().includes(q))
     && (!f || (f === 'offen' ? isOpen(r) : r.status === f)));
   const key = (r) => (sortF ? r[sortF] : r.versendet_am || r.entworfen_am || r.vorgeschlagen_am);
@@ -372,7 +385,7 @@ function renderTable() {
   $('#count').textContent = `${list.length} von ${base.length}`;
   $('#th-edit').hidden = !canWrite;
   if (!list.length) {
-    const td = el('td', null, view === 'todo' && !q && !f ? 'Nichts zu tun: keine Vorschläge, Entwürfe, Einladungen oder Angebote offen.' : 'Keine Bewerbung passt zu Suche oder Filter.');
+    const td = el('td', null, view === 'todo' && !q && !f ? 'Nichts zu tun: keine Vorschläge, Entwürfe, Einladungen oder Angebote offen.' : view === 'warten' && !q && !f ? 'Keine Bewerbung wartet auf Antwort.' : 'Keine Bewerbung passt zu Suche oder Filter.');
     td.colSpan = 8; const tr = document.createElement('tr'); tr.append(td);
     $('#tbody').replaceChildren(tr); return;
   }
@@ -428,12 +441,10 @@ const slug = (s) => s.replace(/ä/g, 'ae').replace(/ö/g, 'oe').replace(/ü/g, '
 
 function openDialog(r) {
   editing = r;
-  $('#dlg-title').textContent = r ? 'Bewerbung bearbeiten' : 'Bewerbung eintragen';
-  for (const f of FIELDS) $('#f-' + f).value = r ? (r[f] ?? '') : f === 'status' ? 'Versendet' : f === 'versendet_am' ? today() : '';
-  const del = $('#del'); del.hidden = !r; del.classList.remove('armed'); del.textContent = 'Löschen';
+  for (const f of FIELDS) $('#f-' + f).value = r[f] ?? '';
+  const del = $('#del'); del.classList.remove('armed'); del.textContent = 'Löschen';
   $('#dlg').showModal();
 }
-$('#add').addEventListener('click', () => openDialog(null));
 $('#cancel').addEventListener('click', () => $('#dlg').close());
 $('#del').addEventListener('click', async () => {
   const del = $('#del');
@@ -447,22 +458,50 @@ $('#form').addEventListener('submit', async (ev) => {
   for (const f of FIELDS) { const x = $('#f-' + f).value.trim(); v[f] = x === '' ? null : NUM.includes(f) ? Number(x) : x; }
   if (!v.firma) { $('#f-firma').focus(); toast('Bitte eine Firma eintragen.', true); return; }
   if (v.link && !/^https:\/\//.test(v.link)) { $('#f-link').focus(); toast('Der Link muss mit https:// beginnen.', true); return; }
-  if (editing) {
-    const patch = {};
-    for (const f of FIELDS) if ((editing[f] ?? null) !== v[f]) patch[f] = v[f];
-    if (!Object.keys(patch).length) { $('#dlg').close(); return; }
-    $('#dlg').close();
-    await save(editing.id, patch.status ? withDates(editing, patch) : patch, editing.firma);
-  } else {
-    const base = slug((v.versendet_am || today()) + '_' + v.firma);
-    let id = base, n = 2;
-    while (rows.some((r) => r.id === id)) id = base + '-' + n++;
-    const doc = withDates({}, { ...v, entworfen_am: v.status === 'Entworfen' ? today() : null });
-    for (const f of FIELDS) if (!(f in doc)) doc[f] = v[f];
-    try { await db.collection('bewerbungen').doc(id).set(doc); $('#dlg').close(); toast('Eingetragen: ' + v.firma); }
-    catch (e) { toast(e?.code === 'quota_exceeded' ? 'Datenbank voll, bitte alte Einträge löschen.' : 'Nicht gespeichert, bitte nochmal versuchen.', true); }
-  }
+  const patch = {};
+  for (const f of FIELDS) if ((editing[f] ?? null) !== v[f]) patch[f] = v[f];
+  $('#dlg').close();
+  if (Object.keys(patch).length) await save(editing.id, patch.status ? withDates(editing, patch) : patch, editing.firma);
 });
+
+// Selbst gefundene Stelle: nur der Link, Status „Angefordert“. Firma, Stelle und Ort trägt die Routine bewerbungen-erstellen aus der Anzeige nach.
+$('#link-add').addEventListener('submit', async (ev) => {
+  ev.preventDefault();
+  const link = $('#link-in').value.trim();
+  if (!/^https:\/\//.test(link)) { toast('Der Link muss mit https:// beginnen.', true); return; }
+  const da = rows.find((r) => r.link === link);
+  if (da) { toast('Schon im Tracker: ' + (da.firma || link), true); return; }
+  const host = new URL(link).hostname.replace(/^www\./, '');
+  const base = slug(today() + '_' + host.replace(/\./g, '-'));
+  let id = base, n = 2;
+  while (rows.some((r) => r.id === id)) id = base + '-' + n++;
+  const doc = { ...Object.fromEntries(FIELDS.map((f) => [f, null])), firma: host, link, status: 'Angefordert', angefordert_am: today(), naechster_schritt: 'Wird gebaut' };
+  try { await db.collection('bewerbungen').doc(id).set(doc); $('#link-in').value = ''; toast('Eingetragen, die Bewerbung wird gebaut: ' + host); }
+  catch (e) { toast(e?.code === 'quota_exceeded' ? 'Datenbank voll, bitte alte Einträge löschen.' : 'Nicht gespeichert, bitte nochmal versuchen.', true); }
+});
+
+// Routinen im Hintergrund starten über tracker.py serve (startet claude -p); ohne Server bleiben die Buttons aus
+const LAUF = location.protocol === 'file:' ? 'http://127.0.0.1:8765/api/lauf' : '/api/lauf';
+let laufAlt = {};
+function zeigeLauf(st) {
+  document.querySelectorAll('[data-lauf]').forEach((b) => {
+    const k = b.dataset.lauf, name = (b.dataset.name ??= b.textContent);
+    b.hidden = !st || !(k in st);
+    b.disabled = !!st?.[k];
+    b.textContent = st?.[k] ? name + ' läuft …' : name;
+    if (laufAlt[k] && st && !st[k]) toast(name + ': fertig');
+  });
+  laufAlt = st || {};
+}
+async function laufStatus() { try { zeigeLauf(await (await fetch(LAUF)).json()); } catch { zeigeLauf(null); } }
+document.querySelectorAll('[data-lauf]').forEach((b) => b.addEventListener('click', async () => {
+  try {
+    const r = await fetch(LAUF + '/' + b.dataset.lauf, { method: 'POST', headers: { 'Content-Type': 'application/json' } });
+    if (!r.ok) throw new Error(r.status);
+    zeigeLauf(await r.json()); toast(b.dataset.name + ': läuft im Hintergrund');
+  } catch { toast('Start nicht möglich. Läuft „python3 tracker/tracker.py serve“?', true); }
+}));
+if (!window.claude) { laufStatus(); setInterval(laufStatus, 5000); }
 
 $('#q').addEventListener('input', renderTable);
 $('#filter').addEventListener('change', renderTable);
@@ -599,7 +638,7 @@ renderAll();
     const user = await window.claude.use('user');
     if (user) { const w = await user.can('data.write'); canWrite = (await user.isOwner()) || w !== false; }
   }
-  $('#add').hidden = !canWrite;
+  $('#link-add').hidden = !canWrite;
   $('#table-note').textContent = canWrite ? 'Status direkt in der Tabelle ändern, Details über „Bearbeiten“' : 'Nur ansehen: Ändern kann nur der Besitzer';
   db.collection('bewerbungen').onSnapshot((snap) => {
     banner('');
