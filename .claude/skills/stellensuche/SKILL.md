@@ -12,7 +12,7 @@ Alle Pfade relativ zum Projektordner (im geplanten Lauf nennt der Auftrag ihn, v
 **Vorher lesen:**
 - `daten/prozess-learnings.md`: „Gültige Workarounds“ befolgen, sie haben bei technischen Details Vorrang.
 - `daten/suchprofil.md`: Ort, Umkreis, Arbeitsmodell, Suchbegriffe, Ausschlüsse, Risiken, Quellen, Match-Grenze, Zeitraum, Tracker
-- `.claude/skills/stellenanalyse/SKILL.md` (Bewertung, Match-Formel: Muss 70 %, Kann 30 %, ehrlich)
+- `.claude/skills/stellenanalyse/SKILL.md` (Bewertung, Match-Formel nach Punkten je Kriterium, ehrlich)
 - `daten/profil.md` und `daten/bewerbungen/_vorlage/lebenslauf.html` (einzige Faktenquelle)
 - falls vorhanden: `daten/bewerbungen/absagen-analyse.md` (Learnings aus Absagen)
 

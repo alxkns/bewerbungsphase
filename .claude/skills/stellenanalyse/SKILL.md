@@ -50,7 +50,9 @@ Gibt es `daten/markt.md`: Begriffe, die dort häufig sind, haben Vorrang, und di
 **Gesuchte Eigenschaften:** Die 3–4 Eigenschaften aus der Tabelle „Eigenschaften und Belege“ in `profil.md`, die die Anzeige am stärksten betont (Häufigkeit, Reihenfolge, Muss), mit dem passenden Beleg festhalten. Sie steuern, was das Anschreiben zeigt. Verlangt die Anzeige eine Eigenschaft, die in der Tabelle fehlt: als offene Frage an den Nutzer notieren. Danach die 3 Eigenschaften fürs Anschreiben festlegen: zuerst die A-Merkmale nach `bewerbung/stil.md` (immer „Ergebnisse statt Aufgaben“, je nach Anzeige „Lerntempo“ oder „Eigeninitiative“), den Rest aus den gesuchten. Fehlt der Beleg für ein A-Merkmal: offene Frage an den Nutzer. Welcher Aspekt vorne steht, sagt „Zielrollen“ in `profil.md` (bei einem Wechsel auch „Wechsel“).
 
 ## 4. Match berechnen
-Muss-Kriterien zählen 70 %, Kann-Kriterien 30 %. Pro Kriterium: ✅ erfüllt (Beleg aus Lebenslauf nennen) · 🟡 teilweise/übertragbar · ❌ fehlt.
+Pro Kriterium: ✅ erfüllt (Beleg aus Lebenslauf nennen) · 🟡 teilweise/übertragbar · ❌ fehlt.
+
+Punkte je Kriterium, nicht feste Anteile für Muss und Kann: Muss ✅ 1 · 🟡 0,5 · ❌ 0, Kann ✅ 0,3 · 🟡 0,15 · ❌ 0. **Match = erreichte Punkte / mögliche Punkte.** Ein Kann wiegt also 0,3 eines Muss und kann nie so viel abziehen wie ein Muss, auch wenn die Anzeige nur ein oder zwei Kann-Kriterien nennt (Fehlbeispiel der alten Formel „Muss 70 %, Kann 30 %“: 7 Muss fast erfüllt, einziges Kann „C# von Vorteil“ fehlt → 65 % statt 89 %). Ohne Kann-Kriterien zählen nur die Muss. Die Rechnung in `analyse.md` hinter die Match-Zeile schreiben (z. B. „6,5 / 7,3 Punkte“).
 - ≥ Match-Grenze aus `suchprofil.md` (Standard 70 %): bewerben (Recruiter-Check ist dann Pflicht)
 - darunter oder ein harter Ausschluss: Nutzer vorher fragen
 
