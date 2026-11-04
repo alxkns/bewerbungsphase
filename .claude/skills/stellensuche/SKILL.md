@@ -26,7 +26,9 @@ Nur die Quellen, die in `suchprofil.md` → „Quellen“ auf „ja“ stehen, p
 
 1. **Bundesagentur für Arbeit** (immer, kostenlos, enthält viele Partner-Anzeigen von StepStone, Indeed u. a.):
    `curl -s -H 'X-API-Key: jobboerse-jobsuche' 'https://rest.arbeitsagentur.de/jobboerse/jobsuche-service/pc/v6/jobs?was=<Begriff>&wo=<Wohnort>&umkreis=<km>&veroeffentlichtseit=<Tage>&size=100&page=1'`. Remote ohne `wo` mit `was=<Begriff>%20remote`.
-2. **XING und StepStone-Suchseiten** (kostenlos, per curl, siehe Workarounds).
+2. **XING und StepStone-Suchseiten** (kostenlos, per curl, siehe Workarounds). Mehrere Ergebnisseiten lesen: XING sortiert nach Relevanz, neue Anzeigen stehen oft erst auf Seite 2–5.
+
+Eigene Such-Skripte gehören nach `daten/stellensuche/` (mit `README.md` zum Ablauf), nicht in den temporären Ordner der Sitzung. Filter vorsichtig halten: Was ein Skript wegwirft, prüft niemand mehr. Branche oder einzelne Titelwörter nur ausschließen, wenn das Suchprofil es genau so verlangt.
 3. **Eigene Quellen:** nur was der Nutzer in `suchprofil.md` → „Eigene Quellen“ selbst beschrieben hat, genau so, wie es dort steht. Fehlt ein dafür nötiger Connector: überspringen und in der Ausgabe melden.
 
 ## Ablauf
