@@ -111,6 +111,8 @@ td .firm { font-weight: 800; }
 .pill, .status-select { --p: var(--card); display: inline-block; padding: 2px 8px; border: 2px solid var(--ink); box-shadow: 2px 2px 0 var(--ink); background: var(--p); font-size: .78rem; font-weight: 800; white-space: nowrap; border-radius: 0; }
 .status-select { cursor: pointer; padding: 3px 6px; }
 .p-blue { --p: var(--blue); } .p-green { --p: var(--green); } .p-yellow { --p: var(--yellow); } .p-pink { --p: var(--pink); } .p-orange { --p: var(--orange); } .p-violet { --p: var(--violet); }
+.edit + .edit { margin-left: 12px; }
+td.actions { white-space: nowrap; }
 .edit { all: unset; cursor: pointer; font-family: var(--mono); font-size: .75rem; font-weight: 700; text-decoration: underline; text-underline-offset: 3px; }
 @media (max-width: 46rem) { .hide-sm { display: none; } }
 
@@ -409,7 +411,11 @@ function renderTable() {
       }
     } else st.append(el('span', 'pill ' + (TONE[r.status] || ''), r.status || '–'));
     tr.append(firma, el('td', null, r.stelle || '–'), st, el('td', 'date', deDate(r.versendet_am)), el('td', 'date hide-sm', deDate(r.antwort_am)), numCell(r.match, fmtMatch, matchTone), numCell(r.score, fmtScore, scoreTone));
-    if (canWrite) { const td = el('td'), b = el('button', 'edit', 'Bearbeiten'); b.type = 'button'; b.addEventListener('click', () => openDialog(r)); td.append(b); tr.append(td); }
+    if (canWrite) {
+      const td = el('td', 'actions');
+      if (ordner.has(r.id)) { const o = el('button', 'edit', 'Ordner'); o.type = 'button'; o.title = 'Ordner mit Anschreiben und Lebenslauf öffnen'; o.addEventListener('click', () => ordnerOeffnen(r)); td.append(o); }
+      const b = el('button', 'edit', 'Bearbeiten'); b.type = 'button'; b.addEventListener('click', () => openDialog(r)); td.append(b); tr.append(td);
+    }
     return tr;
   }));
 }
@@ -480,8 +486,10 @@ $('#link-add').addEventListener('submit', async (ev) => {
   catch (e) { toast(e?.code === 'quota_exceeded' ? 'Datenbank voll, bitte alte Einträge löschen.' : 'Nicht gespeichert, bitte nochmal versuchen.', true); }
 });
 
-// Routinen im Hintergrund starten über tracker.py serve (startet claude -p); ohne Server bleiben die Buttons aus
-const LAUF = location.protocol === 'file:' ? 'http://127.0.0.1:8765/api/lauf' : '/api/lauf';
+// Routinen im Hintergrund starten und Bewerbungsordner öffnen über tracker.py serve; ohne Server bleiben die Buttons aus
+const API = location.protocol === 'file:' ? 'http://127.0.0.1:8765/api/' : '/api/';
+const LAUF = API + 'lauf';
+let ordner = new Set(), ordnerAlt = '';
 let laufAlt = {};
 function zeigeLauf(st) {
   document.querySelectorAll('[data-lauf]').forEach((b) => {
@@ -493,7 +501,18 @@ function zeigeLauf(st) {
   });
   laufAlt = st || {};
 }
-async function laufStatus() { try { zeigeLauf(await (await fetch(LAUF)).json()); } catch { zeigeLauf(null); } }
+async function laufStatus() {
+  try { zeigeLauf(await (await fetch(LAUF)).json()); } catch { zeigeLauf(null); }
+  let liste = [];
+  try { liste = await (await fetch(API + 'ordner')).json(); } catch {}
+  if (liste.join('|') !== ordnerAlt) { ordnerAlt = liste.join('|'); ordner = new Set(liste); renderTable(); }
+}
+async function ordnerOeffnen(r) {
+  try {
+    const x = await fetch(API + 'ordner/' + encodeURIComponent(r.id), { method: 'POST', headers: { 'Content-Type': 'application/json' } });
+    if (!x.ok) throw new Error(x.status);
+  } catch { toast('Ordner nicht geöffnet. Läuft „python3 tracker/tracker.py serve“?', true); }
+}
 document.querySelectorAll('[data-lauf]').forEach((b) => b.addEventListener('click', async () => {
   try {
     const r = await fetch(LAUF + '/' + b.dataset.lauf, { method: 'POST', headers: { 'Content-Type': 'application/json' } });

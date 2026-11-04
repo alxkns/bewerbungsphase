@@ -13,6 +13,7 @@ Die Versionsnummer verhindert, dass parallele Änderungen sich still überschrei
   python3 tracker/tracker.py import DIR                           <id>.json-Dateien einlesen (z. B. Export aus claude.ai)
   python3 tracker/tracker.py serve [--port 8765]                  Dashboard über localhost (Safari/Firefox); startet auf Klick
                                                                   Routinen im Hintergrund (claude -p, Log in daten/logs/)
+                                                                  und öffnet daten/bewerbungen/<id>/ im Dateimanager
 """
 import argparse, json, os, shutil, subprocess, sys, tempfile
 from datetime import datetime
@@ -22,6 +23,7 @@ from urllib.parse import unquote
 
 ROOT = Path(__file__).resolve().parents[1]
 ORDNER = ROOT / "daten" / "tracker"
+BEWERBUNGEN = ROOT / "daten" / "bewerbungen"
 DASHBOARD = ROOT / "dashboard" / "tracker.html"
 # Routinen, die das Dashboard per Klick starten darf
 LAEUFE = ("gmail-abgleich", "stellensuche")
@@ -104,13 +106,24 @@ def lauf_starten(skill):
     return True
 
 
+def ordner_oeffnen(i):
+    d = BEWERBUNGEN / gueltige_id(i)
+    if not d.is_dir():
+        return False
+    if sys.platform == "win32":
+        os.startfile(d)
+    else:
+        subprocess.Popen(["open" if sys.platform == "darwin" else "xdg-open", str(d)])
+    return True
+
+
 class Handler(BaseHTTPRequestHandler):
     def _antwort(self, code, body, typ="application/json; charset=utf-8"):
         roh = body if isinstance(body, bytes) else json.dumps(body, ensure_ascii=False).encode()
         self.send_response(code)
         self.send_header("Content-Type", typ)
         self.send_header("Cache-Control", "no-store")
-        if self.path.startswith("/api/lauf"):
+        if self.path.startswith(("/api/lauf", "/api/ordner")):
             # Das Dashboard als Datei (file://) hat Origin "null"; fremde Webseiten bekommen keine Freigabe
             self.send_header("Access-Control-Allow-Origin", "null")
             self.send_header("Access-Control-Allow-Methods", "GET, POST")
@@ -143,15 +156,24 @@ class Handler(BaseHTTPRequestHandler):
             return self._antwort(200, liste())
         if p == "/api/lauf":
             return self._antwort(200, lauf_status())
+        if p == "/api/ordner":
+            return self._antwort(200, sorted(d.name for d in BEWERBUNGEN.glob("*") if d.is_dir()))
         self._antwort(404, {"fehler": "nicht gefunden"})
 
     def do_OPTIONS(self):
-        self._antwort(204 if self.path.startswith("/api/lauf/") else 404, b"")
+        self._antwort(204 if self.path.startswith(("/api/lauf/", "/api/ordner/")) else 404, b"")
 
     def do_POST(self):
         if not self._erlaubt():
             return
-        skill = self.path.split("?")[0].removeprefix("/api/lauf/")
+        p = self.path.split("?")[0]
+        if p.startswith("/api/ordner/"):
+            try:
+                ok = ordner_oeffnen(unquote(p.removeprefix("/api/ordner/")))
+            except (ValueError, OSError) as e:
+                return self._antwort(400, {"fehler": str(e)})
+            return self._antwort(200 if ok else 404, {"geoeffnet": ok})
+        skill = p.removeprefix("/api/lauf/")
         if skill not in LAEUFE:
             return self._antwort(404, {"fehler": "nicht gefunden"})
         try:
