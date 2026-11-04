@@ -135,6 +135,7 @@ Der Tracker ist die Liste aller Bewerbungen. Das Dashboard (`dashboard/tracker.h
    - „Ordner verbinden“ klicken und `daten/tracker` im Bewerbungs-Ordner auswählen, Bearbeiten erlauben.
    - Fragt der Browser später „Bei jedem Besuch zulassen?“: zulassen, dann ist kein Klick mehr nötig.
    - Nur Safari oder Firefox: dort fehlt die Ordner-Freigabe. Stattdessen `python3 tracker/tracker.py serve` und http://localhost:8765 (läuft, solange der Befehl läuft).
+4. Optional, nur mit Claude Code: Die Buttons „Aktualisieren“ (Gmail-Abgleich) und „Neue Stellen suchen“ im Dashboard starten die Routine sofort im Hintergrund (`claude -p` im Auto-Modus, Log in `daten/logs/`). Dafür muss `python3 tracker/tracker.py serve` dauerhaft laufen, ohne Server bleiben die Buttons ausgeblendet. Nur nach Ok des Nutzers einrichten, auf macOS als launchd-Dienst `~/Library/LaunchAgents/de.bewerbungsphase.tracker.plist` (`RunAtLoad`, `KeepAlive`, `WorkingDirectory` = Projektordner, `PATH` mit dem Ordner von `claude`), dann `launchctl bootstrap gui/$(id -u) <plist>`. Kostet ca. 30 MB Arbeitsspeicher, keine Rechenzeit im Leerlauf.
 
 **claude.ai** (nur mit Claude):
 1. Skill `artifact-capabilities` laden (Pflicht, bevor `capabilities` übergeben werden).

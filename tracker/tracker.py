@@ -11,9 +11,11 @@ Die Versionsnummer verhindert, dass parallele Änderungen sich still überschrei
   python3 tracker/tracker.py update ID '{"status": ...}' [--if-version N]   Felder ändern
   python3 tracker/tracker.py delete ID
   python3 tracker/tracker.py import DIR                           <id>.json-Dateien einlesen (z. B. Export aus claude.ai)
-  python3 tracker/tracker.py serve [--port 8765]                  nur für Safari/Firefox: Dashboard über localhost
+  python3 tracker/tracker.py serve [--port 8765]                  Dashboard über localhost (Safari/Firefox); startet auf Klick
+                                                                  Routinen im Hintergrund (claude -p, Log in daten/logs/)
+                                                                  und öffnet daten/bewerbungen/<id>/ im Dateimanager
 """
-import argparse, json, os, sys, tempfile
+import argparse, json, os, shutil, subprocess, sys, tempfile
 from datetime import datetime
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
@@ -21,7 +23,12 @@ from urllib.parse import unquote
 
 ROOT = Path(__file__).resolve().parents[1]
 ORDNER = ROOT / "daten" / "tracker"
+BEWERBUNGEN = ROOT / "daten" / "bewerbungen"
 DASHBOARD = ROOT / "dashboard" / "tracker.html"
+# Routinen, die das Dashboard per Klick starten darf
+LAEUFE = ("gmail-abgleich", "stellensuche")
+CLAUDE = os.environ.get("CLAUDE_BIN") or shutil.which("claude") or str(Path.home() / ".local/bin/claude")
+laeufe = {}
 
 
 class Konflikt(Exception):
@@ -79,12 +86,48 @@ def loeschen(i):
     return 0
 
 
+def lauf_status():
+    return {s: s in laeufe and laeufe[s].poll() is None for s in LAEUFE}
+
+
+def lauf_starten(skill):
+    # ponytail: ein Lauf je Routine, Prozesse nur im Speicher; nach Server-Neustart unbekannt
+    if lauf_status()[skill]:
+        return False
+    logs = ROOT / "daten" / "logs"
+    logs.mkdir(parents=True, exist_ok=True)
+    auftrag = (f"Projektordner: {ROOT}\nWechsle per cd in diesen Ordner und arbeite nur dort. "
+               f"Lies .claude/skills/{skill}/SKILL.md und befolge es vollständig. Antworte auf Deutsch, kurz.")
+    with open(logs / f"{skill}.log", "a", encoding="utf-8") as log:
+        log.write(f"\n--- {datetime.now().isoformat(timespec='seconds')} Start aus dem Dashboard ---\n")
+        log.flush()
+        laeufe[skill] = subprocess.Popen([CLAUDE, "-p", auftrag, "--permission-mode", "auto"], cwd=ROOT,
+                                         stdin=subprocess.DEVNULL, stdout=log, stderr=subprocess.STDOUT)
+    return True
+
+
+def ordner_oeffnen(i):
+    d = BEWERBUNGEN / gueltige_id(i)
+    if not d.is_dir():
+        return False
+    if sys.platform == "win32":
+        os.startfile(d)
+    else:
+        subprocess.Popen(["open" if sys.platform == "darwin" else "xdg-open", str(d)])
+    return True
+
+
 class Handler(BaseHTTPRequestHandler):
     def _antwort(self, code, body, typ="application/json; charset=utf-8"):
         roh = body if isinstance(body, bytes) else json.dumps(body, ensure_ascii=False).encode()
         self.send_response(code)
         self.send_header("Content-Type", typ)
         self.send_header("Cache-Control", "no-store")
+        if self.path.startswith(("/api/lauf", "/api/ordner")):
+            # Das Dashboard als Datei (file://) hat Origin "null"; fremde Webseiten bekommen keine Freigabe
+            self.send_header("Access-Control-Allow-Origin", "null")
+            self.send_header("Access-Control-Allow-Methods", "GET, POST")
+            self.send_header("Access-Control-Allow-Headers", "Content-Type")
         self.end_headers()
         self.wfile.write(roh)
 
@@ -111,7 +154,32 @@ class Handler(BaseHTTPRequestHandler):
             return self._antwort(200, DASHBOARD.read_bytes(), "text/html; charset=utf-8")
         if p == "/api/bewerbungen":
             return self._antwort(200, liste())
+        if p == "/api/lauf":
+            return self._antwort(200, lauf_status())
+        if p == "/api/ordner":
+            return self._antwort(200, sorted(d.name for d in BEWERBUNGEN.glob("*") if d.is_dir()))
         self._antwort(404, {"fehler": "nicht gefunden"})
+
+    def do_OPTIONS(self):
+        self._antwort(204 if self.path.startswith(("/api/lauf/", "/api/ordner/")) else 404, b"")
+
+    def do_POST(self):
+        if not self._erlaubt():
+            return
+        p = self.path.split("?")[0]
+        if p.startswith("/api/ordner/"):
+            try:
+                ok = ordner_oeffnen(unquote(p.removeprefix("/api/ordner/")))
+            except (ValueError, OSError) as e:
+                return self._antwort(400, {"fehler": str(e)})
+            return self._antwort(200 if ok else 404, {"geoeffnet": ok})
+        skill = p.removeprefix("/api/lauf/")
+        if skill not in LAEUFE:
+            return self._antwort(404, {"fehler": "nicht gefunden"})
+        try:
+            self._antwort(200, {"gestartet": lauf_starten(skill), **lauf_status()})
+        except OSError as e:
+            self._antwort(500, {"fehler": f"claude nicht startbar: {e}"})
 
     def _schreiben(self, merge):
         if not self._erlaubt():

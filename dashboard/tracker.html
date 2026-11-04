@@ -34,6 +34,11 @@ button, input, select, textarea { font: inherit; color: inherit; }
 :focus-visible { outline: 3px solid var(--pink); outline-offset: 2px; }
 
 .head { display: flex; flex-wrap: wrap; gap: 16px 24px; align-items: end; justify-content: space-between; }
+.head-actions { display: grid; gap: 10px; }
+.btn:disabled { cursor: progress; opacity: .7; }
+.link-add { display: flex; gap: 8px; }
+.link-add .field { flex: 1; }
+.link-add[hidden] { display: none; }
 .head-text { display: grid; gap: 12px; justify-items: start; min-width: 0; }
 .eyebrow { margin: 0; background: var(--pink); border: var(--b); box-shadow: var(--sh-sm); padding: 2px 10px; font-family: var(--mono); font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; }
 h1 { margin: 0; font-family: var(--display); font-weight: 400; font-size: clamp(2rem, 6vw, 3.4rem); line-height: 1.05; text-wrap: balance; }
@@ -106,6 +111,8 @@ td .firm { font-weight: 800; }
 .pill, .status-select { --p: var(--card); display: inline-block; padding: 2px 8px; border: 2px solid var(--ink); box-shadow: 2px 2px 0 var(--ink); background: var(--p); font-size: .78rem; font-weight: 800; white-space: nowrap; border-radius: 0; }
 .status-select { cursor: pointer; padding: 3px 6px; }
 .p-blue { --p: var(--blue); } .p-green { --p: var(--green); } .p-yellow { --p: var(--yellow); } .p-pink { --p: var(--pink); } .p-orange { --p: var(--orange); } .p-violet { --p: var(--violet); }
+.edit + .edit { margin-left: 12px; }
+td.actions { white-space: nowrap; }
 .edit { all: unset; cursor: pointer; font-family: var(--mono); font-size: .75rem; font-weight: 700; text-decoration: underline; text-underline-offset: 3px; }
 @media (max-width: 46rem) { .hide-sm { display: none; } }
 
@@ -137,8 +144,15 @@ dialog::backdrop { background: rgba(18, 18, 18, .45); }
       <h1>Bewerbungs-<span class="mark">Tracker</span></h1>
       <p class="take" id="take">Bewerbungen werden geladen …</p>
     </div>
-    <button class="btn" id="connect" type="button" hidden>Ordner verbinden</button>
-    <button class="btn" id="add" type="button" hidden>+ Bewerbung eintragen</button>
+    <div class="head-actions">
+      <button class="btn ghost" type="button" data-lauf="gmail-abgleich" title="Gmail nach Antworten durchsuchen" hidden>Aktualisieren</button>
+      <button class="btn ghost" type="button" data-lauf="stellensuche" hidden>Neue Stellen suchen</button>
+      <form class="link-add" id="link-add" hidden>
+        <input class="field" id="link-in" type="url" placeholder="Link zur Stellenanzeige" aria-label="Link zu einer selbst gefundenen Stellenanzeige" required>
+        <button class="btn" type="submit">Eintragen</button>
+      </form>
+      <button class="btn" id="connect" type="button" hidden>Ordner verbinden</button>
+    </div>
   </header>
   <p class="banner" id="banner" hidden></p>
 
@@ -148,8 +162,7 @@ dialog::backdrop { background: rgba(18, 18, 18, .45); }
     <div class="tile t-green"><span class="lbl">Einladungen</span><span class="val" data-k="einladungen">–</span><span class="sub"><span data-k="einladungsquote">–</span> der versendeten</span></div>
     <div class="tile t-pink"><span class="lbl">Absagen</span><span class="val" data-k="absagen">–</span><span class="sub"><span data-k="absagequote">–</span> der versendeten</span></div>
     <div class="tile t-violet"><span class="lbl">Antwortquote</span><span class="val" data-k="antwortquote">–</span><span class="sub">Einladung oder Absage erhalten</span></div>
-    <div class="tile"><span class="lbl">Vorschläge</span><span class="val" data-k="vorschlaege">–</span><span class="sub">warten auf deine Prüfung</span></div>
-    <div class="tile"><span class="lbl">Entwürfe</span><span class="val" data-k="entwuerfe">–</span><span class="sub">fertig, noch nicht abgeschickt</span></div>
+    <div class="tile"><span class="lbl">ToDo</span><span class="val" data-k="todo">–</span><span class="sub">Vorschläge <span data-k="vorschlaege">–</span> · Entwürfe <span data-k="entwuerfe">–</span></span></div>
   </section>
   <p class="def">Quoten beziehen sich auf versendete Bewerbungen. Eine automatische Eingangsbestätigung zählt nicht als Antwort. Eine Einladung bleibt gezählt, auch wenn später eine Absage kommt.</p>
 
@@ -172,6 +185,7 @@ dialog::backdrop { background: rgba(18, 18, 18, .45); }
     <div class="tools">
       <div class="seg" role="group" aria-label="Ansicht">
         <button type="button" data-view="todo" aria-pressed="true">To-do <span class="n" id="n-todo"></span></button>
+        <button type="button" data-view="warten" aria-pressed="false" title="Warte auf Rückmeldung">Wartet <span class="n" id="n-warten"></span></button>
         <button type="button" data-view="alle" aria-pressed="false">Alle <span class="n" id="n-alle"></span></button>
       </div>
       <input class="field" id="q" type="search" placeholder="Firma, Stelle …" aria-label="Bewerbungen durchsuchen">
@@ -251,7 +265,7 @@ const deDate = (s) => (s ? new Date(s + 'T00:00:00').toLocaleDateString('de-DE',
 
 let rows = [], db = null, canWrite = false, sortF = null, asc = false, editing = null;
 let view = 'todo';
-try { if (localStorage.getItem('ansicht') === 'alle') view = 'alle'; } catch {}
+try { const a = localStorage.getItem('ansicht'); if (a === 'alle' || a === 'warten') view = a; } catch {}
 
 STATUS.forEach((s) => { $('#filter').append(new Option(s, s)); $('#f-status').append(new Option(s, s)); });
 
@@ -265,6 +279,7 @@ function stats(list) {
   const quote = (x) => (versendet ? x / versendet : null);
   return {
     entwuerfe: list.filter((b) => b.status === 'Entworfen').length, vorschlaege: list.filter((b) => b.status === 'Vorschlag').length, versendet,
+    todo: list.filter((b) => ['Vorschlag', 'Entworfen'].includes(b.status)).length,
     offen: zahl((b) => !(b.antwort_am || ['Einladung', 'Angebot', 'Absage', 'Zurückgezogen'].includes(b.status))),
     einladungen, absagen, angebote: zahl((b) => b.status === 'Angebot'), rueckmeldungen,
     antwortquote: quote(rueckmeldungen), einladungsquote: quote(einladungen), absagequote: quote(absagen),
@@ -354,11 +369,11 @@ function renderWeeks() {
 
 function renderTable() {
   const q = $('#q').value.trim().toLowerCase(), f = $('#filter').value;
-  const base = view === 'todo' ? rows.filter((r) => TODO.includes(r.status)) : rows;
-  $('#n-todo').textContent = rows.filter((r) => TODO.includes(r.status)).length;
-  $('#n-alle').textContent = rows.length;
+  const VIEW = { todo: (r) => TODO.includes(r.status), warten: isOpen, alle: () => true };
+  const base = rows.filter(VIEW[view]);
+  for (const v in VIEW) $('#n-' + v).textContent = rows.filter(VIEW[v]).length;
   document.querySelectorAll('.seg button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.view === view)));
-  $('#list-title').textContent = view === 'todo' ? 'Deine To-dos' : 'Alle Bewerbungen';
+  $('#list-title').textContent = { todo: 'Deine To-dos', warten: 'Warte auf Rückmeldung', alle: 'Alle Bewerbungen' }[view];
   const list = base.filter((r) => (!q || [r.firma, r.stelle, r.ort, r.weg, r.naechster_schritt, r.notiz].join(' ').toLowerCase().includes(q))
     && (!f || (f === 'offen' ? isOpen(r) : r.status === f)));
   const key = (r) => (sortF ? r[sortF] : r.versendet_am || r.entworfen_am || r.vorgeschlagen_am);
@@ -372,7 +387,7 @@ function renderTable() {
   $('#count').textContent = `${list.length} von ${base.length}`;
   $('#th-edit').hidden = !canWrite;
   if (!list.length) {
-    const td = el('td', null, view === 'todo' && !q && !f ? 'Nichts zu tun: keine Vorschläge, Entwürfe, Einladungen oder Angebote offen.' : 'Keine Bewerbung passt zu Suche oder Filter.');
+    const td = el('td', null, view === 'todo' && !q && !f ? 'Nichts zu tun: keine Vorschläge, Entwürfe, Einladungen oder Angebote offen.' : view === 'warten' && !q && !f ? 'Keine Bewerbung wartet auf Antwort.' : 'Keine Bewerbung passt zu Suche oder Filter.');
     td.colSpan = 8; const tr = document.createElement('tr'); tr.append(td);
     $('#tbody').replaceChildren(tr); return;
   }
@@ -396,7 +411,11 @@ function renderTable() {
       }
     } else st.append(el('span', 'pill ' + (TONE[r.status] || ''), r.status || '–'));
     tr.append(firma, el('td', null, r.stelle || '–'), st, el('td', 'date', deDate(r.versendet_am)), el('td', 'date hide-sm', deDate(r.antwort_am)), numCell(r.match, fmtMatch, matchTone), numCell(r.score, fmtScore, scoreTone));
-    if (canWrite) { const td = el('td'), b = el('button', 'edit', 'Bearbeiten'); b.type = 'button'; b.addEventListener('click', () => openDialog(r)); td.append(b); tr.append(td); }
+    if (canWrite) {
+      const td = el('td', 'actions');
+      if (ordner.has(r.id)) { const o = el('button', 'edit', 'Ordner'); o.type = 'button'; o.title = 'Ordner mit Anschreiben und Lebenslauf öffnen'; o.addEventListener('click', () => ordnerOeffnen(r)); td.append(o); }
+      const b = el('button', 'edit', 'Bearbeiten'); b.type = 'button'; b.addEventListener('click', () => openDialog(r)); td.append(b); tr.append(td);
+    }
     return tr;
   }));
 }
@@ -428,12 +447,10 @@ const slug = (s) => s.replace(/ä/g, 'ae').replace(/ö/g, 'oe').replace(/ü/g, '
 
 function openDialog(r) {
   editing = r;
-  $('#dlg-title').textContent = r ? 'Bewerbung bearbeiten' : 'Bewerbung eintragen';
-  for (const f of FIELDS) $('#f-' + f).value = r ? (r[f] ?? '') : f === 'status' ? 'Versendet' : f === 'versendet_am' ? today() : '';
-  const del = $('#del'); del.hidden = !r; del.classList.remove('armed'); del.textContent = 'Löschen';
+  for (const f of FIELDS) $('#f-' + f).value = r[f] ?? '';
+  const del = $('#del'); del.classList.remove('armed'); del.textContent = 'Löschen';
   $('#dlg').showModal();
 }
-$('#add').addEventListener('click', () => openDialog(null));
 $('#cancel').addEventListener('click', () => $('#dlg').close());
 $('#del').addEventListener('click', async () => {
   const del = $('#del');
@@ -447,22 +464,63 @@ $('#form').addEventListener('submit', async (ev) => {
   for (const f of FIELDS) { const x = $('#f-' + f).value.trim(); v[f] = x === '' ? null : NUM.includes(f) ? Number(x) : x; }
   if (!v.firma) { $('#f-firma').focus(); toast('Bitte eine Firma eintragen.', true); return; }
   if (v.link && !/^https:\/\//.test(v.link)) { $('#f-link').focus(); toast('Der Link muss mit https:// beginnen.', true); return; }
-  if (editing) {
-    const patch = {};
-    for (const f of FIELDS) if ((editing[f] ?? null) !== v[f]) patch[f] = v[f];
-    if (!Object.keys(patch).length) { $('#dlg').close(); return; }
-    $('#dlg').close();
-    await save(editing.id, patch.status ? withDates(editing, patch) : patch, editing.firma);
-  } else {
-    const base = slug((v.versendet_am || today()) + '_' + v.firma);
-    let id = base, n = 2;
-    while (rows.some((r) => r.id === id)) id = base + '-' + n++;
-    const doc = withDates({}, { ...v, entworfen_am: v.status === 'Entworfen' ? today() : null });
-    for (const f of FIELDS) if (!(f in doc)) doc[f] = v[f];
-    try { await db.collection('bewerbungen').doc(id).set(doc); $('#dlg').close(); toast('Eingetragen: ' + v.firma); }
-    catch (e) { toast(e?.code === 'quota_exceeded' ? 'Datenbank voll, bitte alte Einträge löschen.' : 'Nicht gespeichert, bitte nochmal versuchen.', true); }
-  }
+  const patch = {};
+  for (const f of FIELDS) if ((editing[f] ?? null) !== v[f]) patch[f] = v[f];
+  $('#dlg').close();
+  if (Object.keys(patch).length) await save(editing.id, patch.status ? withDates(editing, patch) : patch, editing.firma);
 });
+
+// Selbst gefundene Stelle: nur der Link, Status „Angefordert“. Firma, Stelle und Ort trägt die Routine bewerbungen-erstellen aus der Anzeige nach.
+$('#link-add').addEventListener('submit', async (ev) => {
+  ev.preventDefault();
+  const link = $('#link-in').value.trim();
+  if (!/^https:\/\//.test(link)) { toast('Der Link muss mit https:// beginnen.', true); return; }
+  const da = rows.find((r) => r.link === link);
+  if (da) { toast('Schon im Tracker: ' + (da.firma || link), true); return; }
+  const host = new URL(link).hostname.replace(/^www\./, '');
+  const base = slug(today() + '_' + host.replace(/\./g, '-'));
+  let id = base, n = 2;
+  while (rows.some((r) => r.id === id)) id = base + '-' + n++;
+  const doc = { ...Object.fromEntries(FIELDS.map((f) => [f, null])), firma: host, link, status: 'Angefordert', angefordert_am: today(), naechster_schritt: 'Wird gebaut' };
+  try { await db.collection('bewerbungen').doc(id).set(doc); $('#link-in').value = ''; toast('Eingetragen, die Bewerbung wird gebaut: ' + host); }
+  catch (e) { toast(e?.code === 'quota_exceeded' ? 'Datenbank voll, bitte alte Einträge löschen.' : 'Nicht gespeichert, bitte nochmal versuchen.', true); }
+});
+
+// Routinen im Hintergrund starten und Bewerbungsordner öffnen über tracker.py serve; ohne Server bleiben die Buttons aus
+const API = location.protocol === 'file:' ? 'http://127.0.0.1:8765/api/' : '/api/';
+const LAUF = API + 'lauf';
+let ordner = new Set(), ordnerAlt = '';
+let laufAlt = {};
+function zeigeLauf(st) {
+  document.querySelectorAll('[data-lauf]').forEach((b) => {
+    const k = b.dataset.lauf, name = (b.dataset.name ??= b.textContent);
+    b.hidden = !st || !(k in st);
+    b.disabled = !!st?.[k];
+    b.textContent = st?.[k] ? name + ' läuft …' : name;
+    if (laufAlt[k] && st && !st[k]) toast(name + ': fertig');
+  });
+  laufAlt = st || {};
+}
+async function laufStatus() {
+  try { zeigeLauf(await (await fetch(LAUF)).json()); } catch { zeigeLauf(null); }
+  let liste = [];
+  try { liste = await (await fetch(API + 'ordner')).json(); } catch {}
+  if (liste.join('|') !== ordnerAlt) { ordnerAlt = liste.join('|'); ordner = new Set(liste); renderTable(); }
+}
+async function ordnerOeffnen(r) {
+  try {
+    const x = await fetch(API + 'ordner/' + encodeURIComponent(r.id), { method: 'POST', headers: { 'Content-Type': 'application/json' } });
+    if (!x.ok) throw new Error(x.status);
+  } catch { toast('Ordner nicht geöffnet. Läuft „python3 tracker/tracker.py serve“?', true); }
+}
+document.querySelectorAll('[data-lauf]').forEach((b) => b.addEventListener('click', async () => {
+  try {
+    const r = await fetch(LAUF + '/' + b.dataset.lauf, { method: 'POST', headers: { 'Content-Type': 'application/json' } });
+    if (!r.ok) throw new Error(r.status);
+    zeigeLauf(await r.json()); toast(b.dataset.name + ': läuft im Hintergrund');
+  } catch { toast('Start nicht möglich. Läuft „python3 tracker/tracker.py serve“?', true); }
+}));
+if (!window.claude) { laufStatus(); setInterval(laufStatus, 5000); }
 
 $('#q').addEventListener('input', renderTable);
 $('#filter').addEventListener('change', renderTable);
@@ -599,7 +657,7 @@ renderAll();
     const user = await window.claude.use('user');
     if (user) { const w = await user.can('data.write'); canWrite = (await user.isOwner()) || w !== false; }
   }
-  $('#add').hidden = !canWrite;
+  $('#link-add').hidden = !canWrite;
   $('#table-note').textContent = canWrite ? 'Status direkt in der Tabelle ändern, Details über „Bearbeiten“' : 'Nur ansehen: Ändern kann nur der Besitzer';
   db.collection('bewerbungen').onSnapshot((snap) => {
     banner('');

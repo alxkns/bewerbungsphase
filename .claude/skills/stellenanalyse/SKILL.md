@@ -17,6 +17,7 @@ Bevor irgendetwas bewertet wird: Was macht diese Person laut Anzeige? Aus den Au
 - **Produkte und Leistungen der Firma** (Pflicht, sobald die Anzeige welche nennt oder die Rolle sie vermarktet/verkauft/betreut): Produktseite auf der Firmen-Website lesen (WebFetch), nie aus Schlagworten der Anzeige ableiten. Festhalten: Was macht das Produkt konkret, wer kauft es (Branche, Rolle), welches Problem löst es, womit wirbt die Firma selbst (Kernnutzen in ihren Worten). Dann den Satz der Anzeige wörtlich auslegen: Was soll der Nutzer mit dem Produkt **tun** (vermarkten, verkaufen, einführen, betreuen)? Ein Produktname ist kein Aufhänger für eigene Erfahrung mit dem Thema. Beispiel: „Du tauchst tief in unsere Produkte ein und entwickelst daraus Marketingbotschaften“ heißt Produktmarketing, also Produkte lernen und für die Zielgruppen verständlich machen. Belegt wird das mit Verständnis und Erklären/Texten, nicht mit „ich hatte selbst dieses Problem“.
 - **Was die Stelle nicht ist** nur, wenn die Anzeige es sagt oder es zwingend aus ihr folgt.
 - **Wo der Nutzer passt:** 2–3 Aufgaben der Anzeige (wörtlich zitiert), je mit Beleg aus Master oder `profil.md`, was der Nutzer davon schon gemacht hat. Keine Pläne, was er bei der Firma tun würde.
+- **Kern-Check (Pflicht):** Jede Aufgabe aus der Liste einer Zielrolle aus `profil.md` → „Zielrollen“ und `suchprofil.md` → „Zielrollen“ zuordnen oder als „fremd“ markieren. Zählt Wollen, nicht Können: Eine Aufgabe, die der Nutzer beherrscht, die aber zu keiner Zielrolle gehört, ist fremd. Ergebnis als „Kern: X von Y Aufgaben in den Zielrollen“. Unter der Hälfte: Kern passt nicht, Empfehlung „nicht bewerben“, egal wie hoch der Match; genau die Hälfte: Nutzer fragen. Ein Satz wie „und automatisierst Abläufe“ am Ende einer sonst fremden Liste macht die Rolle nicht passend (Fehlbeispiel: Zielrolle Prozessautomatisierung, Stelle mit sieben Aufgaben, davon sechs Rechnungen, Buchhaltung und Personalverwaltung, eine Automatisierung → 1 von 7, trotzdem mit Match 90 % vorgeschlagen).
 
 Daraus entstehen zusammen mit „Unternehmen verstehen“ (Skill `unternehmensanalyse`, Kultur und Werte, erst beim Bau) Aufhänger, Einstieg und Mehrwert-Satz im Anschreiben. Passt ein Aufhänger nicht zur Richtung der Rolle (intern/extern), fliegt er raus.
 
@@ -50,9 +51,12 @@ Gibt es `daten/markt.md`: Begriffe, die dort häufig sind, haben Vorrang, und di
 **Gesuchte Eigenschaften:** Die 3–4 Eigenschaften aus der Tabelle „Eigenschaften und Belege“ in `profil.md`, die die Anzeige am stärksten betont (Häufigkeit, Reihenfolge, Muss), mit dem passenden Beleg festhalten. Sie steuern, was das Anschreiben zeigt. Verlangt die Anzeige eine Eigenschaft, die in der Tabelle fehlt: als offene Frage an den Nutzer notieren. Danach die 3 Eigenschaften fürs Anschreiben festlegen: zuerst die A-Merkmale nach `bewerbung/stil.md` (immer „Ergebnisse statt Aufgaben“, je nach Anzeige „Lerntempo“ oder „Eigeninitiative“), den Rest aus den gesuchten. Fehlt der Beleg für ein A-Merkmal: offene Frage an den Nutzer. Welcher Aspekt vorne steht, sagt „Zielrollen“ in `profil.md` (bei einem Wechsel auch „Wechsel“).
 
 ## 4. Match berechnen
-Muss-Kriterien zählen 70 %, Kann-Kriterien 30 %. Pro Kriterium: ✅ erfüllt (Beleg aus Lebenslauf nennen) · 🟡 teilweise/übertragbar · ❌ fehlt.
+Pro Kriterium: ✅ erfüllt (Beleg aus Lebenslauf nennen) · 🟡 teilweise/übertragbar · ❌ fehlt.
+
+Punkte je Kriterium, nicht feste Anteile für Muss und Kann: Muss ✅ 1 · 🟡 0,5 · ❌ 0, Kann ✅ 0,3 · 🟡 0,15 · ❌ 0. **Match = erreichte Punkte / mögliche Punkte.** Ein Kann wiegt also 0,3 eines Muss und kann nie so viel abziehen wie ein Muss, auch wenn die Anzeige nur ein oder zwei Kann-Kriterien nennt (Fehlbeispiel der alten Formel „Muss 70 %, Kann 30 %“: 7 Muss fast erfüllt, einziges Kann „C# von Vorteil“ fehlt → 65 % statt 89 %). Ohne Kann-Kriterien zählen nur die Muss. Die Rechnung in `analyse.md` hinter die Match-Zeile schreiben (z. B. „6,5 / 7,3 Punkte“).
 - ≥ Match-Grenze aus `suchprofil.md` (Standard 70 %): bewerben (Recruiter-Check ist dann Pflicht)
 - darunter oder ein harter Ausschluss: Nutzer vorher fragen
+- Kern passt nicht (Kern-Check in Abschnitt 0): nicht bewerben, auch bei hohem Match
 
 Lücken kommen nicht automatisch ins Anschreiben (Regel im Skill `anschreiben`), sondern in `analyse.md` mit fertiger Antwort fürs Gespräch.
 
@@ -73,10 +77,10 @@ Nur wenn `profil.md` einen Abschnitt „Wechsel“ hat: Wo hilft der bisherige H
 
 ```markdown
 # [Stelle] bei [Firma]
-**Match: 78 %** · Empfehlung: bewerben
+**Match: 78 %** · Kern: 5 von 7 Aufgaben in den Zielrollen · Empfehlung: bewerben
 
 ## Rolle verstehen
-Aufgaben (vollständig, Reihenfolge der Anzeige): … · Für wen: … oder „nicht angegeben“ · Warum die Stelle: … oder „nicht angegeben“
+Aufgaben (vollständig, Reihenfolge der Anzeige, je mit Zielrolle oder „fremd“): … · Für wen: … oder „nicht angegeben“ · Warum die Stelle: … oder „nicht angegeben“
 Wo der Nutzer passt:
 1. „Aufgabe wörtlich“ → Beleg …
 2. …
